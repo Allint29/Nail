@@ -51,6 +51,8 @@ class User(UserMixin, db.Model):
         primaryjoin=(followers.c.follower_id == id),
         secondaryjoin=(followers.c.followed_id == id),
         backref=db.backref('followers', lazy='dynamic'), lazy='dynamic')
+    email2 = db.Column(db.String(120), index=True, unique=True)
+
 
     def __repr__(self):
         return '<User {}>'.format(self.username)

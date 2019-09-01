@@ -34,7 +34,7 @@ def create_app(config_class=Config):
     app_web.config.from_object(config_class)
 
     db.init_app(app_web)
-    migrate.init_app(app_web)
+    migrate.init_app(app_web, db)
     loginF.init_app(app_web)
     mail.init_app(app_web)
     bootstrap.init_app(app_web)
