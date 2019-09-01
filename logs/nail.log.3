@@ -1,0 +1,114 @@
+2019-08-31 13:17:23,184 ERROR: Exception on /auth/reset_password_request [POST] [in /mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py:1891]
+Traceback (most recent call last):
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 2446, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1951, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1820, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1949, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1935, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/mnt/f/python_lin/nail/app/auth/routes.py", line 65, in reset_password_request
+    send_password_reset_email(user)
+  File "/mnt/f/python_lin/nail/app/auth/myemail.py", line 7, in send_password_reset_email
+    token = user.get_reset_password_token()
+  File "/mnt/f/python_lin/nail/app/models.py", line 116, in get_reset_password_token
+    app_web.config['SECRET_KEY'], algorithm='HS256').decode('utf-8')
+NameError: name 'app_web' is not defined
+2019-08-31 13:21:04,530 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:81]
+2019-08-31 13:21:16,096 ERROR: Exception on /auth/reset_password_request [POST] [in /mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py:1891]
+Traceback (most recent call last):
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 2446, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1951, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1820, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1949, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1935, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/mnt/f/python_lin/nail/app/auth/routes.py", line 65, in reset_password_request
+    send_password_reset_email(user)
+  File "/mnt/f/python_lin/nail/app/auth/myemail.py", line 9, in send_password_reset_email
+    sender=app_web.config['ADMINS'][0],
+NameError: name 'app_web' is not defined
+2019-08-31 13:22:04,734 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:81]
+2019-08-31 13:22:18,981 ERROR: Exception on /auth/reset_password_request [POST] [in /mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py:1891]
+Traceback (most recent call last):
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 2446, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1951, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1820, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1949, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1935, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/mnt/f/python_lin/nail/app/auth/routes.py", line 65, in reset_password_request
+    send_password_reset_email(user)
+  File "/mnt/f/python_lin/nail/app/auth/myemail.py", line 14, in send_password_reset_email
+    user=user, token=token))
+  File "/mnt/f/python_lin/nail/app/myemail.py", line 14, in send_email
+    Thread(target=send_async_email, args=(app_web, msg)).start()
+NameError: name 'app_web' is not defined
+2019-08-31 13:23:27,029 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:81]
+2019-08-31 13:25:17,175 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:81]
+2019-08-31 13:31:05,369 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:81]
+2019-08-31 13:33:37,808 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:81]
+2019-08-31 13:40:04,313 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:81]
+2019-08-31 13:40:11,351 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:81]
+2019-08-31 14:09:19,873 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:81]
+2019-08-31 14:09:33,522 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:81]
+2019-08-31 14:14:27,258 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:81]
+2019-08-31 14:18:51,818 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:81]
+2019-08-31 15:09:05,638 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:81]
+2019-08-31 15:36:31,445 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:83]
+2019-08-31 15:39:58,037 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:83]
+2019-08-31 15:43:44,778 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:83]
+2019-08-31 15:48:39,030 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:83]
+2019-08-31 15:50:06,374 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:83]
+2019-08-31 15:51:32,404 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:83]
+2019-08-31 15:51:43,494 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:83]
+2019-08-31 15:51:49,714 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:83]
+2019-08-31 15:52:33,539 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:83]
+2019-08-31 15:52:33,539 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:83]
+2019-08-31 15:56:42,967 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:83]
+2019-08-31 16:01:04,548 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:83]
+2019-08-31 16:01:52,878 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:83]
+2019-08-31 16:02:07,272 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:83]
+2019-08-31 16:02:58,802 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:83]
+2019-08-31 16:03:56,745 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:83]
+2019-08-31 16:05:24,937 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:83]
+2019-08-31 16:06:25,288 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:83]
+2019-08-31 17:04:55,437 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:83]
+2019-08-31 17:35:13,654 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:83]
+2019-08-31 17:35:29,460 ERROR: Exception on /search [GET] [in /mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py:1891]
+Traceback (most recent call last):
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 2446, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1951, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1820, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1949, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1935, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask_login/utils.py", line 261, in decorated_view
+    return func(*args, **kwargs)
+  File "/mnt/f/python_lin/nail/app/main/routes.py", line 189, in search
+    if total > page * current_app.config['POSTS_PER_PAGE'] else None
+TypeError: '>' not supported between instances of 'dict' and 'int'
+2019-08-31 17:38:32,579 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:83]

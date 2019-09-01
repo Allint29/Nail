@@ -1,0 +1,283 @@
+# English translations for PROJECT.
+# Copyright (C) 2019 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2019-08-31 09:56+0300\n"
+"PO-Revision-Date: 2019-08-30 15:37+0300\n"
+"Last-Translator: \n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.7.0\n"
+
+#: app/__init__.py:23
+msgid "Пожалуйста, авторизируйтесь, чтобы открыть эту страницу."
+msgstr "Please log in to open this page."
+
+#: app/forms.py:8 app/forms.py:43 app/forms.py:61
+msgid "Пароль"
+msgstr "Password"
+
+#: app/forms.py:9 app/forms.py:44
+msgid "Повторите пароль"
+msgstr "Confirm password"
+
+#: app/forms.py:11
+msgid "Установить новый пароль"
+msgstr "Enter new passward"
+
+#: app/forms.py:14 app/forms.py:42
+msgid "Почта"
+msgstr "Email"
+
+#: app/forms.py:15
+msgid "Отправить ссылку на почту"
+msgstr "Send a link to the mail"
+
+#: app/forms.py:18
+msgid "Cкажите что-нибудь"
+msgstr "Write something..."
+
+#: app/forms.py:20 app/forms.py:28
+msgid "Опубликовать"
+msgstr "Publish"
+
+#: app/forms.py:26 app/forms.py:41
+msgid "Имя пользователя"
+msgstr "Name of user"
+
+#: app/forms.py:27
+msgid "Обо мне"
+msgstr "About me"
+
+#: app/forms.py:38
+msgid "Пользователь с таким именем уже есть. Измените имя."
+msgstr "Take another name. This name is used."
+
+#: app/forms.py:51
+msgid "Пожалуйста, используйте другое имя."
+msgstr "Please use a different name."
+
+#: app/forms.py:56
+msgid "Пожалуйста, используйте другую почту."
+msgstr "Please use another email."
+
+#: app/forms.py:60
+msgid "Пользователь"
+msgstr "User"
+
+#: app/forms.py:62
+msgid "Запомнить меня"
+msgstr "Remember me"
+
+#: app/forms.py:63 app/templates/base.html:30
+msgid "Войти"
+msgstr "Login"
+
+#: app/myemail.py:20
+msgid "[Nail] Ссылка на восстановление пароля"
+msgstr "[Nail] Password recovery link"
+
+#: app/routes.py:32
+msgid "Ваш пароль изменен."
+msgstr "Your password has been changed."
+
+#: app/routes.py:48
+msgid "Перейдите по ссылке на почте, для смены пароля."
+msgstr "Follow the link in the mail to change your password."
+
+#: app/routes.py:62 app/routes.py:77
+#, python-format
+msgid "Пользователь %(username)s не найден."
+msgstr "User %(username)s not find."
+
+#: app/routes.py:65 app/routes.py:84
+#, python-format
+msgid "Вы отписаны от пользователя %(username)s."
+msgstr "You are unsubscribed from the user %(username)s."
+
+#: app/routes.py:80
+msgid "Вы не можете отписаться от самого себя!"
+msgstr "You cannot unsubscribe from yourself!"
+
+#: app/routes.py:95
+msgid "Ваши изменения в форме были сохранены."
+msgstr "Your changes to the form have been saved."
+
+#: app/routes.py:100
+msgid "Редактирование профиля"
+msgstr "Edit profile"
+
+#: app/routes.py:138
+msgid "Поздравляем, Вы зарегистрированы в системе!"
+msgstr "Congratulations, you are registered in the system!"
+
+#: app/routes.py:140 app/templates/register.html:5
+msgid "Регистрация"
+msgstr "Registration"
+
+#: app/routes.py:157
+msgid "Неправильный логин или пароль!"
+msgstr "Wrong login or password!"
+
+#: app/routes.py:160
+msgid "Вы вошли на сайт"
+msgstr "You are logged in"
+
+#: app/routes.py:165 app/templates/login.html:5
+msgid "Авторизация"
+msgstr "Authorization"
+
+#: app/routes.py:179
+msgid "Ваш пост живой!"
+msgstr "Your post alive!"
+
+#: app/routes.py:188
+msgid "Домашняя страница"
+msgstr "Home page"
+
+#: app/routes.py:201 app/templates/base.html:25
+msgid "Обзор"
+msgstr "Explorer"
+
+#: app/translate.py:32
+msgid "Ошибка: сервис перевода неправильно сконфигурирован."
+msgstr ""
+
+#: app/translate.py:39
+msgid "Ошибка: сервис перевода неисправен"
+msgstr ""
+
+#: app/templates/404.html:4
+msgid "Файл не найден"
+msgstr "File not find"
+
+#: app/templates/404.html:6 app/templates/500.html:7
+msgid "Вернуться"
+msgstr "Back"
+
+#: app/templates/500.html:4
+msgid "Произошла непредвиденная ошибка"
+msgstr "An unexpected error occurred"
+
+#: app/templates/500.html:5
+msgid "Ошибка перенаправлена администратору. Приносим извенения за неудобство! "
+msgstr ""
+"The error was forwarded to the administrator. We apologize for the "
+"inconvenience!"
+
+#: app/templates/_post.html:15
+#, python-format
+msgid "%(username)s напиал %(when)s"
+msgstr "%(username)s wrote %(when)s"
+
+#: app/templates/_post.html:26
+msgid "Перевести"
+msgstr ""
+
+#: app/templates/base.html:5
+msgid "Страничка мастера по маникюру"
+msgstr "Page of nail master"
+
+#: app/templates/base.html:7
+msgid "Добро пожаловать на страницу мастера маникюра и педикюра"
+msgstr "Welcome to the nail master page!"
+
+#: app/templates/base.html:24
+msgid "Главная страница"
+msgstr "Main page"
+
+#: app/templates/base.html:33
+msgid "Профиль"
+msgstr "Profile"
+
+#: app/templates/base.html:34
+msgid "Выйти"
+msgstr "Logout"
+
+#: app/templates/base.html:75
+msgid "Error: Could not contact server."
+msgstr ""
+
+#: app/templates/edit_profile.html:5
+msgid "Редактор профиля"
+msgstr "Profile editor"
+
+#: app/templates/index.html:5
+msgid "Приветствую,"
+msgstr "Hi,"
+
+#: app/templates/index.html:5
+msgid "Вы на главной странице"
+msgstr "You are on the main page"
+
+#: app/templates/index.html:17 app/templates/user.html:36
+msgid "Новые посты"
+msgstr "New posts"
+
+#: app/templates/index.html:22 app/templates/user.html:41
+msgid "Старые посты"
+msgstr "Old posts"
+
+#: app/templates/login.html:13
+msgid "Забыли пароль?"
+msgstr "Forgot password?"
+
+#: app/templates/login.html:14
+msgid "Восстановить пароль"
+msgstr "Recover the password"
+
+#: app/templates/login.html:16
+msgid "Нет регистрации?"
+msgstr "No registration?"
+
+#: app/templates/login.html:17
+msgid "Зарегистрируйтесь!"
+msgstr "Register!"
+
+#: app/templates/reset_password.html:5
+msgid "Измените Ваш пароль"
+msgstr "Change your password"
+
+#: app/templates/reset_password_request.html:5
+msgid "Переопределить пароль"
+msgstr "To override the password"
+
+#: app/templates/user.html:10
+msgid " Пользователь"
+msgstr " User"
+
+#: app/templates/user.html:12
+msgid "Последний визит"
+msgstr "Last visit"
+
+#: app/templates/user.html:13
+#, python-format
+msgid "%(count)d подписки"
+msgstr "%(count)d folowers"
+
+#: app/templates/user.html:13
+#, python-format
+msgid "%(count)d подписан"
+msgstr "%(count)d folowed"
+
+#: app/templates/user.html:16
+msgid "Редактировать свой профиль"
+msgstr "Edit your profile"
+
+#: app/templates/user.html:18
+msgid "Подписаться"
+msgstr "Subscribe"
+
+#: app/templates/user.html:20
+msgid "Отписаться"
+msgstr "Unsubscribe"
+

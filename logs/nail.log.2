@@ -1,0 +1,132 @@
+2019-08-31 17:38:42,840 ERROR: Exception on /search [GET] [in /mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py:1891]
+Traceback (most recent call last):
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 2446, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1951, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1820, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1949, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1935, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask_login/utils.py", line 261, in decorated_view
+    return func(*args, **kwargs)
+  File "/mnt/f/python_lin/nail/app/main/routes.py", line 191, in search
+    if total > page * current_app.config['POSTS_PER_PAGE'] else None
+TypeError: '>' not supported between instances of 'dict' and 'int'
+2019-08-31 17:39:59,991 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:83]
+2019-08-31 17:40:04,575 ERROR: Exception on /search [GET] [in /mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py:1891]
+Traceback (most recent call last):
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 2446, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1951, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1820, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1949, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1935, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask_login/utils.py", line 261, in decorated_view
+    return func(*args, **kwargs)
+  File "/mnt/f/python_lin/nail/app/main/routes.py", line 191, in search
+    if total > page * current_app.config['POSTS_PER_PAGE'] else None
+TypeError: '>' not supported between instances of 'dict' and 'int'
+2019-08-31 17:41:26,142 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:83]
+2019-08-31 17:41:50,862 ERROR: Exception on /search [GET] [in /mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py:1891]
+Traceback (most recent call last):
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/sqlalchemy/sql/elements.py", line 706, in comparator
+    comparator_factory = self.type.comparator_factory
+AttributeError: 'NoneType' object has no attribute 'comparator_factory'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 2446, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1951, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1820, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1949, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1935, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask_login/utils.py", line 261, in decorated_view
+    return func(*args, **kwargs)
+  File "/mnt/f/python_lin/nail/app/main/routes.py", line 187, in search
+    current_app.config['POSTS_PER_PAGE'])
+  File "/mnt/f/python_lin/nail/app/models.py", line 169, in search
+    db.case(when, value=cls.id)), total
+  File "<string>", line 2, in order_by
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/sqlalchemy/orm/base.py", line 220, in generate
+    fn(self, *args[1:], **kw)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/sqlalchemy/orm/query.py", line 1825, in order_by
+    criterion = self._adapt_col_list(criterion)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/sqlalchemy/orm/query.py", line 315, in _adapt_col_list
+    for o in cols
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/sqlalchemy/orm/query.py", line 315, in <listcomp>
+    for o in cols
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/sqlalchemy/sql/elements.py", line 4480, in _literal_as_label_reference
+    elif hasattr(element, "__clause_element__"):
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/sqlalchemy/sql/elements.py", line 717, in __getattr__
+    return getattr(self.comparator, key)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/sqlalchemy/util/langhelpers.py", line 855, in __get__
+    obj.__dict__[self.__name__] = result = self.fget(obj)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/sqlalchemy/sql/elements.py", line 710, in comparator
+    "is not a TypeEngine class or object" % self.type
+TypeError: Object None associated with '.type' attribute is not a TypeEngine class or object
+2019-08-31 17:43:20,391 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:83]
+2019-08-31 17:43:25,156 ERROR: Exception on /search [GET] [in /mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py:1891]
+Traceback (most recent call last):
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/sqlalchemy/sql/elements.py", line 706, in comparator
+    comparator_factory = self.type.comparator_factory
+AttributeError: 'NoneType' object has no attribute 'comparator_factory'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 2446, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1951, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1820, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1949, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1935, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask_login/utils.py", line 261, in decorated_view
+    return func(*args, **kwargs)
+  File "/mnt/f/python_lin/nail/app/main/routes.py", line 187, in search
+    current_app.config['POSTS_PER_PAGE'])
+  File "/mnt/f/python_lin/nail/app/models.py", line 170, in search
+    db.case(when, value=cls.id)), total
+  File "<string>", line 2, in order_by
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/sqlalchemy/orm/base.py", line 220, in generate
+    fn(self, *args[1:], **kw)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/sqlalchemy/orm/query.py", line 1825, in order_by
+    criterion = self._adapt_col_list(criterion)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/sqlalchemy/orm/query.py", line 315, in _adapt_col_list
+    for o in cols
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/sqlalchemy/orm/query.py", line 315, in <listcomp>
+    for o in cols
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/sqlalchemy/sql/elements.py", line 4480, in _literal_as_label_reference
+    elif hasattr(element, "__clause_element__"):
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/sqlalchemy/sql/elements.py", line 717, in __getattr__
+    return getattr(self.comparator, key)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/sqlalchemy/util/langhelpers.py", line 855, in __get__
+    obj.__dict__[self.__name__] = result = self.fget(obj)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/sqlalchemy/sql/elements.py", line 710, in comparator
+    "is not a TypeEngine class or object" % self.type
+TypeError: Object None associated with '.type' attribute is not a TypeEngine class or object
+2019-08-31 17:45:08,717 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:83]

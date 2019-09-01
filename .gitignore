@@ -1,0 +1,6 @@
+.env
+.vs
+env
+__pycache__
+*.db
+messages.pot
