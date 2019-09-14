@@ -1,4 +1,4 @@
-2019-08-31 17:38:42,840 ERROR: Exception on /search [GET] [in /mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py:1891]
+2019-09-13 18:00:48,787 ERROR: Exception on /user/login [GET] [in /mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py:1891]
 Traceback (most recent call last):
   File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 2446, in wsgi_app
     response = self.full_dispatch_request()
@@ -12,13 +12,49 @@ Traceback (most recent call last):
     rv = self.dispatch_request()
   File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1935, in dispatch_request
     return self.view_functions[rule.endpoint](**req.view_args)
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask_login/utils.py", line 261, in decorated_view
-    return func(*args, **kwargs)
-  File "/mnt/f/python_lin/nail/app/main/routes.py", line 191, in search
-    if total > page * current_app.config['POSTS_PER_PAGE'] else None
-TypeError: '>' not supported between instances of 'dict' and 'int'
-2019-08-31 17:39:59,991 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:83]
-2019-08-31 17:40:04,575 ERROR: Exception on /search [GET] [in /mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py:1891]
+  File "/mnt/f/python_lin/nail/app/user/routes.py", line 37, in login
+    return render_template('user/login.html', title=titleVar, form=form)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/templating.py", line 140, in render_template
+    ctx.app,
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/templating.py", line 120, in _render
+    rv = template.render(context)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/jinja2/asyncsupport.py", line 76, in render
+    return original_render(self, *args, **kwargs)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/jinja2/environment.py", line 1008, in render
+    return self.environment.handle_exception(exc_info, True)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/jinja2/environment.py", line 780, in handle_exception
+    reraise(exc_type, exc_value, tb)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/jinja2/_compat.py", line 37, in reraise
+    raise value.with_traceback(tb)
+  File "/mnt/f/python_lin/nail/app/templates/user/login.html", line 36, in top-level template code
+    {% for error in form.password.errors %}
+  File "/mnt/f/python_lin/nail/app/templates/base.html", line 1, in top-level template code
+    {% extends 'bootstrap/base.html' %}
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask_bootstrap/templates/bootstrap/base.html", line 1, in top-level template code
+    {% block doc -%}
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask_bootstrap/templates/bootstrap/base.html", line 4, in block "doc"
+    {%- block html %}
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask_bootstrap/templates/bootstrap/base.html", line 20, in block "html"
+    {% block body -%}
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask_bootstrap/templates/bootstrap/base.html", line 23, in block "body"
+    {% block content -%}
+  File "/mnt/f/python_lin/nail/app/templates/base.html", line 17, in block "content"
+    {% block app_content %}
+  File "/mnt/f/python_lin/nail/app/templates/user/login.html", line 19, in block "app_content"
+    <a href="{{ url_for('user.register') }}">{{ _('Зарегистрируйтесь!') }}</a>
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/helpers.py", line 370, in url_for
+    return appctx.app.handle_url_build_error(error, endpoint, values)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 2215, in handle_url_build_error
+    reraise(exc_type, exc_value, tb)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/helpers.py", line 358, in url_for
+    endpoint, values, method=method, force_external=external
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/werkzeug/routing.py", line 2020, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.BuildError: Could not build url for endpoint 'user.register'. Did you mean 'user.register_user' instead?
+2019-09-13 18:03:23,833 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:87]
+2019-09-13 18:03:33,089 ERROR: Exception on /user/login [GET] [in /mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py:1891]
 Traceback (most recent call last):
   File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 2446, in wsgi_app
     response = self.full_dispatch_request()
@@ -32,101 +68,44 @@ Traceback (most recent call last):
     rv = self.dispatch_request()
   File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1935, in dispatch_request
     return self.view_functions[rule.endpoint](**req.view_args)
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask_login/utils.py", line 261, in decorated_view
-    return func(*args, **kwargs)
-  File "/mnt/f/python_lin/nail/app/main/routes.py", line 191, in search
-    if total > page * current_app.config['POSTS_PER_PAGE'] else None
-TypeError: '>' not supported between instances of 'dict' and 'int'
-2019-08-31 17:41:26,142 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:83]
-2019-08-31 17:41:50,862 ERROR: Exception on /search [GET] [in /mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py:1891]
-Traceback (most recent call last):
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/sqlalchemy/sql/elements.py", line 706, in comparator
-    comparator_factory = self.type.comparator_factory
-AttributeError: 'NoneType' object has no attribute 'comparator_factory'
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 2446, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1951, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1820, in handle_user_exception
+  File "/mnt/f/python_lin/nail/app/user/routes.py", line 37, in login
+    return render_template('user/login.html', title=titleVar, form=form)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/templating.py", line 140, in render_template
+    ctx.app,
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/templating.py", line 120, in _render
+    rv = template.render(context)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/jinja2/asyncsupport.py", line 76, in render
+    return original_render(self, *args, **kwargs)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/jinja2/environment.py", line 1008, in render
+    return self.environment.handle_exception(exc_info, True)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/jinja2/environment.py", line 780, in handle_exception
+    reraise(exc_type, exc_value, tb)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/jinja2/_compat.py", line 37, in reraise
+    raise value.with_traceback(tb)
+  File "/mnt/f/python_lin/nail/app/templates/user/login.html", line 36, in top-level template code
+    {% for error in form.password.errors %}
+  File "/mnt/f/python_lin/nail/app/templates/base.html", line 1, in top-level template code
+    {% extends 'bootstrap/base.html' %}
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask_bootstrap/templates/bootstrap/base.html", line 1, in top-level template code
+    {% block doc -%}
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask_bootstrap/templates/bootstrap/base.html", line 4, in block "doc"
+    {%- block html %}
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask_bootstrap/templates/bootstrap/base.html", line 20, in block "html"
+    {% block body -%}
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask_bootstrap/templates/bootstrap/base.html", line 23, in block "body"
+    {% block content -%}
+  File "/mnt/f/python_lin/nail/app/templates/base.html", line 17, in block "content"
+    {% block app_content %}
+  File "/mnt/f/python_lin/nail/app/templates/user/login.html", line 19, in block "app_content"
+    <a href="{{ url_for('user.register') }}">{{ _('Зарегистрируйтесь!') }}</a>
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/helpers.py", line 370, in url_for
+    return appctx.app.handle_url_build_error(error, endpoint, values)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 2215, in handle_url_build_error
     reraise(exc_type, exc_value, tb)
   File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
     raise value
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1949, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1935, in dispatch_request
-    return self.view_functions[rule.endpoint](**req.view_args)
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask_login/utils.py", line 261, in decorated_view
-    return func(*args, **kwargs)
-  File "/mnt/f/python_lin/nail/app/main/routes.py", line 187, in search
-    current_app.config['POSTS_PER_PAGE'])
-  File "/mnt/f/python_lin/nail/app/models.py", line 169, in search
-    db.case(when, value=cls.id)), total
-  File "<string>", line 2, in order_by
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/sqlalchemy/orm/base.py", line 220, in generate
-    fn(self, *args[1:], **kw)
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/sqlalchemy/orm/query.py", line 1825, in order_by
-    criterion = self._adapt_col_list(criterion)
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/sqlalchemy/orm/query.py", line 315, in _adapt_col_list
-    for o in cols
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/sqlalchemy/orm/query.py", line 315, in <listcomp>
-    for o in cols
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/sqlalchemy/sql/elements.py", line 4480, in _literal_as_label_reference
-    elif hasattr(element, "__clause_element__"):
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/sqlalchemy/sql/elements.py", line 717, in __getattr__
-    return getattr(self.comparator, key)
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/sqlalchemy/util/langhelpers.py", line 855, in __get__
-    obj.__dict__[self.__name__] = result = self.fget(obj)
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/sqlalchemy/sql/elements.py", line 710, in comparator
-    "is not a TypeEngine class or object" % self.type
-TypeError: Object None associated with '.type' attribute is not a TypeEngine class or object
-2019-08-31 17:43:20,391 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:83]
-2019-08-31 17:43:25,156 ERROR: Exception on /search [GET] [in /mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py:1891]
-Traceback (most recent call last):
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/sqlalchemy/sql/elements.py", line 706, in comparator
-    comparator_factory = self.type.comparator_factory
-AttributeError: 'NoneType' object has no attribute 'comparator_factory'
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 2446, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1951, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1820, in handle_user_exception
-    reraise(exc_type, exc_value, tb)
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
-    raise value
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1949, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1935, in dispatch_request
-    return self.view_functions[rule.endpoint](**req.view_args)
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask_login/utils.py", line 261, in decorated_view
-    return func(*args, **kwargs)
-  File "/mnt/f/python_lin/nail/app/main/routes.py", line 187, in search
-    current_app.config['POSTS_PER_PAGE'])
-  File "/mnt/f/python_lin/nail/app/models.py", line 170, in search
-    db.case(when, value=cls.id)), total
-  File "<string>", line 2, in order_by
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/sqlalchemy/orm/base.py", line 220, in generate
-    fn(self, *args[1:], **kw)
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/sqlalchemy/orm/query.py", line 1825, in order_by
-    criterion = self._adapt_col_list(criterion)
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/sqlalchemy/orm/query.py", line 315, in _adapt_col_list
-    for o in cols
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/sqlalchemy/orm/query.py", line 315, in <listcomp>
-    for o in cols
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/sqlalchemy/sql/elements.py", line 4480, in _literal_as_label_reference
-    elif hasattr(element, "__clause_element__"):
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/sqlalchemy/sql/elements.py", line 717, in __getattr__
-    return getattr(self.comparator, key)
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/sqlalchemy/util/langhelpers.py", line 855, in __get__
-    obj.__dict__[self.__name__] = result = self.fget(obj)
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/sqlalchemy/sql/elements.py", line 710, in comparator
-    "is not a TypeEngine class or object" % self.type
-TypeError: Object None associated with '.type' attribute is not a TypeEngine class or object
-2019-08-31 17:45:08,717 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:83]
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/helpers.py", line 358, in url_for
+    endpoint, values, method=method, force_external=external
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/werkzeug/routing.py", line 2020, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.BuildError: Could not build url for endpoint 'user.register'. Did you mean 'user.register_user' instead?

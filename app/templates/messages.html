@@ -1,0 +1,15 @@
+﻿
+<div class="container">
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+    {# содержимое приложения которое должно быть предоставлено в блоке app_content #}
+    {% block app_content %}{% endblock %}
+</div>
+

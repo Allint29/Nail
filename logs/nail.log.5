@@ -1,13 +1,4 @@
-2019-08-31 09:50:22,121 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:66]
-2019-08-31 09:52:23,908 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:66]
-2019-08-31 09:59:23,265 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:66]
-2019-08-31 10:03:23,600 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:66]
-2019-08-31 10:04:48,902 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:66]
-2019-08-31 10:06:28,918 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:66]
-2019-08-31 10:14:35,162 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:66]
-2019-08-31 10:30:14,312 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:66]
-2019-08-31 13:02:33,402 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:81]
-2019-08-31 13:02:38,990 ERROR: Exception on /index [GET] [in /mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py:1891]
+2019-09-13 17:23:30,896 ERROR: Exception on /user/register_request [POST] [in /mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py:1891]
 Traceback (most recent call last):
   File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 2446, in wsgi_app
     response = self.full_dispatch_request()
@@ -21,68 +12,10 @@ Traceback (most recent call last):
     rv = self.dispatch_request()
   File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1935, in dispatch_request
     return self.view_functions[rule.endpoint](**req.view_args)
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask_login/utils.py", line 261, in decorated_view
-    return func(*args, **kwargs)
-  File "/mnt/f/python_lin/nail/app/main/routes.py", line 44, in index
-    page, app_web.config['POSTS_PER_PAGE'], False)
-NameError: name 'app_web' is not defined
-2019-08-31 13:02:43,210 ERROR: Exception on /index [GET] [in /mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py:1891]
-Traceback (most recent call last):
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 2446, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1951, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1820, in handle_user_exception
-    reraise(exc_type, exc_value, tb)
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
-    raise value
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1949, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1935, in dispatch_request
-    return self.view_functions[rule.endpoint](**req.view_args)
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask_login/utils.py", line 261, in decorated_view
-    return func(*args, **kwargs)
-  File "/mnt/f/python_lin/nail/app/main/routes.py", line 44, in index
-    page, app_web.config['POSTS_PER_PAGE'], False)
-NameError: name 'app_web' is not defined
-2019-08-31 13:02:45,345 ERROR: Exception on /explore [GET] [in /mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py:1891]
-Traceback (most recent call last):
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 2446, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1951, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1820, in handle_user_exception
-    reraise(exc_type, exc_value, tb)
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
-    raise value
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1949, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1935, in dispatch_request
-    return self.view_functions[rule.endpoint](**req.view_args)
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask_login/utils.py", line 261, in decorated_view
-    return func(*args, **kwargs)
-  File "/mnt/f/python_lin/nail/app/main/routes.py", line 58, in explore
-    page, app_web.config['POSTS_PER_PAGE'], False)
-NameError: name 'app_web' is not defined
-2019-08-31 13:05:09,975 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:81]
-2019-08-31 13:05:13,157 ERROR: Exception on /explore [GET] [in /mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py:1891]
-Traceback (most recent call last):
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 2446, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1951, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1820, in handle_user_exception
-    reraise(exc_type, exc_value, tb)
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
-    raise value
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1949, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1935, in dispatch_request
-    return self.view_functions[rule.endpoint](**req.view_args)
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask_login/utils.py", line 261, in decorated_view
-    return func(*args, **kwargs)
-  File "/mnt/f/python_lin/nail/app/main/routes.py", line 63, in explore
-    return render_template('index.html', title=_('Обзор'), posts=posts.items, next_url=next_url, prev_url=prev_url)
+  File "/mnt/f/python_lin/nail/app/user/routes.py", line 68, in register
+    send_new_registration_email(user)
+  File "/mnt/f/python_lin/nail/app/user/myemail.py", line 22, in send_new_registration_email
+    user=user, token=token),
   File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/templating.py", line 140, in render_template
     ctx.app,
   File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/templating.py", line 120, in _render
@@ -95,24 +28,8 @@ Traceback (most recent call last):
     reraise(exc_type, exc_value, tb)
   File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/jinja2/_compat.py", line 37, in reraise
     raise value.with_traceback(tb)
-  File "/mnt/f/python_lin/nail/app/templates/index.html", line 2, in top-level template code
-    {% import 'bootstrap/wtf.html' as wtf %}
-  File "/mnt/f/python_lin/nail/app/templates/base.html", line 1, in top-level template code
-    {% extends 'bootstrap/base.html' %}
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask_bootstrap/templates/bootstrap/base.html", line 1, in top-level template code
-    {% block doc -%}
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask_bootstrap/templates/bootstrap/base.html", line 4, in block "doc"
-    {%- block html %}
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask_bootstrap/templates/bootstrap/base.html", line 20, in block "html"
-    {% block body -%}
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask_bootstrap/templates/bootstrap/base.html", line 23, in block "body"
-    {% block content -%}
-  File "/mnt/f/python_lin/nail/app/templates/base.html", line 55, in block "content"
-    {% block app_content %}{% endblock %}
-  File "/mnt/f/python_lin/nail/app/templates/index.html", line 11, in block "app_content"
-    {% include '_post.html' %}
-  File "/mnt/f/python_lin/nail/app/templates/_post.html", line 36, in top-level template code
-    <a href="{{ url_for('user', username=post.author.username) }}">
+  File "/mnt/f/python_lin/nail/app/templates/myemails/registration_info.txt", line 10, in top-level template code
+    {{ url_for('user.register_request', token=token, _external=True) }}
   File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/helpers.py", line 370, in url_for
     return appctx.app.handle_url_build_error(error, endpoint, values)
   File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 2215, in handle_url_build_error
@@ -123,4 +40,93 @@ Traceback (most recent call last):
     endpoint, values, method=method, force_external=external
   File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/werkzeug/routing.py", line 2020, in build
     raise BuildError(endpoint, values, method, self)
-werkzeug.routing.BuildError: Could not build url for endpoint 'user' with values ['username']. Did you mean 'main.user' instead?
+werkzeug.routing.BuildError: Could not build url for endpoint 'user.register_request' with values ['token']. Did you mean 'user.register' instead?
+2019-09-13 17:26:04,586 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:87]
+2019-09-13 17:26:13,159 ERROR: Exception on /user/register_request [POST] [in /mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py:1891]
+Traceback (most recent call last):
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 2446, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1951, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1820, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1949, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1935, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/mnt/f/python_lin/nail/app/user/routes.py", line 68, in register
+    send_new_registration_email(user)
+  File "/mnt/f/python_lin/nail/app/user/myemail.py", line 22, in send_new_registration_email
+    user=user, token=token),
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/templating.py", line 140, in render_template
+    ctx.app,
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/templating.py", line 120, in _render
+    rv = template.render(context)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/jinja2/asyncsupport.py", line 76, in render
+    return original_render(self, *args, **kwargs)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/jinja2/environment.py", line 1008, in render
+    return self.environment.handle_exception(exc_info, True)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/jinja2/environment.py", line 780, in handle_exception
+    reraise(exc_type, exc_value, tb)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/jinja2/_compat.py", line 37, in reraise
+    raise value.with_traceback(tb)
+  File "/mnt/f/python_lin/nail/app/templates/myemails/registration_info.txt", line 10, in top-level template code
+    {{ url_for('user.register_request', token=token, _external=True) }}
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/helpers.py", line 370, in url_for
+    return appctx.app.handle_url_build_error(error, endpoint, values)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 2215, in handle_url_build_error
+    reraise(exc_type, exc_value, tb)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/helpers.py", line 358, in url_for
+    endpoint, values, method=method, force_external=external
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/werkzeug/routing.py", line 2020, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.BuildError: Could not build url for endpoint 'user.register_request' with values ['token']. Did you mean 'user.register' instead?
+2019-09-13 17:28:49,825 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:87]
+2019-09-13 17:29:01,618 ERROR: Exception on /user/register_request [POST] [in /mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py:1891]
+Traceback (most recent call last):
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 2446, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1951, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1820, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1949, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1935, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/mnt/f/python_lin/nail/app/user/routes.py", line 68, in register
+    send_new_registration_email(user)
+  File "/mnt/f/python_lin/nail/app/user/myemail.py", line 22, in send_new_registration_email
+    user=user, token=token),
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/templating.py", line 140, in render_template
+    ctx.app,
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/templating.py", line 120, in _render
+    rv = template.render(context)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/jinja2/asyncsupport.py", line 76, in render
+    return original_render(self, *args, **kwargs)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/jinja2/environment.py", line 1008, in render
+    return self.environment.handle_exception(exc_info, True)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/jinja2/environment.py", line 780, in handle_exception
+    reraise(exc_type, exc_value, tb)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/jinja2/_compat.py", line 37, in reraise
+    raise value.with_traceback(tb)
+  File "/mnt/f/python_lin/nail/app/templates/myemails/registration_info.txt", line 10, in top-level template code
+    {{ url_for('user.register_request', token=token, _external=True) }}
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/helpers.py", line 370, in url_for
+    return appctx.app.handle_url_build_error(error, endpoint, values)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 2215, in handle_url_build_error
+    reraise(exc_type, exc_value, tb)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/helpers.py", line 358, in url_for
+    endpoint, values, method=method, force_external=external
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/werkzeug/routing.py", line 2020, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.BuildError: Could not build url for endpoint 'user.register_request' with values ['token']. Did you mean 'user.register' instead?
+2019-09-13 17:31:25,922 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:87]

@@ -1,6 +1,7 @@
 ﻿# -*- coding: utf-8 -*-
 import logging
 from logging.handlers import SMTPHandler, RotatingFileHandler
+import os
 from flask import Flask, request, current_app
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -9,15 +10,15 @@ from flask_mail import Mail
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from flask_babel import Babel, _, lazy_gettext as _l
-import os
-from config import Config
 from elasticsearch import Elasticsearch
+from config import Config
+
 
 
 db = SQLAlchemy()
 migrate = Migrate()
 loginF = LoginManager()
-loginF.login_view = 'auth.login'
+loginF.login_view = 'user.login'
 loginF.login_message = _l('Пожалуйста, авторизируйтесь, чтобы открыть эту страницу.')
 mail = Mail()
 bootstrap = Bootstrap()
@@ -40,25 +41,31 @@ def create_app(config_class=Config):
     bootstrap.init_app(app_web)
     moment.init_app(app_web)
     babel.init_app(app_web)
+    app_web.elasticsearch = Elasticsearch([app_web.config['ELASTICSEARCH_URL']]) \
+        if app_web.config['ELASTICSEARCH_URL'] else None 
 
     from app.errors import bp as errors_bp
     app_web.register_blueprint(errors_bp)
 
-    from app.auth import bp as auth_bp
-    app_web.register_blueprint(auth_bp, url_prefix='/auth')
+    from app.user import bp as user_bp
+    app_web.register_blueprint(user_bp, url_prefix='/user')
 
-    from app.main import bp as main_bp
+    from app.admin import bp as admin_bp
+    app_web.register_blueprint(admin_bp, url_prefix='/admin')
+
+    from app.user.main import bp as main_bp
     app_web.register_blueprint(main_bp)
 
-    app_web.elasticsearch = Elasticsearch([app_web.config['ELASTICSEARCH_URL']]) \
-        if app_web.config['ELASTICSEARCH_URL'] else None
+    from app.news import bp as news_bp
+    app_web.register_blueprint(news_bp)
+
 
     print(app_web.config['MAIL_SERVER'])
     if not app_web.debug and not app_web.testing:
         if app_web.config['MAIL_SERVER']:
-            auth = None
+            user = None
             if app_web.config['MAIL_USERNAME'] or app_web.config['MAIL_PASSWORD']:
-                auth = (app_web.config['MAIL_USERNAME'], app_web.config['MAIL_PASSWORD'])
+                user = (app_web.config['MAIL_USERNAME'], app_web.config['MAIL_PASSWORD'])
             secure = None
             if app_web.config['MAIL_USE_TLS']:
                 secure = ()
@@ -66,7 +73,7 @@ def create_app(config_class=Config):
                 mailhost=(app_web.config['MAIL_SERVER'], app_web.config['MAIL_PORT']),
                 fromaddr='no-reply@' + app_web.config['MAIL_SERVER'],
                 toaddrs=app_web.config['ADMINS'], subject='NailMasterKrd',
-                credentials=auth, secure=secure)
+                credentials=user, secure=secure)
             mail_handler.setLevel(logging.ERROR)
             app_web.logger.addHandler(mail_handler)
     
@@ -95,5 +102,5 @@ def get_locale():
     return 'ru'
 
 
-from app import models
+from app.user import models
 

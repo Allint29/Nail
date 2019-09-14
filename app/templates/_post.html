@@ -12,7 +12,7 @@
                 {{ post.author.username }}
             </a>
             {% endset %}
-            {{ _('%(username)s напиал %(when)s',
+            {{ _('%(username)s напиcал(а) %(when)s',
             username=user_link, when=moment(post.timestamp).fromNow()) }}
             <br>
             <span id="post{{ post.id }}">{{ post.body }}</span>
