@@ -1,4 +1,4 @@
-2019-09-13 13:20:37,620 ERROR: Exception on /index [GET] [in /mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py:1891]
+2019-09-13 18:41:22,341 ERROR: Exception on /user/login [GET] [in /mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py:1891]
 Traceback (most recent call last):
   File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 2446, in wsgi_app
     response = self.full_dispatch_request()
@@ -12,70 +12,112 @@ Traceback (most recent call last):
     rv = self.dispatch_request()
   File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1935, in dispatch_request
     return self.view_functions[rule.endpoint](**req.view_args)
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask_login/utils.py", line 261, in decorated_view
-    return func(*args, **kwargs)
-  File "/mnt/f/python_lin/nail/app/main/routes.py", line 54, in index
-    prev_url=prev_url)
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/templating.py", line 138, in render_template
-    ctx.app.jinja_env.get_or_select_template(template_name_or_list),
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/jinja2/environment.py", line 869, in get_or_select_template
-    return self.get_template(template_name_or_list, parent, globals)
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/jinja2/environment.py", line 830, in get_template
-    return self._load_template(name, self.make_globals(globals))
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/jinja2/environment.py", line 804, in _load_template
-    template = self.loader.load(self, name, globals)
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/jinja2/loaders.py", line 125, in load
-    code = environment.compile(source, name, filename)
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/jinja2/environment.py", line 591, in compile
-    self.handle_exception(exc_info, source_hint=source_hint)
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/jinja2/environment.py", line 780, in handle_exception
+  File "/mnt/f/python_lin/nail/app/user/routes.py", line 25, in login
+    form = LoginForm()
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/wtforms/form.py", line 212, in __call__
+    return type.__call__(cls, *args, **kwargs)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask_wtf/form.py", line 88, in __init__
+    super(FlaskForm, self).__init__(formdata=formdata, **kwargs)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/wtforms/form.py", line 272, in __init__
+    super(Form, self).__init__(self._unbound_fields, meta=meta_obj, prefix=prefix)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/wtforms/form.py", line 52, in __init__
+    field = meta.bind_field(self, unbound_field, options)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/wtforms/meta.py", line 27, in bind_field
+    return unbound_field.bind(form=form, **options)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/wtforms/fields/core.py", line 353, in bind
+    return self.field_class(*self.args, **kw)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/wtforms/fields/core.py", line 702, in __init__
+    super(BooleanField, self).__init__(label, validators, **kwargs)
+TypeError: __init__() got an unexpected keyword argument 'disable'
+2019-09-13 18:42:09,119 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:87]
+2019-09-13 18:42:10,882 ERROR: Exception on /user/login [GET] [in /mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py:1891]
+Traceback (most recent call last):
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 2446, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1951, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1820, in handle_user_exception
     reraise(exc_type, exc_value, tb)
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/jinja2/_compat.py", line 37, in reraise
-    raise value.with_traceback(tb)
-  File "/mnt/f/python_lin/nail/app/templates/user/index.html", line 5, in template
-    <h1> {{ _('Приветствую,') }} {{ current_user.username }}! {{ _(Вы на главной странице) }} </h1>
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/jinja2/environment.py", line 497, in _parse
-    return Parser(self, source, name, encode_filename(filename)).parse()
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/jinja2/parser.py", line 901, in parse
-    result = nodes.Template(self.subparse(), lineno=1)
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/jinja2/parser.py", line 883, in subparse
-    rv = self.parse_statement()
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/jinja2/parser.py", line 130, in parse_statement
-    return getattr(self, 'parse_' + self.stream.current.value)()
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/jinja2/parser.py", line 268, in parse_block
-    node.body = self.parse_statements(('name:endblock',), drop_needle=True)
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/jinja2/parser.py", line 165, in parse_statements
-    result = self.subparse(end_tokens)
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/jinja2/parser.py", line 875, in subparse
-    add_data(self.parse_tuple(with_condexpr=True))
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/jinja2/parser.py", line 620, in parse_tuple
-    args.append(parse())
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/jinja2/parser.py", line 432, in parse_expression
-    return self.parse_condexpr()
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/jinja2/parser.py", line 437, in parse_condexpr
-    expr1 = self.parse_or()
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/jinja2/parser.py", line 450, in parse_or
-    left = self.parse_and()
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/jinja2/parser.py", line 459, in parse_and
-    left = self.parse_not()
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/jinja2/parser.py", line 470, in parse_not
-    return self.parse_compare()
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/jinja2/parser.py", line 474, in parse_compare
-    expr = self.parse_math1()
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/jinja2/parser.py", line 496, in parse_math1
-    left = self.parse_concat()
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/jinja2/parser.py", line 507, in parse_concat
-    args = [self.parse_math2()]
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/jinja2/parser.py", line 517, in parse_math2
-    left = self.parse_pow()
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/jinja2/parser.py", line 528, in parse_pow
-    left = self.parse_unary()
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/jinja2/parser.py", line 547, in parse_unary
-    node = self.parse_postfix(node)
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/jinja2/parser.py", line 676, in parse_postfix
-    node = self.parse_call(node)
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/jinja2/parser.py", line 767, in parse_call
-    self.stream.expect('comma')
-  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/jinja2/lexer.py", line 384, in expect
-    self.name, self.filename)
-jinja2.exceptions.TemplateSyntaxError: expected token ',', got 'на'
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1949, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1935, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/mnt/f/python_lin/nail/app/user/routes.py", line 25, in login
+    form = LoginForm()
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/wtforms/form.py", line 212, in __call__
+    return type.__call__(cls, *args, **kwargs)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask_wtf/form.py", line 88, in __init__
+    super(FlaskForm, self).__init__(formdata=formdata, **kwargs)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/wtforms/form.py", line 272, in __init__
+    super(Form, self).__init__(self._unbound_fields, meta=meta_obj, prefix=prefix)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/wtforms/form.py", line 52, in __init__
+    field = meta.bind_field(self, unbound_field, options)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/wtforms/meta.py", line 27, in bind_field
+    return unbound_field.bind(form=form, **options)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/wtforms/fields/core.py", line 353, in bind
+    return self.field_class(*self.args, **kw)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/wtforms/fields/core.py", line 702, in __init__
+    super(BooleanField, self).__init__(label, validators, **kwargs)
+TypeError: __init__() got an unexpected keyword argument 'enable'
+2019-09-13 18:44:46,538 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:87]
+2019-09-13 18:47:29,053 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:87]
+2019-09-13 18:48:13,245 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:87]
+2019-09-13 18:53:14,114 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:87]
+2019-09-14 16:35:59,270 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:90]
+2019-09-14 16:39:13,909 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:90]
+2019-09-14 16:44:13,222 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:90]
+2019-09-14 16:45:25,140 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:90]
+2019-09-14 16:46:47,537 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:90]
+2019-09-14 17:57:19,229 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:90]
+2019-09-14 17:58:01,871 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:90]
+2019-09-16 10:56:33,378 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:90]
+2019-09-16 10:56:39,560 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:90]
+2019-09-16 10:58:27,315 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:90]
+2019-09-16 11:01:42,120 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:90]
+2019-09-16 11:01:43,814 ERROR: Exception on / [GET] [in /mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py:1891]
+Traceback (most recent call last):
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 2446, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1951, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1820, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1949, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1935, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/mnt/f/python_lin/nail/app/news/routes.py", line 7, in index
+    news_list = get_sevendays_news_manikur()
+  File "/mnt/f/python_lin/nail/app/news/parser/sevendays_news_manikur.py", line 26, in get_sevendays_news_manikur
+    result_news.append({'title' : title, 'url' : url, 'published' : published}, sorce='https://7days.ru')
+TypeError: append() takes no keyword arguments
+2019-09-16 11:01:50,891 ERROR: Exception on / [GET] [in /mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py:1891]
+Traceback (most recent call last):
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 2446, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1951, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1820, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1949, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/mnt/f/python_lin/nail/env/lib/python3.6/site-packages/flask/app.py", line 1935, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/mnt/f/python_lin/nail/app/news/routes.py", line 7, in index
+    news_list = get_sevendays_news_manikur()
+  File "/mnt/f/python_lin/nail/app/news/parser/sevendays_news_manikur.py", line 26, in get_sevendays_news_manikur
+    result_news.append({'title' : title, 'url' : url, 'published' : published}, sorce='https://7days.ru')
+TypeError: append() takes no keyword arguments
+2019-09-16 11:02:25,282 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:90]
+2019-09-16 11:18:12,238 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:90]
+2019-09-16 11:21:18,385 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:90]
+2019-09-16 11:24:48,098 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:90]
+2019-09-16 11:25:11,843 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:90]
+2019-09-16 11:25:29,870 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:90]
+2019-09-16 13:19:42,728 INFO: Nail startup [in /mnt/f/python_lin/nail/app/__init__.py:89]

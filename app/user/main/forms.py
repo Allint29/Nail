@@ -29,6 +29,9 @@ class PostForm(FlaskForm):
         DataRequired(), Length(min=1, max=140)])
     submit = SubmitField(_l('Опубликовать'))
 
+
+#здесь вставить коментарий к посту
+
 class SearchForm(FlaskForm):
     '''       
           Поле q не требует никаких объяснений, поскольку оно аналогично другим текстовым 

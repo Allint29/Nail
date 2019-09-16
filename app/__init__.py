@@ -29,7 +29,6 @@ babel = Babel()
 #применяю файл конфигурации к объекту app_web
 #
 
-
 def create_app(config_class=Config):
     app_web = Flask(__name__)
     app_web.config.from_object(config_class)
@@ -103,4 +102,5 @@ def get_locale():
 
 
 from app.user import models
+from app.news import models
 
