@@ -5,3 +5,12 @@ __pycache__
 *.db
 messages.pot
 logs
+asinco_await.py
+asinco_await2.py
+corutines.py
+dela.py
+prostonail.com.html
+pyInstagram
+*.log
+*.log.*
+migrations

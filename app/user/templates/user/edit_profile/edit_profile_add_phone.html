@@ -1,0 +1,47 @@
+﻿{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content  %}
+
+<div class="row">
+    <div class="col-md-6">
+        <form action="" method="post">
+            {{ form.hidden_tag() }}
+            <!--Если есть номер для подтверждения то нужно ввести номер нового телефона-->
+            {% if number_for_check %}
+            <h3>Телефон</h3>
+            <h3>{{ number_for_check.number }} </h3>
+            <div class="form-group my-hidden">
+                {{ form.number_phone }}
+            </div>
+            <div class="form-group">
+                {{ form.code_of_confirm.label }}
+                {{ form.code_of_confirm }}
+                {% for error in form.code_of_confirm.errors %}
+                <span style="color: orange;">{{ error }}</span>
+                {% endfor %}
+            </div>
+            {{ form.commit_confirm }}
+            {{ form.phone_button_cancel}}
+
+            <!--Если телефон для подтверждения есть то выводим формы для ввода кода-->
+            {% else %}
+
+            <div class="form-group">
+                {{ form.number_phone.label }}
+                {{ form.number_phone }}
+                {% for error in form.number_phone.errors %}
+                <span style="color: orange;">{{ error }}</span>
+                {% endfor %}
+            </div>
+            {{ form.submit }}
+            {{ form.phone_button_delete}}
+            {{number_for_check.id}}
+            {% endif%}
+
+        </form>
+
+    </div>
+
+</div>
+{% endblock %}

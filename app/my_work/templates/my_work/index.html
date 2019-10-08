@@ -1,0 +1,85 @@
+﻿{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content  %}
+<h2> Любимая работа </h2>
+<div class="modal-body row">
+    <div class="col-md-8 news-content">
+        {% for work in comment_forms_list %}
+        <h3>Работа от {{ work['work'].published.strftime('%d/%m/%Y %H:%M') }}</h3>
+        <p>
+            <img src="{{ work['work'].url }}" />
+        </p>
+
+        <p />
+        <small>Лайков в Instagram:  {{ work['work'].likes }}  |  Комментарии: {{ work['work'].comments_count() }}</small>
+        
+        {% if current_user.is_authenticated %}
+                
+        <form action="{{ url_for('my_work.add_comment') }}" method="post">
+            {{ work['comment_form'].hidden_tag() }}
+            <div class="form-group">
+                <div class="modal-body row">
+                    {{ work['comment_form'].comment_text.label }}
+                    <div class="col-md-10 news-content">
+
+                        {{ work['comment_form'].comment_text() }}
+                    </div>
+                    <div class="col-md-2 news-content" align="center">
+
+                        {{ work['comment_form'].submit() }}
+                    </div>
+                </div>
+
+                </div>
+            
+        </form>
+                
+            
+        {% else %}
+        <p>
+            <!--здесь request.full_path -это часть которая идет за http://127.0.0.1:5000/-->
+            <a href="{{ url_for('user.login', next=request.full_path) }}">Авторизируйтесь!</a> Оставлять комментарии могут только авторизированные пользователи.
+        </p>
+        {% endif %}
+
+
+        <!--R11 вставляем коментарии к работе-->
+        {% if work['work'].comments %}
+        <h5>Коментарии:</h5>
+        {% for comment in work['work'].comments %}
+        {% if comment.show == 1 %}
+        <div class="card">
+            <div class="card-body">
+                <small class="card-text">{{comment.text}}</small>
+                <p class="card-text">
+                    <small>Опубликовано: {{ comment.published.strftime('%d.%m.%Y') }} | Автор
+                        {% if comment.source != "this" %}
+                        от {{comment.source}}
+                        {% endif %}
+                        : {{ comment.owner }} </small>
+                </p>
+                {% if current_user.username == comment.owner or current_user.is_admin %}
+                <p><a href="{{ url_for('my_work.delete_comment', comment_id = comment.id) }}"> {{ _('Удалить') }}</a>
+                    <a href="{{ url_for('my_work.change_comment', comment_id = comment.id) }}"> {{ _('Изменить') }}</a>
+
+                </p>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+
+        {% endif %}
+        <hr />
+        <hr />
+
+        {% endfor %}
+    </div>
+    <div class="col-md-4 news-content">
+        <h4>Другой контент</h4>
+    </div>
+</div>
+
+{% endblock %}
+

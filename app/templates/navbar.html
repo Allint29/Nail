@@ -1,32 +1,26 @@
-﻿
+﻿<div class="container">
+<nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-between">
 
-<nav class="navbar navbar-default">
-    <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                
-            </button>
-            <a class="navbar-brand" href="{{ url_for('news.index')}}">Nail Master Krd</a>
-        </div>
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <ul class="nav navbar-nav">
-                {% if current_user.is_authenticated %}
-                <li><a href="{{ url_for('news.index') }}"> {{ _('Новости юмора') }}</a></li>
-                <li><a href="{{ url_for('news.index') }}"> {{ _('Работы мастера') }}</a></li>
-                <li><a href="{{ url_for('main.index') }}"> {{ _('Личный микроблог') }}</a></li>
-                <li><a href="{{ url_for('main.explore')}}"> {{ _('Обзор микроблогов') }}</a></li>
-                {% else %}
-                <li><a href="{{ url_for('news.index') }}"> {{ _('Новости юмора') }}</a></li>
-                <li><a href="{{ url_for('news.index') }}"> {{ _('Работы мастера') }}</a></li>
-                {% endif %}
-            </ul>
+    <a class="navbar-brand" href="{{ url_for('my_work.index')}}">Nail Master Krd</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            {% if current_user.is_authenticated %}
+            <li class="nav-item"><a class="nav-link active" href="{{ url_for('news.index') }}"> {{ _('Модный маникюр') }}</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('news.index') }}"> {{ _('Новости юмора') }}</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('my_work.index') }}"> {{ _('Работы мастера') }}</a></li>
+
+            {% else %}
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('news.index') }}"> {{ _('Новости юмора') }}</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('my_work.index') }}"> {{ _('Работы мастера') }}</a></li>
+            {% endif %}
+
             {% if g.search_form %}
-            <form class="navbar-form navbar-left" method="get"
-                  action="{{ url_for('main.search') }}">
-                <div class="form-group">
+            <form class="form-inline" method="get" action="{{ url_for('main.search') }}">
+                <div class="form-group mr-sm-2">
                     {{
                     g.search_form.q(size=20, class='form-control',
                     placeholder=g.search_form.q.label.text)
@@ -34,18 +28,28 @@
                 </div>
             </form>
             {% endif %}
-            <ul class="nav navbar-nav navbar-right">
-                {% if current_user.is_anonymous %}
-                <li>
-                    <a href="{{ url_for('user.login') }}"> {{ _('Войти') }} </a>
-                    <a href="{{ url_for('user.register_request') }}"> {{ _('Зарегистрироваться') }} </a>
-                </li>
-                {% else %}
-                <li><a href="{{ url_for('main.user', username=current_user.username) }}">{{ _('Профиль') }}</a></li>
-                <li><a href="{{ url_for('user.logout') }}">{{ _('Выйти') }}</a></li>
-                {% endif %}
-            </ul>
-        </div>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {{ _('Личный кабинет') }}
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+
+                    {% if current_user.is_anonymous %}
+
+                    <a class="dropdown-item" href="{{ url_for('user.login') }}"> {{ _('Войти') }} </a>
+                    <a class="dropdown-item" href="{{ url_for('user.registration_main') }}"> {{ _('Зарегистрироваться') }} </a>
+
+                    {% else %}
+                    <a class="dropdown-item" href="{{ url_for('main.explore')}}"> {{ _('Обзор микроблогов') }}</a>
+                    <a class="dropdown-item" href="{{ url_for('main.index') }}">{{ _('Личный микроблог') }}</a>
+                    <a class="dropdown-item" href="{{ url_for('main.user', username=current_user.username) }}">{{ _('Профиль') }}</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{{ url_for('user.logout') }}">{{ _('Выйти') }}</a>
+                    {% endif %}
+
+                </div>
+            </li>
+        </ul>
     </div>
 </nav>
-
+</div>

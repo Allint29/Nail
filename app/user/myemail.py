@@ -4,7 +4,7 @@ from app.main_func.myemail import send_email
 
 
 def send_password_reset_email(user):
-    token = user.get_reset_password_token()    
+    token = user.get_reset_password_token(expires_in=current_app.config['SECONDS_TO_CONFIRM_EMAIL'])    
     send_email(_('[Nail] Ссылка на восстановление пароля'),
                sender=current_app.config['ADMINS'][0],
                recipients=[user.email],
@@ -13,8 +13,18 @@ def send_password_reset_email(user):
                html_body=render_template('myemails/reset_password.html',
                                          user=user, token=token))
 
+def send_mail_reset_email(user, mail):
+    token = user.get_new_registration_token(expires_in=current_app.config['SECONDS_TO_CONFIRM_EMAIL'])    
+    send_email(_('[Nail] Ссылка на подтверждение Вашей почты'),
+               sender=current_app.config['ADMINS'][0],
+               recipients=[mail],
+               text_body=render_template('myemails/reset_email.txt',
+                                         user=user, token=token),
+               html_body=render_template('myemails/reset_email.html',
+                                         user=user, token=token))
+
 def send_new_registration_email(user):
-    token = user.get_new_registration_token()    
+    token = user.get_new_registration_token(expires_in=current_app.config['SECONDS_TO_CONFIRM_EMAIL'])    
     send_email(_('[Nail] Ссылка на подтверждение регистрации на сайте NailMasterKrd'),
                sender=current_app.config['ADMINS'][0],
                recipients=[user.email],

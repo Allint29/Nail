@@ -1,0 +1,15 @@
+﻿{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content  %}
+<h4>{{ _('Регистрация. Шаг 2') }}</h4>
+<p>{{ _('Ваш телефон подтвержден. Осталось придумать пароль!') }}</p>
+<div class="row">
+    <div class="col-md-4">
+        {{ wtf.quick_form(form) }}
+    </div>
+</div>
+{% endblock %}
+
+
+

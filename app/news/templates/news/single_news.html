@@ -1,0 +1,58 @@
+﻿{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content  %}
+
+<div class="modal-body row">
+    <div class="col-md-10">
+        <h2 align="center">{{ news.title }}</h2>
+        <hr/>
+        <p>{{ news.text|safe }}</p>
+        <p>{{ news.published.strftime('%d/%m/%Y %H:%M') }}</p>
+        <p>Источник: <a href="{{ news.url }}">{{ news.source }}</a> </p>
+        <hr />
+
+        {% if current_user.is_authenticated %}
+        <form action="{{ url_for('news.add_comment') }}" method="post">
+            {{ comment_form.hidden_tag() }}
+            <div class="form-group">
+                {{ comment_form.comment_text.label }}
+                {{ comment_form.comment_text() }}
+            </div>
+            {{ comment_form.submit() }}
+        </form>
+        {% else %}
+        <p>
+            <!--здесь request.full_path -это часть которая идет за http://127.0.0.1:5000/-->
+            <a href="{{ url_for('user.login', next=request.full_path) }}">Авторизируйтесь!</a> Оставлять комментарии могут только авторизированные пользователи.
+        </p>
+        {% endif %}
+        
+        <!--R11 вставляем коментарии к новости-->
+        {% if news.comments %}
+        <h5>Коментарии:</h5>
+        {% for comment in news.comments %}
+        <div class="card">
+            <div class="card-body">
+                <p class="card-text">{{comment.text}}</p>
+                <p class="card-text">
+                    <small>Опубликовано: {{ comment.created.strftime('%d.%m.%Y') }} | Автор: {{ comment.user.username }}</small>
+                </p>
+            </div>
+        </div>
+        {% endfor %}
+        {% endif %}
+    </div>
+    <div class="col-md-2">
+        <h4>Другие новости</h4>
+        {% for news in news_list %}
+        <h6><a href="{{ url_for('news.single_news', news_id=news.id) }}">{{ news.title }}</a></h6>
+        <small>{{ news.published.strftime('%d/%m/%Y %H:%M') }}</small>
+        <small>Источник: <a href="{{ news.url }}">{{ news.source }}</a> </small>
+        <hr />
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}
+

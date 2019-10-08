@@ -20,5 +20,18 @@ class Config(object):
     MS_TRANSLATOR_KEY = os.environ.get('MS_TRANSLATOR_KEY')
     ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL')
 
-    POSTS_PER_PAGE = 25
-    
+    #MY_SMSC_LOGIN = os.environ.get('MY_SMSC_LOGIN') 
+    #MY_SMSC_PASSWORD = os.environ.get('My_SMSC_PASSWORD')
+    SMSC_HTTPS = os.environ.get('SMSC_HTTPS')
+    SMSC_LOGIN = os.environ.get('SMSC_LOGIN')
+    SMSC_PASSWORD = os.environ.get('SMSC_PASSWORD')
+    SMSC_CHARSET = os.environ.get('SMSC_CHARSET')
+    SMSC_POST = os.environ.get('SMSC_POST')
+    SMSC_DEBUG = os.environ.get('SMSC_DEBUG')
+    SMTP_FROM = os.environ.get('SMTP_FROM')
+    SMTP_SERVER = os.environ.get('SMTP_SERVER')
+
+    POSTS_PER_PAGE = 3
+
+    MINUTES_FOR_CONFIRM_PHONE = 5
+    SECONDS_TO_CONFIRM_EMAIL = 600

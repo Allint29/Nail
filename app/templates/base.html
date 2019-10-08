@@ -1,15 +1,34 @@
 ﻿{% extends 'bootstrap/base.html' %}
 
+{% block styles %}
+
+<!-- Latest compiled and minified Bootstrap CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+
+<!-- my static CSS -->
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<!--Take highlight.js for light code-text-->
+<!-- HighLight CSS -->
+<link rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.9/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.9/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+{% endblock %}
+
 {% block title %}
-{% if title %}
+    {% if title %}
 {{ title }} - {{ _('Страничка мастера ногтевого сервиса') }}'
-{% else %}
+    {% else %}
 {{ _('Добро пожаловать на страницу мастера маникюра и педикюра') }}
-{% endif %}
+    {% endif %}
 {% endblock %}
+
 {% block navbar %}
-{% include 'navbar.html'%}
+    {% include 'navbar.html'%}
+
 {% endblock %}
+
 {% block content %}
 <div class="container">
     {% include 'messages.html'%}
@@ -17,27 +36,36 @@
     {% block app_content %}
     {% endblock %}
 </div>
-        {% endblock %}
+{% endblock %}
 
-        {% block scripts %}
-            {{ super() }}
-            {{ moment.include_moment() }}
-            {{ moment.lang(g.locale) }}
-            
-            <script>
-                function translate(sourceElem, destElem, sourceLang, destLang) {
-                    $(destElem).html('<img src="{{ url_for('static', filename='loading.gif') }}">');
-                    $.post('/translate', {
-                        text: $(sourceElem).text(),
-                        source_language: sourceLang,
-                        dest_language: destLang
-                    }).done(function(response) {
-                        $(destElem).text(response['text'])
-                    }).fail(function() {
-                        $(destElem).text("{{ _('Error: Could not contact server.') }}");
-                    });
-                }
-            </script>
-            
-            <!--     {{ moment.lang('ru') }}  -->
-        {% endblock %}
+{% block scripts %}
+{{ super() }}
+{{ moment.include_moment() }}
+{{ moment.lang(g.locale) }}
+
+<script>
+    function translate(sourceElem, destElem, sourceLang, destLang) {
+        $(destElem).html('<img src="{{ url_for('static', filename='loading.gif') }}">');
+        alert('Временно не доступен перевод текста: "' + $(sourceElem).text() + '". Извените.');
+
+        $.post('/user_profile/translate', {
+            text: $(sourceElem).text(),
+            source_language: sourceLang,
+            dest_language: destLang
+            }
+        ).done(function (response) {
+
+            $(destElem).text(response['text'])
+        }).fail(function() {
+            $(destElem).text("{{ _('Error: Could not contact server.') }}");
+        });
+    }
+</script>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+
+<!--     {{ moment.lang('ru') }}  -->
+{% endblock %}

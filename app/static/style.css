@@ -1,0 +1,17 @@
+﻿/*это мой стиль который применяю чтобы картинки не вылазили за границы контейнера*/
+.news-content img {
+    max-width: 100%;
+    min-width: 100%;
+
+}
+
+.review-content img {
+    width: 100px;
+    height: 100px;
+    border: 1px solid green;
+    margin: 10px;
+}
+
+.my-hidden {
+    display: none;
+}

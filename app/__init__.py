@@ -3,14 +3,18 @@ import logging
 from logging.handlers import SMTPHandler, RotatingFileHandler
 import os
 from flask import Flask, request, current_app
+
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+
+
 from flask_login import LoginManager
 from flask_mail import Mail
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from flask_babel import Babel, _, lazy_gettext as _l
 from elasticsearch import Elasticsearch
+
 from config import Config
 
 
@@ -24,7 +28,6 @@ mail = Mail()
 bootstrap = Bootstrap()
 moment = Moment()
 babel = Babel()
-
 
 #применяю файл конфигурации к объекту app_web
 #
@@ -42,9 +45,9 @@ def create_app(config_class=Config):
     babel.init_app(app_web)
     app_web.elasticsearch = Elasticsearch([app_web.config['ELASTICSEARCH_URL']]) \
         if app_web.config['ELASTICSEARCH_URL'] else None 
-
+    
     from app.errors import bp as errors_bp
-    app_web.register_blueprint(errors_bp)
+    app_web.register_blueprint(errors_bp, url_prefix='/errors')
 
     from app.user import bp as user_bp
     app_web.register_blueprint(user_bp, url_prefix='/user')
@@ -53,13 +56,22 @@ def create_app(config_class=Config):
     app_web.register_blueprint(admin_bp, url_prefix='/admin')
 
     from app.user.main import bp as main_bp
-    app_web.register_blueprint(main_bp)
+    app_web.register_blueprint(main_bp, url_prefix='/user_profile')
 
     from app.news import bp as news_bp
     app_web.register_blueprint(news_bp)
 
+    from app.my_work import bp as my_work_bp
+    app_web.register_blueprint(my_work_bp, url_prefix='/master_works')
 
-    print(app_web.config['MAIL_SERVER'])
+    from app.valided_phones import bp as valid_phones
+    app_web.register_blueprint(valid_phones, url_prefix='/validate_phones')
+
+    from app.master_schedule import bp as master_schedule
+    app_web.register_blueprint(master_schedule, url_prefix='/master_schedule')
+
+
+    #print(app_web.config['MAIL_SERVER'])
     if not app_web.debug and not app_web.testing:
         if app_web.config['MAIL_SERVER']:
             user = None
@@ -103,4 +115,4 @@ def get_locale():
 
 from app.user import models
 from app.news import models
-
+from app.my_work import models
