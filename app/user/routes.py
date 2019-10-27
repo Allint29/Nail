@@ -6,8 +6,7 @@ from flask_babel import _, get_locale
 from app import db
 from app.main_func import utils as main_utils
 from app.user import bp
-from app.user.forms import LoginForm, RegistrationRequestForm, RegistrationByPhoneForm, RegistrationByPhoneConfirmForm, RegistrationMainForm, RegistrationForm, \
-     ResetPasswordRequestForm, ResetPasswordForm, RegistrationByPhoneNewPasswordForm, ResetPasswordByPhoneRequestForm, ResetPasswordMainForm
+from app.user.forms import LoginForm, RegistrationRequestForm, RegistrationByPhoneForm, RegistrationByPhoneConfirmForm, RegistrationMainForm, RegistrationForm, ResetPasswordRequestForm, ResetPasswordForm, RegistrationByPhoneNewPasswordForm, ResetPasswordByPhoneRequestForm, ResetPasswordMainForm
 from app.user.models import User, UserPhones
 from app.user.myemail import send_password_reset_email, send_new_registration_email
 from app.user.utils import delete_non_comfirmed_phone, step_one_for_enter_phone, \
@@ -36,15 +35,18 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user is None or not user.check_password(form.password.data) or user.password_hash is None or user.password_hash == "":
+            print("Неправильный логин или пароль")
             flash(flash_uncheck)
             return redirect(url_for('user.login'))
         login_user(user, remember=form.remember_me.data)
         flash(flash_check)
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
+            print("Нет некста")
             next_page = url_for('main.index')
         return redirect(next_page)
-    return render_template('user/login.html', title=titleVar, form=form)
+        print("Загрузил страницу")
+    return render_template('user/login.html', title=titleVar, form_login=form)
 
 @bp.route('/logout')
 def logout():

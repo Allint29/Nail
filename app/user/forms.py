@@ -40,11 +40,11 @@ class LoginForm(FlaskForm):
     '''
     form for enter to private side of site
     '''
-    username = StringField(_l('Пользователь'), validators=[DataRequired()], render_kw={"class" : "form-control"})
-    password = PasswordField(_l('Пароль'), validators=[DataRequired()], render_kw={"class" : "form-control"})
-    remember_me = BooleanField(_l('Запомнить меня'), render_kw={"class" : "from-check-input"})
+    username = StringField(_l('Пользователь'), validators=[DataRequired()], render_kw={"class" : "form-control comment-field field-user", "placeholder": _l("Логин")})
+    password = PasswordField(_l('Пароль'), validators=[DataRequired()], render_kw={"class" : "form-control comment-field field-password", "placeholder": _l("Пароль")})
+    remember_me = BooleanField(_l('Запомнить меня'), render_kw={"class" : "from-check-input visually-hidden"})
     
-    submit = SubmitField(_l('Войти'), render_kw={"class" : "btn btn-primary"})
+    submit = SubmitField(_l('Войти'), render_kw={"class" : "button"})
 
 
 #########################################################################################################################

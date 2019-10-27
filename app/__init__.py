@@ -46,6 +46,9 @@ def create_app(config_class=Config):
     app_web.elasticsearch = Elasticsearch([app_web.config['ELASTICSEARCH_URL']]) \
         if app_web.config['ELASTICSEARCH_URL'] else None 
     
+    from app.welcome import bp as welcome_bp
+    app_web.register_blueprint(welcome_bp)
+
     from app.errors import bp as errors_bp
     app_web.register_blueprint(errors_bp, url_prefix='/errors')
 
@@ -56,10 +59,10 @@ def create_app(config_class=Config):
     app_web.register_blueprint(admin_bp, url_prefix='/admin')
 
     from app.user.main import bp as main_bp
-    app_web.register_blueprint(main_bp, url_prefix='/user_profile')
+    app_web.register_blueprint(main_bp, url_prefix='/main')
 
     from app.news import bp as news_bp
-    app_web.register_blueprint(news_bp)
+    app_web.register_blueprint(news_bp, url_prefix='/news')
 
     from app.my_work import bp as my_work_bp
     app_web.register_blueprint(my_work_bp, url_prefix='/master_works')

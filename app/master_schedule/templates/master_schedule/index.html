@@ -1,7 +1,56 @@
 ﻿{% extends "base.html" %}
 {% import 'bootstrap/wtf.html' as wtf %}
 
+
 {% block app_content  %}
-Контент расписания
+Admin content
+{{wtf.quick_form(form)}}
 {% endblock %}
 
+<!--<div class="schedule-container">
+    <h1 class="visually-hidden">Расписание мастера на ближайшие даты</h1>
+    <section class="site-map">
+        <p> <a href="{{ url_for('welcome.index') }}">Главная страница</a><span>&#9830;</span><a>Расписание</a></p>
+    </section>
+
+    <form action="" method="post">
+        <h2 class="visually-hidden">Выбор периода</h2>
+        {{ form.hidden_tag() }}
+        <ul class="schedule-container-item">
+            <li>Выбрать даты </li>
+            <li>
+                {{ form.date_field_start.label}}
+                {{ form.date_field_start}}
+
+            </li>
+            <li>
+                {{ form.date_field_end.label}}
+                {{ form.date_field_end}}
+            </li>
+            <li>
+                {{ form.submit }}
+            </li>
+        </ul>
+
+    </form>
+    <ul class="schedule-container-days" >
+        <h2 class="visually-hidden">Выбранные даты</h2>
+        {%if list_time_to_show %}
+        {% for item in list_time_to_show %}
+        <li>
+            <h3>{{ item['date'].day_date.strftime('%d/%m/%Y')}} {{item['date'].day_name}}</h3>
+            <ul>
+                {% for item_list in item['list_work_time']%}
+
+                <li class="schedule-container-days-content">
+                    <span class="{%if item_list['empty'] == 'free' %}schedule-container-days-free{% elif item_list['empty'] == 'non_free' %}schedule-container-days-non-free{%else%}schedule-container-days-some-free{%endif%}">{{item_list['time'].begin_time_of_day.hour}}:00</span>
+
+                    <span>{%if item_list['empty'] == 'free' %}<span class="schedule-container-days-free">Свободно</span>{% elif item_list['empty'] == 'non_free' %}<span class="schedule-container-days-non-free">Занято</span>{%else%}<span class="schedule-container-days-some-free">Неполное время</span>{%endif%}</span>
+                </li>
+                {%endfor%}
+            </ul>
+        </li>
+        {% endfor %}
+        {% endif %}
+    </ul>
+</div>-->

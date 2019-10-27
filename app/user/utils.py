@@ -9,6 +9,15 @@ from flask_login import current_user
 from app.main_func import utils as main_utils
 import random
 
+def create_default_user():
+    if not User.query.filter(User.username == 'DefaultUser').first():
+        user = User(username='DefaultUser', email='example@example.example')
+        user.set_password('DefaultUser_')        
+        user.set_confirm_email_true()
+        user.expire_date_request_confirm_password = main_utils.min_date_for_calculation()
+        db.session.add(user)
+        db.session.commit()
+
 def set_default_password(user=None, number=None):
     '''
     Метод создает пароль для пользователя пароль по умолчанию

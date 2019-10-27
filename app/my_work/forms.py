@@ -17,8 +17,8 @@ class CommentForm(FlaskForm):
     model of input comments for news
     '''
     work_id = HiddenField('ID работы', validators=[DataRequired()]);
-    comment_text = StringField('Текст комментария', validators=[DataRequired()], render_kw={"class" : "form-control"});
-    submit = SubmitField('Отправить', render_kw={"class": "btn btn-primary"});
+    comment_text = TextAreaField(_l('Оставьте отзыв!'), validators=[DataRequired()], render_kw={"class" : "form-control comment-field", "placeholder": _l("Оставьте отзыв!")});
+    submit = SubmitField(_l('Отправить'), render_kw={"class": "button"});
 
     #R11 проверки на то что новость существует в БД лучше сделать из класса самой формы новости
     def validate_work_id(self, work_id):
@@ -33,8 +33,8 @@ class ChangeCommentToMyWorkForm(FlaskForm):
     '''
     class for visualisation form for insert some changes in comment of user.
     '''    
-    text = TextAreaField(_l('Комментарий'), validators=[Length(min=0, max=140)])
-    submit = SubmitField(_l('Опубликовать'))
+    comment_text = TextAreaField(_l('Отредактируйте комментарий'), validators=[Length(min=0, max=140)], render_kw={"class" : "form-control comment-field", "placeholder": _l('Внесите изменения в свой комментарий.')})
+    submit = SubmitField(_l('Опубликовать'),  render_kw={"class": "button"})
 
     def __init__(self, original_comment_id, *args, **kwargs):
         super(ChangeCommentToMyWorkForm, self).__init__(*args, **kwargs)

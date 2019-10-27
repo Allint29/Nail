@@ -1,0 +1,13 @@
+﻿{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content  %}
+
+<section class="site-map">
+    <p> <a href="{{ url_for('welcome.index') }}">Главная страница</a><span>&#9830;</span><a>Карта</a></p>
+</section>
+<section class="container-map">
+    <h2>{{ _('Наше местоположение') }}</h2>
+    <iframe src="https://yandex.ru/map-widget/v1/-/CGHEaXpr" allowfullscreen ="true"></iframe>
+</section>
+{% endblock %}

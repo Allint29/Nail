@@ -2,11 +2,20 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content  %}
-<h1> {{ _('Изменение комментария') }}</h1>
-<div class="row">
-    <div class="col-md-4">
-        {{ wtf.quick_form(form) }}
+<section class="site-map">
+    <p> <a href="{{ url_for('welcome.index') }}">Главная страница</a><span>&#9830;</span><a href="{{ url_for('my_work.index') }}">Портфолио</a><span>&#9830;</span><a>Редактор комментария</a></p>
+</section>
+<div class="comment-edition-form">
+    <h1>{{ _('Редактор комментария') }}</h1>
+    <form action="" method="post">
+        {{form.hidden_tag()}}
+        <ul>
+            <li class="visually-hidden"> {{form.comment_text.label}} </li>
+            <li> {{ form.comment_text }} </li>
+            <li> {{form.submit}} </li>
+        </ul>
+    </form>
+
     </div>
-</div>
 {% endblock %}
 

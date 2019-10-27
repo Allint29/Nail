@@ -2,84 +2,82 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content  %}
-<h2> Любимая работа </h2>
-<div class="modal-body row">
-    <div class="col-md-8 news-content">
-        {% for work in comment_forms_list %}
-        <h3>Работа от {{ work['work'].published.strftime('%d/%m/%Y %H:%M') }}</h3>
-        <p>
-            <img src="{{ work['work'].url }}" />
-        </p>
+<h1 class="visually-hidden">Мастер ногтевого сервиса Nail-Master-Krd. Работы и отзывы.</h1>
 
-        <p />
-        <small>Лайков в Instagram:  {{ work['work'].likes }}  |  Комментарии: {{ work['work'].comments_count() }}</small>
-        
+<section class="site-map">
+    <p> <a href="{{ url_for('welcome.index') }}">Главная страница</a><span>&#9830;</span><a >Портфолио</a></p>
+</section>
+
+<section class="content-section">
+    {% for item in comment_forms_list %}
+    <ul class="content-picture">
+        <li><h2>Работа от {{ item['work'].published.strftime('%d/%m/%Y') }}</h2></li>
+        <li><div class="content-picture-container"><img src="{{ item['work'].url }}" /></div></li>
+        <li><span class="content-like">Лайков в Instagram: {{ item['work'].likes }} | Комментарии: {{ item['work'].comments_count() }}</span></li>
+
         {% if current_user.is_authenticated %}
-                
-        <form action="{{ url_for('my_work.add_comment') }}" method="post">
-            {{ work['comment_form'].hidden_tag() }}
-            <div class="form-group">
-                <div class="modal-body row">
-                    {{ work['comment_form'].comment_text.label }}
-                    <div class="col-md-10 news-content">
-
-                        {{ work['comment_form'].comment_text() }}
-                    </div>
-                    <div class="col-md-2 news-content" align="center">
-
-                        {{ work['comment_form'].submit() }}
-                    </div>
-                </div>
-
-                </div>
-            
-        </form>
-                
-            
+        <li>
+            <section class="comment-form-section">
+                <form class="comment-form" action="{{ url_for('my_work.add_comment') }}" method="post">
+                    {{ item['comment_form'].hidden_tag() }}
+                    <ul>
+                        <li>
+                            <label class="visually-hidden">{{ item['comment_form'].comment_text.label }}</label>
+                        </li>
+                        <li>{{ item['comment_form'].comment_text() }}</li>
+                        <li>  {{ item['comment_form'].submit() }}</li>
+                    </ul>
+                </form>
+            </section>
+        </li>
         {% else %}
-        <p>
-            <!--здесь request.full_path -это часть которая идет за http://127.0.0.1:5000/-->
-            <a href="{{ url_for('user.login', next=request.full_path) }}">Авторизируйтесь!</a> Оставлять комментарии могут только авторизированные пользователи.
-        </p>
+        <li>
+            <p>
+                <!--здесь request.full_path -это часть которая идет за http://127.0.0.1:5000/-->
+                <a href="{{ url_for('user.login', next=request.full_path) }}">Авторизируйтесь!</a> Оставлять комментарии могут только авторизированные пользователи.
+            </p>
+        </li>
         {% endif %}
 
+        <li class="content-picture-comment">
+            <!--R11 вставляем коментарии к работе-->
+            {% if item['work'].comments %}
+            <h5>Коментарии:</h5>
+            {% for comment in item['work'].comments %}
+            {% if comment.show == 1 %}
+            <div class="card">
+                <div class="card-body comment-field">
+                    <small class="card-text">{{comment.text}}</small>
+                    <p class="card-text">
+                        <small>
+                            Опубликовано: {{ comment.published.strftime('%d.%m.%Y') }} | Автор
+                            {% if comment.source != "this" %}
+                            от {{comment.source}}
+                            {% endif %}
+                            : {{ comment.owner }}
+                        </small>
+                    </p>
+                    {% if current_user.username == comment.owner or current_user.is_admin %}
+                    <p>
+                        <a href="{{ url_for('my_work.delete_comment', comment_id = comment.id) }}"> {{ _('Удалить') }}</a>
+                        <a href="{{ url_for('my_work.change_comment', comment_id = comment.id) }}"> {{ _('Изменить') }}</a>
 
-        <!--R11 вставляем коментарии к работе-->
-        {% if work['work'].comments %}
-        <h5>Коментарии:</h5>
-        {% for comment in work['work'].comments %}
-        {% if comment.show == 1 %}
-        <div class="card">
-            <div class="card-body">
-                <small class="card-text">{{comment.text}}</small>
-                <p class="card-text">
-                    <small>Опубликовано: {{ comment.published.strftime('%d.%m.%Y') }} | Автор
-                        {% if comment.source != "this" %}
-                        от {{comment.source}}
-                        {% endif %}
-                        : {{ comment.owner }} </small>
-                </p>
-                {% if current_user.username == comment.owner or current_user.is_admin %}
-                <p><a href="{{ url_for('my_work.delete_comment', comment_id = comment.id) }}"> {{ _('Удалить') }}</a>
-                    <a href="{{ url_for('my_work.change_comment', comment_id = comment.id) }}"> {{ _('Изменить') }}</a>
-
-                </p>
-                {% endif %}
+                    </p>
+                    {% endif %}
+                </div>
             </div>
-        </div>
-        {% endif %}
-        {% endfor %}
+            {% endif %}
+            {% endfor %}
 
-        {% endif %}
-        <hr />
-        <hr />
+            {% endif %}
+        </li>
+    </ul>
+    {% endfor %}
 
-        {% endfor %}
-    </div>
-    <div class="col-md-4 news-content">
-        <h4>Другой контент</h4>
-    </div>
-</div>
+</section>
+
+    {% include "pagination.html"%}
+
+
 
 {% endblock %}
-

@@ -9,7 +9,9 @@ import jwt
 from app import db, loginF
 from app.main_func import utils as main_utils
 from wtforms.validators import DataRequired, Length
+from app.master_schedule.models import ScheduleOfDay
 #from wtforms import StringField, TextAreaField, SubmitField, BooleanField
+from sqlalchemy.orm import relationship
 
 from app.main_func.search import add_to_index, remove_from_index, query_index
 
@@ -22,6 +24,17 @@ followers = db.Table('followers',
     db.Column('follower_id', db.Integer, db.ForeignKey('user.id')),
     db.Column('followed_id', db.Integer, db.ForeignKey('user.id'))
 )
+
+
+class ConnectionType(db.Model):
+    '''
+    Таблица хранит данные о возможных типах связи с пользователем
+    '''
+    id = db.Column(db.Integer, primary_key=True)
+    name_of_type = db.Column(db.String(50), nullable=False)
+
+    user = db.relationship('User', backref='connection_type', lazy='dynamic')
+    
 
 
 class UserPhones(db.Model):
@@ -48,6 +61,7 @@ class UserPhones(db.Model):
     trying_to_enter_confirm_code = db.Column(db.Integer, default=3)
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
 
 
     def set_phone_hash_code(self, code):
@@ -110,8 +124,11 @@ class User(UserMixin, db.Model):
     role = db.Column(db.String(10), index=True);
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
 
-    phones = db.relationship('UserPhones', backref='user', lazy='dynamic')
+    connection_type_id = db.Column(db.Integer, db.ForeignKey('connection_type.id'))
 
+    phones = db.relationship('UserPhones', backref='user', lazy='dynamic')
+    #обратная ссылка из таблицы расписания для связи зарегистрированного пользователя и времени записи на прием
+    date_of_schedules = db.relationship('ScheduleOfDay', backref='user', lazy='dynamic')
     posts = db.relationship('Post', backref='author', lazy='dynamic')
 
     followed = db.relationship(

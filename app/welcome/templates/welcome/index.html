@@ -1,0 +1,124 @@
+﻿{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content  %}
+
+    <h1 class="visually-hidden">Мастер ногтевого сервиса Nail-Master-Krd</h1>
+    <section class="features">
+        <h2 class="visually-hidden">Мы работаем для Вас</h2>
+        <ul class="features-list">
+            <li class="feature-item">
+                <h3>Быстро и качественно</h3>
+                <p>Делаем нашу работу быстро! Полтора часа пролетят незаметно! И вот Вы уже обладательница великолепных ноготков, которые прослужат максимально долго!</p>
+            </li>
+            <li class="feature-item">
+                <h3>Красиво и модно</h3>
+                <p>Следим за последними тенденциями! Ваш маникюр будет блестать на любом мероприятии! А стиль Ваших пальчиков позволит всегда быть в центре внимания!</p>
+            </li>
+            <li class="feature-item">
+                <h3>Безопасно и честно</h3>
+                <p>Все инструменты проходят обезательную стерильную обработку! Цены приятно удивят, так как Вы платите только за работу мастера исключая расходы на содержание салона!</p>
+            </li>
+        </ul>
+    </section>
+
+    <div class="index-columns">
+        <section class="news">
+            <h2>Новости Nail-Master-Krd</h2>
+            <ul class="news-list">
+                <li class="news-item">
+                    <p>Появились новые оттенки осеннего сезона 2019, а так же много нового из дизайнерских штучек!</p>
+                    <time datetime="2019-10-10">10 ноября</time>
+                </li>
+               
+                <li class="news-item">
+                    <p>Спешите сделать комплекс "маникюр + педикюр" со скидкой!</p>
+                    <time datetime="2019-08-10">10 августа</time>
+                </li>
+            </ul>
+            <a class="button" href="#">Другие новости Nail-Master-Krd</a>
+        </section>
+
+        <section class="gallery">
+            <h2>Фотогалерея Nail-Master-Krd</h2>
+            <div class="gallery-content">
+                {%if list_with_z_index %}
+                <a class="gallary-content-a" href="{{ url_for('my_work.index') }}">
+
+                    {%for image in list_with_z_index %}
+
+                    <img src="{{ image['work'].url }}" style="z-index: {{image['z']}}; display: {{image['display']}}"/>
+                    <p>{{ count }}</p>
+                    {%endfor%}
+                </a>
+
+                {% else %}
+                <a class="gallary-content-a" href="#"><img src="../../../static/images/1.jpg" /></a>
+                {%endif%}
+
+            </div>
+    
+            <div class="galary-container-button">
+                <button class="button gallery-button" disabled>Назад</button>
+                <button class="button gallery-button">Вперед</button>
+            </div>
+        </section>
+    </div>
+
+<div class="index-columns">
+    <section class="contacts">
+        <h2>Контакты</h2>
+        <p>
+            Nail-Master-Krd<br>
+            Адрес: г.Краснодар, ул.Атарбекова, д. 5/1<br>
+            Телефон(WhatsApp):<br>
+            +7 (928) 433-71-81<br>
+            Instagram: anna_nails_ani
+        </p>
+        <p>
+            Время работы:<br />
+            пн-пт: с 8:00 до 20:00<br />
+            сб: c 11:00 до 18:00<br />
+            вс: c 11:00 до 14:00<br />
+        </p>
+        <a class="button js-contact-button-map" href="{{url_for('welcome.welcome_map')}}">Как проехать</a>
+        <a class="button visually-hidden" href="#">Обратная связь</a>
+    </section>
+    <section class="appointment">
+        <h2>Расписание и запись</h2>
+        <p class="appointment-info">
+            Прежде чем записаться Вы можете посмотреть свободные места в расписании. Так же Вы можете оставить свой телефон и мы перезвоним!
+        </p>
+        <a class="button shedule-button" href="{{url_for( 'master_schedule.show_schedule' )}}">Расписание</a>
+        <!--Здесь будет форма-->
+    </section>
+</div>
+
+<section class="modal modal-map">
+    <h2 class="visually-hidden">{{ _('Как до нас добраться?')}}</h2>
+    <p>
+        <iframe src="https://yandex.ru/map-widget/v1/-/CGHEaXpr" allowfullscreen ="true"></iframe>
+        
+        <img class="visually-hidden" src="../static/images/map.png" width="780" height="560" alt="{{_('Наш адрес: ул. Атарбекова, д. 5/1, Фестивальный микрорайон, Краснодар')}}" />
+
+    </p>
+    <button class="modal-close" type="button"><span class="visually-hidden">{{_('Закрыть')}}</span></button>
+</section>
+
+<section class="modal modal-login">
+    {%include 'login_form.html'%}
+    <button class="modal-close" type="button"><span class="visually-hidden">{{_('Закрыть')}}</span></button>
+</section>
+
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+

@@ -2,12 +2,18 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content  %}
+<section class="site-map">
+    <p> <a href="{{ url_for('welcome.index') }}">Главная страница</a><span>&#9830;</span><a href="{{ url_for('news.index') }}">Статьи</a><span>&#9830;</span><a>{{ news.title }}</a></p>
+</section>
 
 <div class="modal-body row">
-    <div class="col-md-10">
-        <h2 align="center">{{ news.title }}</h2>
-        <hr/>
-        <p>{{ news.text|safe }}</p>
+    <div class="col-md-12">
+        <section class="content-news">
+            <h1>{{ news.title }}</h1>
+            <hr />
+            {{ news.text|safe }}
+
+        </section>
         <p>{{ news.published.strftime('%d/%m/%Y %H:%M') }}</p>
         <p>Источник: <a href="{{ news.url }}">{{ news.source }}</a> </p>
         <hr />
@@ -27,7 +33,7 @@
             <a href="{{ url_for('user.login', next=request.full_path) }}">Авторизируйтесь!</a> Оставлять комментарии могут только авторизированные пользователи.
         </p>
         {% endif %}
-        
+
         <!--R11 вставляем коментарии к новости-->
         {% if news.comments %}
         <h5>Коментарии:</h5>
@@ -43,16 +49,19 @@
         {% endfor %}
         {% endif %}
     </div>
-    <div class="col-md-2">
-        <h4>Другие новости</h4>
-        {% for news in news_list %}
-        <h6><a href="{{ url_for('news.single_news', news_id=news.id) }}">{{ news.title }}</a></h6>
-        <small>{{ news.published.strftime('%d/%m/%Y %H:%M') }}</small>
-        <small>Источник: <a href="{{ news.url }}">{{ news.source }}</a> </small>
-        <hr />
-        {% endfor %}
-    </div>
+
 </div>
 
 {% endblock %}
 
+{% block right_content%}
+<div class="col-md-12">
+    <h4>Другие новости</h4>
+    {% for news in news_list %}
+    <h6><a href="{{ url_for('news.single_news', news_id=news.id) }}">{{ news.title }}</a></h6>
+    <small>{{ news.published.strftime('%d/%m/%Y %H:%M') }}</small>
+    <small>Источник: <a href="{{ news.url }}">{{ news.source }}</a> </small>
+    <hr />
+    {% endfor %}
+</div>
+{% endblock %}

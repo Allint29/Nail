@@ -15,6 +15,11 @@ def add_to_index(index, model):
     except Exception as err:
         print ('My Error:', err)
         return 0, 0
+    except ConnectionRefusedError as err:
+        print ('My Error:', err)
+        return 0, 0
+    except:
+        pass
         
 
 def remove_from_index(index, model):
@@ -27,6 +32,12 @@ def remove_from_index(index, model):
     except Exception as err:
         print ('My Error:', err)
         return 0, 0
+    except ConnectionRefusedError as err:
+        print ('My Error:', err)
+        return 0, 0
+    except:
+        pass
+
 
 def query_index(index, query, page, per_page):
 
@@ -47,3 +58,8 @@ def query_index(index, query, page, per_page):
     except Exception as err:
         print ('My Error:', err)
         return 0, 0
+    except ConnectionRefusedError as err:
+        print ('My Error:', err)
+        return 0, 0
+    except:
+        pass

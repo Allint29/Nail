@@ -1,71 +1,119 @@
-﻿{% extends 'bootstrap/base.html' %}
+﻿<!doctype html>
 
-{% block styles %}
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://fonts.googleapis.com/css?family=Caveat:400,700|Marck+Script&display=swap&subset=cyrillic,cyrillic-ext,latin-ext" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Amatic+SC:400,700&display=swap&subset=cyrillic" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Pangolin&display=swap&subset=cyrillic" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Gabriela&display=swap&subset=cyrillic" rel="stylesheet">
 
-<!-- Latest compiled and minified Bootstrap CSS -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='normolize.css') }}">
 
 
-<!-- my static CSS -->
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-<!--Take highlight.js for light code-text-->
-<!-- HighLight CSS -->
-<link rel="stylesheet"
-      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.9/styles/default.min.css">
-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.9/highlight.min.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
-{% endblock %}
+    <!-- Latest compiled and minified Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
-{% block title %}
-    {% if title %}
-{{ title }} - {{ _('Страничка мастера ногтевого сервиса') }}'
-    {% else %}
-{{ _('Добро пожаловать на страницу мастера маникюра и педикюра') }}
-    {% endif %}
-{% endblock %}
+    <!-- my static CSS -->
 
-{% block navbar %}
-    {% include 'navbar.html'%}
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
-{% endblock %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
 
-{% block content %}
-<div class="container">
-    {% include 'messages.html'%}
-    {# содержимое приложения которое должно быть предоставлено в блоке app_content #}
-    {% block app_content %}
+    <!--Take highlight.js for light code-text-->
+    <!-- HighLight CSS -->
+    <link rel="stylesheet"
+          href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.9/styles/default.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.9/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script scr="../scripts/scripts.js"></script>
+    <title>Nail-Master-Krd</title>
+
+</head>
+
+
+<body>
+    <header class="main-header">
+        {% include 'navbar.html'%}
+        {% include 'messages.html'%}
+    </header>
+    {% block content %}
+
+    <main class="container">
+        {% block app_content%}
+        {% endblock %}
+    </main>
+
+    <footer class="main-footer">
+        <div class="container">
+            <p class="footer-contacts">
+                Мастер ногтевого сервиса Nail-Master-Krd<br>
+                Адрес: г.Краснодар, ул.Атарбекова, д. 5/1<br>
+                <a href="#">Как нас найти?</a><br>
+                Телефон (WhatsApp): +7 (928) 433-71-81<br>
+                Instagram: anna_nails_ani
+            </p>
+            <div class="footer-social sss">
+                <b>Давайте дружить!</b>
+                <ul>
+                    <li><a class="social-button vkontakte" href="#"><span class="visually-hidden ">Вконтакте</span></a></li>
+                    <li><a class="social-button instagram" href="https://www.instagram.com/anna_nails_ani/"><span class="visually-hidden">Инстаграм</span></a></li>
+                    <li><a class="social-button whatsapp" href="#"><span class="visually-hidden whatsapp">WhatsApp</span></a></li>
+                </ul>
+            </div>
+            <p class="footer-copyright">
+                <b>Разработано</b>
+                <a class="button" href="#">Alexey Aniskin</a>
+            </p>
+        </div>
+    </footer>
+
+    <div class="modal-overlay">
+
+    </div>
+
     {% endblock %}
-</div>
-{% endblock %}
 
-{% block scripts %}
-{{ super() }}
-{{ moment.include_moment() }}
-{{ moment.lang(g.locale) }}
+    <!--{ super() }}-->
+    {{ moment.include_moment() }}
+    {{ moment.lang(g.locale) }}
 
-<script>
-    function translate(sourceElem, destElem, sourceLang, destLang) {
-        $(destElem).html('<img src="{{ url_for('static', filename='loading.gif') }}">');
-        alert('Временно не доступен перевод текста: "' + $(sourceElem).text() + '". Извените.');
+    <script>
+        function translate(sourceElem, destElem, sourceLang, destLang) {
+            $(destElem).html('<img class="loading-gif" src="{{ url_for('static', filename='loading.gif') }}">');
+            /*alert('Временно не доступен перевод текста: "' + $(sourceElem).text() + '". Извените.');*/
 
-        $.post('/user_profile/translate', {
-            text: $(sourceElem).text(),
-            source_language: sourceLang,
-            dest_language: destLang
-            }
-        ).done(function (response) {
+            $.post('/translate', {
+                    text: $(sourceElem).text(),
+                    source_language: sourceLang,
+                    dest_language: destLang
+                }
+            ).done(function (response) {
 
-            $(destElem).text(response['text'])
-        }).fail(function() {
-            $(destElem).text("{{ _('Error: Could not contact server.') }}");
-        });
-    }
-</script>
+                $(destElem).text(response['text'])
+            }).fail(function() {
+                $(destElem).text("{{ _('Error: Could not contact server.') }}");
+            });
+        }
+    </script>
 
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script  src="../static/scripts/login_popup.js"></script>
+    <script  src="../static/scripts/map_popup.js"></script>
+    <script>
+        var popup = document.querySelector(".modal-login");
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+   
+
+    <!--     {{ moment.lang('ru') }}  -->
 
 
-<!--     {{ moment.lang('ru') }}  -->
-{% endblock %}
+</body>
+</html>
+
+

@@ -1,0 +1,29 @@
+﻿
+{% import 'bootstrap/wtf.html' as wtf %}
+
+    <h2>{{ _('Авторизация') }}</h2>
+    <form action="{{ url_for('user.login') }}" method="post">
+        {{ form_login.hidden_tag() }}
+        <ul>
+            <li class="visually-hidden">{{ form_login.username.label }}</li>
+            <li><div class="login-form-field-user">{{ form_login.username }}</div></li>
+            <li class="visually-hidden">{{ form_login.password.label}}</li>
+            <li><div class="login-form-field-password">{{ form_login.password }}</div></li>
+            <li class="login-checkbox">
+                {{ form_login.remember_me }}
+                <span class="checkbox-indicator"></span>
+                {{ form_login.remember_me.label }}
+            </li>
+            <li class="login-button-section">
+                {{ form_login.submit }}
+                <ul>
+                    <li>
+                        <span class="help-text"><a href="{{ url_for('user.reset_password_main') }}">{{ _('Забыли пароль?') }}</a></span>
+                    </li>
+                    <li><span class="help-text"><a href="{{ url_for('user.registration_main')}}">{{_('Регистрация') }}</a></span></li>
+                </ul>
+            </li>
+
+        </ul>
+    </form>
+

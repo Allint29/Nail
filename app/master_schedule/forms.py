@@ -1,0 +1,56 @@
+﻿from datetime import datetime
+from flask_wtf import FlaskForm;
+from wtforms import HiddenField, StringField, SubmitField, TextAreaField, DateField, SelectField, IntegerField
+from wtforms.validators import DataRequired, ValidationError, Length, InputRequired, NumberRange
+from flask_babel import Babel, _, lazy_gettext as _l
+from app.master_schedule.models import DateTable, ScheduleOfDay
+from app.main_func import utils as main_utils
+
+
+class CountInt(object):
+    def __init__(self, min=-1, max=-1, message=None):
+        self.min = min
+        self.max = max
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        if not message:
+            message = u'Field must be between %i and %i characters long.' % (min, max)
+        self.message = message
+
+    def __call__(self, form, field):
+        l = field.data and len(field.data) or 0
+        if l < self.min or self.max != -1 and l > self.max:
+            raise ValidationError(self.message)
+
+class ScheduleTimeToShow(FlaskForm):
+    '''
+    Форма которая показывает время дня и его статус: занято или свободно
+    '''    
+    date_field_start = DateField (_('с'), validators=[DataRequired()], render_kw={"class" : "shedule-text-field comment-field", "type": "date", "placeholder" : _('Выберите дату')})
+    date_field_end = DateField (_('по'), validators=[DataRequired()], render_kw={"class" : "shedule-text-field comment-field", "type": "date", "placeholder" : _('Выберите дату')})
+    
+    submit = SubmitField(_('Выбрать'), render_kw={"class": "button"});
+
+
+
+class ScheduleMaster(FlaskForm):
+    '''
+    Форма расписание которое видит мастер
+    '''
+   # date_field_start = DateField (_('с'), validators=[DataRequired()], render_kw={"class" : "shedule-text-field comment-field", "type": "date", "placeholder" : _('Выберите дату')})
+   # date_field_end = DateField (_('по'), validators=[DataRequired()], render_kw={"class" : "shedule-text-field comment-field", "type": "date", "placeholder" : _('Выберите дату')})
+    
+    work_type_field=SelectField(_('Тип работы'), validators=[DataRequired()], choices=[('man', _('Маникюр')), ('ped', _('Педикюр')), ('some', _('Другое'))]) 
+    price_field=StringField(_('Цена'), validators=[DataRequired()], default="0")
+    price_field=StringField(_('Имя клиента'), validators=[DataRequired()], default="неизвестно")
+
+    submit = SubmitField(_('Выбрать'), render_kw={"class": "button"});
+
+    def validate_price_field(self, price_field):
+        
+        if main_utils.is_digit(price_field.data) == False:
+            raise ValidationError(_l('Можно вводить только числа'))
+
+        price = float(price_field.data)
+        
+        if price< 0 or price > 10000:            
+            raise ValidationError(_l('Цена не может быть отрицательной или больше 10000'))
