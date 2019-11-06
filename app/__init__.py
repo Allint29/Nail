@@ -7,7 +7,7 @@ from flask import Flask, request, current_app
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
-
+from flask_admin import Admin
 from flask_login import LoginManager
 from flask_mail import Mail
 from flask_bootstrap import Bootstrap
@@ -17,10 +17,11 @@ from elasticsearch import Elasticsearch
 
 from config import Config
 
-
+from flask_admin.contrib.sqla import ModelView
 
 db = SQLAlchemy()
 migrate = Migrate()
+admin2 = Admin()
 loginF = LoginManager()
 loginF.login_view = 'user.login'
 loginF.login_message = _l('Пожалуйста, авторизируйтесь, чтобы открыть эту страницу.')
@@ -37,6 +38,7 @@ def create_app(config_class=Config):
     app_web.config.from_object(config_class)
 
     db.init_app(app_web)
+    admin2.init_app(app_web)
     migrate.init_app(app_web, db)
     loginF.init_app(app_web)
     mail.init_app(app_web)
@@ -55,8 +57,8 @@ def create_app(config_class=Config):
     from app.user import bp as user_bp
     app_web.register_blueprint(user_bp, url_prefix='/user')
 
-    from app.admin import bp as admin_bp
-    app_web.register_blueprint(admin_bp, url_prefix='/admin')
+    from app.admin_my import bp as admin_bp
+    app_web.register_blueprint(admin_bp, url_prefix='/admin_my')
 
     from app.user.main import bp as main_bp
     app_web.register_blueprint(main_bp, url_prefix='/main')
@@ -72,7 +74,6 @@ def create_app(config_class=Config):
 
     from app.master_schedule import bp as master_schedule
     app_web.register_blueprint(master_schedule, url_prefix='/master_schedule')
-
 
     #print(app_web.config['MAIL_SERVER'])
     if not app_web.debug and not app_web.testing:

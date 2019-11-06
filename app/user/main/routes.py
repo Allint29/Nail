@@ -27,7 +27,7 @@ def translate_text():
                                       request.form['source_language'],
                                       request.form['dest_language'])})
 
-@bp.route('/follow/<username>')
+@bp.route('/follow_<username>')
 @login_required
 def follow(username):
     '''
@@ -45,7 +45,7 @@ def follow(username):
     flash('Вы подписаны {}!'.format(username))
     return redirect(url_for('main.user', username=username))
 
-@bp.route('/unfollow/<username>')
+@bp.route('/unfollow_<username>')
 @login_required
 def unfollow(username):
     user = User.query.filter_by(username=username).first()
@@ -237,7 +237,7 @@ def edit_profile():
     return render_template('user/edit_profile/edit_profile.html', title=_('Редактирование профиля'), form=form, \
         list_phones_user=list_phones_user, e_mail=e_mail)
 
-@bp.route('/edit_profile/add_phone', methods=['GET', 'POST'])
+@bp.route('/edit_profile_add_phone', methods=['GET', 'POST'])
 @login_required
 def edit_profile_add_phone():
     form = EditProfilAddPhoneForm(current_user.id)
@@ -282,7 +282,7 @@ def edit_profile_add_phone():
 
     return render_template('user/edit_profile/edit_profile_add_phone.html', title=_('Добавление номера телефона'), form=form, list_phones_user = list_phones_user, number_for_check = number_for_check)
 
-@bp.route('/edit_profile/add_email/<mail>', methods=['GET', 'POST'])
+@bp.route('/edit_profile_add_email_<mail>', methods=['GET', 'POST'])
 @login_required
 def edit_profile_add_email(mail):
     form = CreateNewEmail()
@@ -321,7 +321,7 @@ def edit_profile_add_email(mail):
     return render_template('user/edit_profile/edit_profile_new_email.html', title=_('Редактирование профиля'), form=form, \
         user=current_user, mail=mail)
 
-@bp.route('/edit_profile/add_email/confirm/<token>', methods=['GET', 'POST'])
+@bp.route('/edit_profile_add_email_confirm_<token>', methods=['GET', 'POST'])
 def confirm_adding_email(token):
     '''
     view of finish of registration new user, create new pass and redirect to login
@@ -350,7 +350,7 @@ def confirm_adding_email(token):
 
     return render_template('user/edit_profile/edit_profile_new_email_congratulation.html', title=titleVar, form=form)
 
-@bp.route('/edit_profile/change_password/<user>', methods=['GET', 'POST'])
+@bp.route('/edit_profile_change_password_<user>', methods=['GET', 'POST'])
 @login_required
 def edit_profile_change_password(user):
     titleVar=_('Смена пароля')

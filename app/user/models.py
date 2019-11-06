@@ -34,7 +34,9 @@ class ConnectionType(db.Model):
     name_of_type = db.Column(db.String(50), nullable=False)
 
     user = db.relationship('User', backref='connection_type', lazy='dynamic')
-    
+
+    def __repr__(self):
+        return '<Connection_type={}, id ={}, checked={}>'.format(self.id, self.name_of_type)
 
 
 class UserPhones(db.Model):
@@ -62,7 +64,7 @@ class UserPhones(db.Model):
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
-
+  #  date_time_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def set_phone_hash_code(self, code):
         self.phone_hash_code = generate_password_hash(code)

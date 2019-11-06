@@ -76,7 +76,7 @@ def add_comment():
     return redirect(utils.get_redirect_target())
 
 
-@bp.route('/comments/delete_comment/<comment_id>')
+@bp.route('/delete_comment_work/<comment_id>')
 @login_required
 def delete_comment(comment_id):
     '''
@@ -101,7 +101,7 @@ def delete_comment(comment_id):
             return redirect(utils.get_redirect_target())      
         
 
-@bp.route('/comments/change_comment/<comment_id>', methods=['GET', 'POST'])
+@bp.route('/change_comment_work_<comment_id>', methods=['GET', 'POST'])
 @login_required
 def change_comment(comment_id):
     '''

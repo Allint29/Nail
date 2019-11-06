@@ -74,7 +74,7 @@ def registration_main():
 
 #################################### Регистрация по телефону #######################################
 
-@bp.route('/register_by_phone/send', methods=['GET', 'POST'])
+@bp.route('/register_by_phone_send', methods=['GET', 'POST'])
 def registration_by_phone_send():
     form = RegistrationByPhoneForm()
     title = _('Регистрация по телефонному номеру')
@@ -99,7 +99,7 @@ def registration_by_phone_send():
 
     return render_template('user/registration_by_phone/register_by_phone.html', form=form, title=title)
 
-@bp.route('/register_by_phone/confirm/<data>', methods=['GET', 'POST'])
+@bp.route('/register_by_phone_confirm_<data>', methods=['GET', 'POST'])
 def registration_by_phone_confirm(data):
     form = RegistrationByPhoneConfirmForm()
     title = _('Регистрация по телефонному номеру')        
@@ -136,7 +136,7 @@ def registration_by_phone_confirm(data):
 
     return render_template('user/registration_by_phone/register_by_phone_confirm.html', form=form, title=title, number=number, user=user)
 
-@bp.route('/register_by_phone/new_password/<data>', methods=['GET', 'POST'])
+@bp.route('/register_by_phone_new_password_<data>', methods=['GET', 'POST'])
 def registration_by_phone_new_password(data):
     form = RegistrationByPhoneNewPasswordForm()
     title = _('Регистрация по телефонному номеру')
@@ -193,7 +193,7 @@ def register_request():
         return redirect(url_for('user.login'))
     return render_template('user/registration_by_email/register_request.html', title=titleVar, form_mail=form_mail)
 
-@bp.route('/register_user/<token>', methods=['GET', 'POST'])
+@bp.route('/register_user_<token>', methods=['GET', 'POST'])
 def register_user(token):
     '''
     view of finish of registration new user, create new pass and redirect to login
@@ -287,7 +287,7 @@ def reset_password_request():
     return render_template('user/reset_password/reset_password_by_email_request.html',
                            title=titleVar, form=form)
 
-@bp.route('/reset_password/<token>', methods=['GET', 'POST'])
+@bp.route('/reset_password_<token>', methods=['GET', 'POST'])
 def reset_password(token):
     '''
     view of reset password form after confirm of link from email

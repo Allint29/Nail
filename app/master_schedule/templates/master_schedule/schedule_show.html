@@ -40,8 +40,9 @@
 
                 <li class="schedule-container-days-content">
                     <span class="{%if item_list['empty'] == 'free' %}schedule-container-days-free{% elif item_list['empty'] == 'non_free' %}schedule-container-days-non-free{%else%}schedule-container-days-some-free{%endif%}">{{item_list['time'].begin_time_of_day.hour}}:00</span>
-                    
+
                     <span>{%if item_list['empty'] == 'free' %}<span class="schedule-container-days-free">Свободно</span>{% elif item_list['empty'] == 'non_free' %}<span class="schedule-container-days-non-free">Занято</span>{%else%}<span class="schedule-container-days-some-free">Неполное время</span>{%endif%}</span>
+
                 </li>
                 {%endfor%}
             </ul>

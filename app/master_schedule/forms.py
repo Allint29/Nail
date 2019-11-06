@@ -1,6 +1,6 @@
 ﻿from datetime import datetime
 from flask_wtf import FlaskForm;
-from wtforms import HiddenField, StringField, SubmitField, TextAreaField, DateField, SelectField, IntegerField
+from wtforms import Form, HiddenField, StringField, SubmitField, TextAreaField, DateField, SelectField, IntegerField
 from wtforms.validators import DataRequired, ValidationError, Length, InputRequired, NumberRange
 from flask_babel import Babel, _, lazy_gettext as _l
 from app.master_schedule.models import DateTable, ScheduleOfDay
@@ -31,19 +31,46 @@ class ScheduleTimeToShow(FlaskForm):
     submit = SubmitField(_('Выбрать'), render_kw={"class": "button"});
 
 
+class ScheduleTimeToShowMaster(FlaskForm):
+    '''
+    Форма которая показывает время дня и его статус: занято или свободно
+    '''    
+    date_field = DateField (_('дата'), validators=[DataRequired()], render_kw={"class" : "shedule-text-field-master comment-field", "type": "date", "placeholder" : _('Выберите дату')})
+  
+    submit = SubmitField(_('Выбрать'), render_kw={"class": "button"});
+
+class TimeForm(FlaskForm):
+    '''
+    Форма для выбора времени для редактирования
+    '''
+
+    id_time = StringField(_('ID тайминга'),  render_kw={"class" : "", "type": "text"})   
+    change_button = SubmitField(_('Изменить'), render_kw={"class": "button", "type": "submit"})
+    reserve_button = SubmitField(_('Занять'), render_kw={"class": "button", "type": "submit"})
+    delete_button = SubmitField(_('Освободить'), render_kw={"class": "button", "type": "submit"})
+    
 
 class ScheduleMaster(FlaskForm):
     '''
     Форма расписание которое видит мастер
     '''
-   # date_field_start = DateField (_('с'), validators=[DataRequired()], render_kw={"class" : "shedule-text-field comment-field", "type": "date", "placeholder" : _('Выберите дату')})
-   # date_field_end = DateField (_('по'), validators=[DataRequired()], render_kw={"class" : "shedule-text-field comment-field", "type": "date", "placeholder" : _('Выберите дату')})
+    id_time = StringField(_('ID тайминга'),  render_kw={"class" : "comment-field", "type": "text"})   
+            
+    work_type_field=SelectField(_('Тип работы'), validators=[DataRequired()], choices=[('man', _('Маникюр')), ('ped', _('Педикюр')), ('man_ped', _('Ман+Пед')),('some', _('Другое'))], render_kw={"class" : "comment-field"}) 
+    price_field=StringField(_('Цена'), validators=[DataRequired()], render_kw={"class" : "comment-field"}, default="0")
     
-    work_type_field=SelectField(_('Тип работы'), validators=[DataRequired()], choices=[('man', _('Маникюр')), ('ped', _('Педикюр')), ('some', _('Другое'))]) 
-    price_field=StringField(_('Цена'), validators=[DataRequired()], default="0")
-    price_field=StringField(_('Имя клиента'), validators=[DataRequired()], default="неизвестно")
+    type_connection_field=SelectField(_('Связь'), validators=[DataRequired()], choices=[('whatsapp', _('WhatsApp')), ('vk', _('ВКонтакте')), ('instagram', _('Instagram')), ('_number_phone', _('Телефон'))],render_kw={"class" : "comment-field"}) 
 
-    submit = SubmitField(_('Выбрать'), render_kw={"class": "button"});
+    client_field=StringField(_('Клиент'), validators=[DataRequired()], render_kw={"class" : "comment-field"}, default="")
+    adress_client_field=StringField(_('Адрес'), validators=[DataRequired()], render_kw={"class" : "comment-field"}, default="")
+    node_field=TextAreaField(_('Примечание'), validators=[DataRequired()], render_kw={"class" : "comment-field"}, default="")
+    time_empty_field=SelectField(_('Занять'), validators=[DataRequired()], choices=[(1, _('Свободно')), (0, _('Занято'))],render_kw={"class" : "comment-field"}) 
+    reserve_time_for_client_field = SelectField(_('Резерв времени'), validators=[DataRequired()], choices=[('one', _('Один час')), ('two', _('Два часа')), ('three', _('Три часа'))],render_kw={"class" : "comment-field"})
+    client_come = SelectField(_('Пришел ли клиент'), validators=[DataRequired()], choices=[(0, _('Нет')), (1, _('Да')),  (2, _('Опоздал'))], render_kw={"class" : "comment-field"}, default=0)
+
+    submit = SubmitField(_('Записать'), render_kw={"class": "button"})
+    cancel_field = SubmitField(_('Отменить'), render_kw={"class": "button fl-cancel-field"})
+    clear_field = SubmitField(_('Освободить'),  render_kw={"class" : "button clear-field", "type": "submit"})
 
     def validate_price_field(self, price_field):
         

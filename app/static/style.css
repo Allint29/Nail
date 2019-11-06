@@ -998,7 +998,7 @@ button.bg-light:hover {
     /* background-image: url('images/1.jpg');*/
     background-position: 0 0;
     background-repeat: repeat;
-    box-shadow: -20px -20px 50px rgba(0, 0, 0, 0.7);
+    box-shadow: -10px -3px 50px rgba(0, 0, 0, 0.7);
 }
 
     .main-footer .container {
@@ -1654,11 +1654,11 @@ button.bg-light:hover {
 }
 
 .modal-map iframe {
-    width:100%;
-    height:100%;
-    frameborder: 0;
+    width: 100%;
+    height: 100%;
+    /*frameborder: 0;*/
     border: none;
-    allowfullscreen: true;
+    /*allowfullscreen: true;        */
 }
 
 .modal-close {
@@ -1803,10 +1803,7 @@ button.bg-light:hover {
 }
 
 .schedule-container form {
-    
     width: 100% !important;
-    
-           
 }
 .schedule-container-item {
     display: flex;
@@ -1842,6 +1839,159 @@ button.bg-light:hover {
     .shedule-text-field { min-width: 85%; }
 }
 
+/*страница записи клиентов мастером - наследует стиль обычного расписания, но кнопки меньше и поле с датой и временем в одну строку*/
+.schedule-container-master {
+    width: 100%;
+    font-size: 16px;
+    line-height: 18px;
+}
+
+.schedule-container-master form {
+    width: 100% !important;
+    min-height: 60px !important;
+    height: 60px;
+}
+
+.schedule-container-master ul {
+    list-style: none;
+    margin: 0 0 30px 0 !important;
+    padding: 10px 30px 10px 10px !important;
+    
+}
+
+.schedule-container-item-master li {
+    display: flex;
+    min-height: 45px;
+    max-width: 300px;
+    margin: 5px 5px 5px 10px;
+    justify-content: space-between;
+    align-items: center;
+    align-content: space-between;
+    min-width: 18%;
+    border-bottom: 1px solid rgba(255,110,210, 1) !important;
+}
+
+.shedule-text-field-master {
+    min-height: 45px;
+    max-width: 150px;
+    border: 1px solid rgba(255,110,210, 1) !important;
+    text-align: center;
+}
+.schedule-container-days-time {
+    border: 1px solid rgba(255,110,210, 1) !important;
+}
+
+.schedule-container-days-master {
+    display: block;
+    width: 100%
+}
+
+.schedule-container-days-content {
+    border: 1px solid rgba(255,110,210, 1) !important;
+    padding: 5px;
+    margin-bottom: 10px;
+}
+
+.schedule-container-days-content-buttons {
+    margin: 0 10px 10px 0 !important;
+    min-width: 100% !important;
+    padding: 0 !important;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: left;
+    border: none !important;
+}
+
+.schedule-container-days-content-buttons li {
+    padding: 0 !important;
+    margin: 0 !important;
+    
+}
+
+.schedule-container-days-content-buttons .button {
+    padding: 5px !important;
+    width: 45px;
+    height: 45px;
+    margin: 0 10px 10px 0 !important;
+}
 
 
+@media (max-width:768px) {
+    .schedule-container-item-master li {
+        min-width: 100%;
+        align-content: right;
+    }
+
+    .shedule-text-field-master {
+        min-width: 45%;
+    }
+
+    .shedule-text-field-master {
+        min-height: 45px;
+        max-width: 150px;
+        border: 1px solid rgba(255,110,210, 1) !important;
+        text-align: center;
+    }
+}
+
+/*стили для таблицы внесения изменений в БД записи на определенное время*/
+
+
+.schedule-master-details-container {
+    align-items: center;
+    align-content: center;
+    alignment: center;
+    max-width: 330px;
+    
+    border: 1px solid rgba(255,110,210, 1) !important;
+    overflow: auto
+}
+
+
+    .schedule-master-details-container ul{
+    padding: 0 !important;
+    list-style: none;
+}
+
+.schedule-master-details-container li {
+    padding: 5px !important;
+    margin: 5px 0px 5px 0px !important;
+    display: flex;
+    justify-content: space-between;
+    list-style: none;
+    
+}
+
+.schedule-master-details-container input {
+    min-width: 150px !important;
+    border: 1px solid rgba(255,110,210, 1) !important;
+    
+}
+
+.schedule-master-details-container .button {
+    margin: 2px !important;
+    padding: 10px 5px 10px 5px !important;
+}
+
+    .fl-cancel-field {
+        width: 100% !important;
+    }
     /*@media (max-width:576px) @media (min-width:768px) @media (max-width:992px) @media (min-width:1200px) */
+
+    /*Стили формы редактирования пользователя*/
+
+.edit-user-container {
+    display: block;
+    background: grey;
+}
+
+.edit-user-container ul {
+    display: flex;
+    flex-wrap: wrap;
+}
+    .edit-user-container li {
+        display: block;
+        background: #4e87c0
+    }
+    .fl-text-field {
+}

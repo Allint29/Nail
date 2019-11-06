@@ -53,15 +53,19 @@ class ScheduleOfDay(db.Model):
     name_of_client = db.Column(db.String, default='неизвестно')
     adress_of_client = db.Column(db.String, default='неизвестно')
     note = db.Column(db.String, default='примечание')
+
+    #тип связи
+    connection_type=db.Column(db.Integer, default=0)
     
     #поле говорит о том пришел ли клиент
     client_come_in = db.Column(db.Integer, default=0)
 
     #свойство  указывающе занято ли время
     is_empty = db.Column(db.Integer, default=1)
+
     #связь с таблицей зарегистрированных пользователей
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-
+    
     #связь с таблицей даты
     date_table_id = db.Column(db.Integer, db.ForeignKey('date_table.id'))
 

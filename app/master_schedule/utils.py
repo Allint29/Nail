@@ -5,6 +5,7 @@ from datetime import datetime, timedelta, date
 from app.master_schedule.models import DateTable, ScheduleOfDay
 from app import db
 from app.main_func import utils as main_utils
+from app.master_schedule.forms import TimeForm
 
 def delete_all_days_in_schedule():
     '''
@@ -161,11 +162,12 @@ def create_query_time_one_day():
         
 
 
-def take_empty_time_in_shedule(begin_date=None, end_date=None):
+def take_empty_time_in_shedule(begin_date=None, end_date=None, to_back=None):
     '''
     Функция берет список с временем расписания и возвращает словарь с маркировкой времени расписания - занято, свободно, свободно с ограничениями
     '''
     
+
     if begin_date == None and end_date == None:
         begin_date = datetime.now()
         end_date = datetime.now()
@@ -174,15 +176,33 @@ def take_empty_time_in_shedule(begin_date=None, end_date=None):
     elif begin_date != None and end_date == None:
         end_date = begin_date
 
+    try:
+        if type(begin_date) == date:
+            begin_date=datetime(begin_date.year, begin_date.month, begin_date.day)
+    except:
+        begin_date=datetime.now()
 
-    if begin_date > end_date:
-        begin_date = end_date
-    elif begin_date < date.today() or end_date < date.today():
-        begin_date = datetime.now()
-        end_date = datetime.now() + timedelta(days=7)
+    try:
+        if type(end_date) == date:
+            end_date=datetime(end_date.year, end_date.month, end_date.day)
+    except:
+        print('error in end_date')
+        end_date = datetime.now()
 
+    begin_date= main_utils.make_date_from_date_time(begin_date)['date']
+    end_date=main_utils.make_date_from_date_time(end_date)['date']
 
-    list_of_date=DateTable.query.filter(DateTable.day_date >= main_utils.make_date_from_date_time(begin_date)['date']).filter(DateTable.day_date <= main_utils.make_date_from_date_time(end_date)['date']).order_by(DateTable.day_date).all()
+    now_date=main_utils.make_date_from_date_time(datetime.now())['date']
+    
+    if to_back == None:
+        if begin_date > end_date:
+            begin_date = end_date
+        elif begin_date < now_date or end_date < now_date:
+            begin_date = now_date
+            end_date = now_date + timedelta(days=7)
+    
+
+    list_of_date=DateTable.query.filter(DateTable.day_date >= begin_date).filter(DateTable.day_date <= end_date).order_by(DateTable.day_date).all()
     list_date = []
     i=0
     while i < len(list_of_date):
@@ -199,26 +219,53 @@ def take_empty_time_in_shedule(begin_date=None, end_date=None):
         j=0
         while j<len(list_of_work_time):
             t=list_of_work_time[j].begin_time_of_day.hour
+            #добавляю форму для отправки запроса на редактирование
+            
+            edit_form = TimeForm()
+            edit_form.id_time.data=list_of_work_time[j].id
             
             #достигли последнего элемента и он свободен, то время свободное
             if t==21:
                 if list_of_work_time[j].is_empty == True:
-                    list_to_show.append({'time': list_of_work_time[j], 'empty': 'free'})
+                    list_to_show.append({'time': list_of_work_time[j], 'empty': 'free', 'form_edit': edit_form})
                 else:
-                    list_to_show.append({'time': list_of_work_time[j], 'empty': 'non_free'})
+                    list_to_show.append({'time': list_of_work_time[j], 'empty': 'non_free', 'form_edit': edit_form})
        
             else:
                 if list_of_work_time[j].is_empty == True:
                     if list_of_work_time[j+1].is_empty == False:
-                        list_to_show.append({'time': list_of_work_time[j], 'empty': 'some_free'})
+                        list_to_show.append({'time': list_of_work_time[j], 'empty': 'some_free', 'form_edit': edit_form})
                     else:
-                        list_to_show.append({'time': list_of_work_time[j], 'empty': 'free'})
+                        list_to_show.append({'time': list_of_work_time[j], 'empty': 'free', 'form_edit': edit_form})
        
                 else:
-                    list_to_show.append({'time': list_of_work_time[j], 'empty': 'non_free'})
+                    list_to_show.append({'time': list_of_work_time[j], 'empty': 'non_free', 'form_edit': edit_form})
             j=j+1
 
         list_date.append({'date': list_of_date[i], 'list_work_time': list_to_show})        
         i=i+1 
-    
+
     return list_date
+
+def reserve_time_shedue(id_shedule_time):
+    '''
+    Функция переводит тригер занятости времени во включенное состояние и сохраняет это в БД
+    '''
+    time_to_reserve = ScheduleOfDay.query.filter(ScheduleOfDay.id == id_shedule_time).first()
+    time_to_reserve.is_empty=0
+    db.session.commit() 
+
+def clear_time_shedue(id_shedule_time):
+    '''
+    Функция отчищает время дня для и ставит все значения по уолчанию
+    '''
+    time_to_reserve = ScheduleOfDay.query.filter(ScheduleOfDay.id == id_shedule_time).first()
+    time_to_reserve.work_type.lower() == "маникюр"
+    time_to_reserve.cost = 0
+    time_to_reserve.name_of_client == 'неизвестно'
+    time_to_reserve.adress_of_client == 'неизвестно'
+    time_to_reserve.note == 'примечание'
+    time_to_reserve.client_come_in = 0
+    time_to_reserve.is_empty=1
+    db.session.commit()  
+

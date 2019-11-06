@@ -1,4 +1,5 @@
-﻿<div class="upper-line ">
+﻿
+<div class="upper-line ">
     <div class="container">
         <p>Мастер ногтевого сервиса Nail-Master-Krd</p>
         <p class="upper-line-hide">Краснодар, Фестивальный микрорайон</p>
@@ -7,9 +8,9 @@
 <div class="main-logitip-line ">
     <div class="container">
         <a class="main-header-logo" href="{{ url_for('welcome.index')}}" title="{{_('На главную страницу')}}">
-            <img src="../static/images/Logo5-red.png" width="200"/>
+            <img src="../static/images/Logo5-red.png" width="200" />
         </a>
-        
+
         <p class="hide-min-size">
             Адрес:<br>
             г.Краснодар, <br>
@@ -20,9 +21,9 @@
             Телефон (WhatsApp):<br>
             +7 (928) 433-71-81<br>
             Instagram:<br>
-            <a class="main-header-logo-link" href="https://www.instagram.com/anna_nails_ani/" title="{{_('Профиль в Интсаграм')}}">anna_nails_ani </a>  
+            <a class="main-header-logo-link" href="https://www.instagram.com/anna_nails_ani/" title="{{_('Профиль в Интсаграм')}}">anna_nails_ani </a>
         </p>
-        
+
         <p class="hide-large-size">
             г.Краснодар, <br>
             ул.Атарбекова, д. 5/1<br>
@@ -30,7 +31,7 @@
             +7 (928) 433-71-81<br>
             <a class="main-header-logo-link" href="https://www.instagram.com/anna_nails_ani/" title="{{_('Профиль в Интсаграм')}}">Instagram: anna_nails_ani</a>
         </p>
-        
+
     </div>
 
 </div>
@@ -50,7 +51,7 @@
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('my_work.index') }}"> {{ _('Портфолио') }}</a></li>
                 </ul>
             </div>
-            
+
             <ul class="navbar-nav mr-auto user-navigation">
                 <li class="nav-item dropdown user-navigation-dropdown">
                     <a class="nav-link dropdown-toggle login-link" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -81,7 +82,8 @@
                         </form>
                         {% endif %}
                         {%if current_user.is_admin %}
-                        <a class="dropdown-item" href="{{ url_for('master_schedule.index')}}"> {{ _('Администратор') }}</a>
+                    
+                        <a class="dropdown-item" href="{{ url_for('admin_my.admin_index')}}"> {{ _('Администратор') }}</a>
                         {%endif%}
                         <a class="dropdown-item" href="{{ url_for('main.explore')}}"> {{ _('Песочница') }}</a>
                         <a class="dropdown-item" href="{{ url_for('main.index') }}">{{ _('Мой блог') }}</a>

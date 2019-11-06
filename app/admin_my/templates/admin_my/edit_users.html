@@ -1,0 +1,84 @@
+﻿{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+    <div class="edit-user-container">
+        {% if list_edit_users_form %}
+        {% for form, phone_list in list_edit_users_form %}
+        <form action="" method="post">
+            <ul>
+                {% for item in form%}
+                {% if item.label.text == 'CSRF Token' %}
+                {{item.label}}
+                {%endif%}
+                {{item}}
+                {% for error in item.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+
+                {%endfor%}
+                <!-- <li>
+        {{form.id_user.label}}
+        {{form.id_user}}
+        {% for error in form.id_user.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+
+    </li>
+    <li>
+        {{form.username_field.label}}
+        {{form.username_field}}
+    </li>
+    <li>
+        {{form.about_me_field.label}}
+        {{form.about_me_field}}
+    </li>
+    <li>
+        {{form.email_field.label}}
+        {{form.email_field}}
+    </li>
+    <li>
+        {{form.email_confirmed_field.label}}
+        {{form.email_confirmed_field}}
+    </li>
+    <li>
+        {{form.registration_date_field.label}}
+        {{form.registration_date_field.data.strftime('%d/%m/%Y %H:%M')}}
+    </li>
+    <li>
+        {{form.trying_to_enter_new_phone_field.label}}
+        {{form.trying_to_enter_new_phone_field}}
+    </li>
+    <li>
+        {{form.role_field.label}}
+        {{form.role_field}}
+    </li>
+    <li>            {{form.last_seen_field.label}}
+        {{form.last_seen_field.data.strftime('%d/%m/%Y %H:%M')}}</li>
+    <li>            {{form.type_connection_field.label}}
+        {{form.type_connection_field}}</li>
+    <li></li>
+    <li></li>
+    <li></li>-->
+            </ul>
+            {%for phone, phone_form in phone_list.items()%}
+            {{ phone_form.hidden_tag() }}
+            {{phone_form.id_phone.label}}
+            {{phone_form.id_phone}}
+            {{phone_form.number_phone_field.label}}
+            {{phone_form.number_phone_field}}
+            {{phone_form.phone_confirmed_field.label}}
+            {{phone_form.phone_confirmed_field}}
+            {{phone_form.date_to_expire_field.label}}
+            {{phone_form.date_to_expire_field}}
+            {{phone_form.black_list_field.label}}
+            {{phone_form.black_list_field}}
+            {%endfor%}
+
+        </form>
+        <hr />
+        {% endfor %}
+        {% endif %}
+    </div>
+    {% endblock %}
+

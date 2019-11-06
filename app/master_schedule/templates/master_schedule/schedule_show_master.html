@@ -1,0 +1,66 @@
+﻿{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+
+{% block app_content  %}
+<div class="schedule-container-master">
+    <h1 class="visually-hidden">Страница записи клиентов</h1>
+    <section class="site-map">
+        <p> <a href="{{ url_for('welcome.index') }}">Главная страница</a><span>&#9830;</span><a>Запись клиентов</a></p>
+    </section>
+
+    <form action="" method="post">
+        <h2 class="visually-hidden">Выбор периода</h2>
+        {{ form.hidden_tag() }}
+
+    <ul class="schedule-container-item-master">
+        <li>
+            <span class="visually-hidden">{{ form.date_field.label}} </span>
+            {{ form.date_field}}
+            {{ form.submit }}
+        </li>
+
+
+    </ul>
+
+    </form>
+    <ul class="schedule-container-days-master" >
+        <h2 class="visually-hidden">Выбранные даты</h2>
+        {%if list_time_to_show %}
+        {% for item in list_time_to_show %}
+        <li>
+            <h3>{{ item['date'].day_date.strftime('%d/%m/%Y')}} {{item['date'].day_name}}</h3>
+            <ul class="schedule-container-days-time">
+                {% for item_list in item['list_work_time']%}
+
+                <li class="schedule-container-days-content">
+                    <span class="{%if item_list['empty'] == 'free' %}schedule-container-days-free{% elif item_list['empty'] == 'non_free' %}schedule-container-days-non-free{%else%}schedule-container-days-some-free{%endif%}">{{item_list['time'].begin_time_of_day.hour}}:00</span>
+
+                    <span>{%if item_list['empty'] == 'free' %}<span class="schedule-container-days-free">Свободно</span>{% elif item_list['empty'] == 'non_free' %}<span class="schedule-container-days-non-free">Занято</span>{%else%}<span class="schedule-container-days-some-free">Неполное время</span>{%endif%}</span>
+                    {%if current_user.is_admin %}
+                    <span>{{_('Клиент:')}} {{item_list['time'].name_of_client}}</span>
+                    <span>{{_('Цена:')}} {{item_list['time'].cost}} {{_('руб.')}}</span>
+                    <span>{{_('Тип:')}} {{item_list['time'].work_type}}</span>
+                    <span>{{_('Контакты:')}} {{item_list['time'].adress_of_client}}</span>
+                    <span>{{_('Примечание:')}} {{item_list['time'].note}}</span>
+                    <form action="" method="post">
+                        {{item_list['form_edit'].hidden_tag()}}
+                        {{item_list['form_edit'].id_time}}
+                        <ul class="schedule-container-days-content-buttons">
+                            <li>{{item_list['form_edit'].change_button}}</li>
+                            <li>{{item_list['form_edit'].reserve_button}}</li>
+                            <li>{{item_list['form_edit'].delete_button}}</li>
+                        </ul>
+                    </form>
+                    {% endif %}
+
+                </li>
+                {%endfor%}
+            </ul>
+        </li>
+        {% endfor %}
+        {% endif %}
+    </ul>
+</div>
+{% endblock %}
+
