@@ -1,0 +1,7 @@
+1. Install pip3
+2. Create venv and in this: pip install -r requirements.txt.
+There is may be problem with not found module for Instagramm. 
+Remove this from list requirements.txt and install all other modules, 
+then install Instagramm module at one with installation note of this.
+3.Create new env variables ".env".
+4.Create new db with Flask migrations.

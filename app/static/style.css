@@ -985,6 +985,7 @@ button.bg-light:hover {
 /*--------Футтер---------*/
 .main-footer {
     margin-top: 65px;
+    padding-bottom: 35px;
     color: rgba(0,0,0, 1);
     font-size: 18px;
     line-height: 22px;
@@ -1982,16 +1983,30 @@ button.bg-light:hover {
 
 .edit-user-container {
     display: block;
-    background: grey;
+    background: rgba(255,110,210, 0.3);
+    font-size: 14px;
 }
 
-.edit-user-container ul {
-    display: flex;
-    flex-wrap: wrap;
-}
+    .edit-user-container ul {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 0px;
+        border: 1px solid rgba(255,110,210, 1) !important;
+    }
     .edit-user-container li {
         display: block;
-        background: #4e87c0
+        margin: 2px 2px 2px 2px;
+        padding: 2px 2px 2px 2px;
+        border: 1px solid rgba(255,110,210, 0.3) !important;
     }
-    .fl-text-field {
+    .edit-user-container p {
+        display: block;
+        margin: 0 0px 0 0px;
+        
+    }
+
+
+.fl-button-field-user-edit {
+    padding: 0 5px 0 5px !important;
+    margin: 2px 2px 2px 2px !important;
 }
