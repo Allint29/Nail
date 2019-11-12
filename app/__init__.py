@@ -57,11 +57,11 @@ def create_app(config_class=Config):
     from app.user import bp as user_bp
     app_web.register_blueprint(user_bp, url_prefix='/user')
 
-    from app.admin_my import bp as admin_bp
-    app_web.register_blueprint(admin_bp, url_prefix='/admin_my')
-
     from app.user.main import bp as main_bp
     app_web.register_blueprint(main_bp, url_prefix='/main')
+
+    from app.admin_my import bp as admin_bp
+    app_web.register_blueprint(admin_bp, url_prefix='/admin_my')
 
     from app.news import bp as news_bp
     app_web.register_blueprint(news_bp, url_prefix='/news')

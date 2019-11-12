@@ -165,8 +165,7 @@ def create_query_time_one_day():
 def take_empty_time_in_shedule(begin_date=None, end_date=None, to_back=None):
     '''
     Функция берет список с временем расписания и возвращает словарь с маркировкой времени расписания - занято, свободно, свободно с ограничениями
-    '''
-    
+    '''    
 
     if begin_date == None and end_date == None:
         begin_date = datetime.now()
@@ -251,7 +250,9 @@ def reserve_time_shedue(id_shedule_time):
     '''
     Функция переводит тригер занятости времени во включенное состояние и сохраняет это в БД
     '''
-    time_to_reserve = ScheduleOfDay.query.filter(ScheduleOfDay.id == id_shedule_time).first()
+    #сначала очищаем форму от записи
+    clear_time_shedue(id_shedule_time)
+    time_to_reserve = ScheduleOfDay.query.filter(ScheduleOfDay.id == id_shedule_time).first()    
     time_to_reserve.is_empty=0
     db.session.commit() 
 
@@ -260,12 +261,16 @@ def clear_time_shedue(id_shedule_time):
     Функция отчищает время дня для и ставит все значения по уолчанию
     '''
     time_to_reserve = ScheduleOfDay.query.filter(ScheduleOfDay.id == id_shedule_time).first()
-    time_to_reserve.work_type.lower() == "маникюр"
-    time_to_reserve.cost = 0
-    time_to_reserve.name_of_client == 'неизвестно'
-    time_to_reserve.adress_of_client == 'неизвестно'
-    time_to_reserve.note == 'примечание'
+    time_to_reserve.work_type = "маникюр".lower()
+    time_to_reserve.cost = 0    
+    time_to_reserve.name_of_client = 'неизвестно'.lower()    
+    time_to_reserve.mail_of_client = 'неизвестно'.lower()
+    time_to_reserve.phone_of_client = 'неизвестно'.lower()
+    time_to_reserve.adress_of_client = 'неизвестно'.lower()
+    time_to_reserve.note = 'примечание'.lower()
+    time_to_reserve.connection_type = 0
     time_to_reserve.client_come_in = 0
     time_to_reserve.is_empty=1
+    time_to_reserve.user_id = None          
     db.session.commit()  
 

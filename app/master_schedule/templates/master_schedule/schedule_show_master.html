@@ -41,6 +41,8 @@
                     <span>{{_('Клиент:')}} {{item_list['time'].name_of_client}}</span>
                     <span>{{_('Цена:')}} {{item_list['time'].cost}} {{_('руб.')}}</span>
                     <span>{{_('Тип:')}} {{item_list['time'].work_type}}</span>
+                    <span>{{_('Почта:')}} {{item_list['time'].mail_of_client}}</span>
+                    <span>{{_('Тел.:')}} {{item_list['time'].phone_of_client}}</span>
                     <span>{{_('Контакты:')}} {{item_list['time'].adress_of_client}}</span>
                     <span>{{_('Примечание:')}} {{item_list['time'].note}}</span>
                     <form action="" method="post">
@@ -48,8 +50,11 @@
                         {{item_list['form_edit'].id_time}}
                         <ul class="schedule-container-days-content-buttons">
                             <li>{{item_list['form_edit'].change_button}}</li>
+                            {%if item_list['empty'] == 'free' %}
                             <li>{{item_list['form_edit'].reserve_button}}</li>
+                            {%else%}
                             <li>{{item_list['form_edit'].delete_button}}</li>
+                            {%endif%}
                         </ul>
                     </form>
                     {% endif %}

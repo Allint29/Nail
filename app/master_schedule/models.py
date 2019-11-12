@@ -5,7 +5,7 @@ from flask import current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import db, loginF
 from app.main_func import utils as main_utils
-from wtforms.validators import DataRequired, Length
+from wtforms.validators import DataRequired, Length, Email
 from sqlalchemy.orm import relationship
 #from app.user.models import User
 
@@ -50,8 +50,15 @@ class ScheduleOfDay(db.Model):
     cost = db.Column(db.Integer, default=0)
 
     #информация о клиенте
+    #имя клиента не связано с таблицей клиента
     name_of_client = db.Column(db.String, default='неизвестно')
+    #почта не связана с таблицей клиента, может быть пустым, вставляется из данных клиента если есть
+    mail_of_client = db.Column(db.String, default='неизвестно')
+    #телефон не связан с таблицей клиента, вставляется значение из телефонов клиента если есть
+    phone_of_client = db.Column(db.String, default='неизвестно')
+    #адрес не связан с таблицей клиента - в соцсети
     adress_of_client = db.Column(db.String, default='неизвестно')
+    # описание не связано с таблицей клиента
     note = db.Column(db.String, default='примечание')
 
     #тип связи
@@ -62,8 +69,8 @@ class ScheduleOfDay(db.Model):
 
     #свойство  указывающе занято ли время
     is_empty = db.Column(db.Integer, default=1)
-
-    #связь с таблицей зарегистрированных пользователей
+    
+    #связь с таблицей зарегистрированных пользователей (жестко не привязана)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     
     #связь с таблицей даты

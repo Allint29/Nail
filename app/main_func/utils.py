@@ -3,6 +3,7 @@ from urllib.parse import urlparse, urljoin;
 from flask import request, url_for;
 from datetime import datetime, timedelta, date
 import math
+import json
 
 def is_safe_url(target):
     '''
@@ -24,7 +25,7 @@ def get_redirect_target():
        if is_safe_url(target):
            return target;
 
-   return url_for("news.index")
+   return url_for("welcome.index")
 
 
 def min_date_for_calculation():
@@ -137,3 +138,25 @@ def is_digit(string):
             return True
         except ValueError:
             return False
+
+def parser_time_client_from_str(dic_val):
+    '''
+    Функция преобразует строку из пост гет запроса словаря с ключами time_date_id , client_id в int,
+    возвращает словарь с теми же ключами, но уже значения это числа, если преобразование прошло не удачно, то знаячения будут -1
+    '''
+    print(dic_val)
+    dic_val = json.loads(dic_val.replace("'", '"').replace("Undefined".lower(), '-1'))    
+    
+    try:
+        time_date_id = int(dic_val['time_date_id'])
+    except:
+        time_date_id = -1
+
+    try:
+        client_id = int(dic_val['client_id'])
+    except:
+        client_id = -1
+
+    dic_val = {'time_date_id' : time_date_id, 'client_id' : client_id}
+    
+    return dic_val

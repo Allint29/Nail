@@ -36,7 +36,6 @@ class ScheduleTimeToShowMaster(FlaskForm):
     Форма которая показывает время дня и его статус: занято или свободно
     '''    
     date_field = DateField (_('дата'), validators=[DataRequired()], render_kw={"class" : "shedule-text-field-master comment-field", "type": "date", "placeholder" : _('Выберите дату')})
-  
     submit = SubmitField(_('Выбрать'), render_kw={"class": "button"});
 
 class TimeForm(FlaskForm):
@@ -55,14 +54,21 @@ class ScheduleMaster(FlaskForm):
     Форма расписание которое видит мастер
     '''
     id_time = StringField(_('ID тайминга'),  render_kw={"class" : "comment-field", "type": "text"})   
-            
+    name_time = StringField(_('Время'),  render_kw={"class" : "comment-field", "type": "text"})
+    
+    client_id_field=StringField(_('Клиент_Id'), validators=[DataRequired()], render_kw={"class" : "comment-field"}, default="")
+    client_field=StringField(_('Клиент'), validators=[DataRequired()], render_kw={"class" : "comment-field"}, default="")
+    take_client_button = SubmitField(_('Выбрать'), render_kw={"class": "button fl-cancel-field", "type": "button"})
+    
+    adress_client_field=StringField(_('Соцсети'), render_kw={"class" : "comment-field"}, default="")
+    phone_client_field = StringField(_('Телефон'), render_kw={"class" : "comment-field"}, default="")
+    email_client_field = StringField(_('Почта'), render_kw={"class" : "comment-field"}, default="")
+    type_connection_field=StringField(_('Тип связи'), render_kw={"class" : "comment-field"}, default="")#SelectField(_('Связь'), validators=[DataRequired()], choices=[('whatsapp', _('WhatsApp')), ('vk', _('ВКонтакте')), ('instagram', _('Instagram')), ('_number_phone', _('Телефон'))],render_kw={"class" : "comment-field"}) 
+
     work_type_field=SelectField(_('Тип работы'), validators=[DataRequired()], choices=[('man', _('Маникюр')), ('ped', _('Педикюр')), ('man_ped', _('Ман+Пед')),('some', _('Другое'))], render_kw={"class" : "comment-field"}) 
     price_field=StringField(_('Цена'), validators=[DataRequired()], render_kw={"class" : "comment-field"}, default="0")
     
-    type_connection_field=SelectField(_('Связь'), validators=[DataRequired()], choices=[('whatsapp', _('WhatsApp')), ('vk', _('ВКонтакте')), ('instagram', _('Instagram')), ('_number_phone', _('Телефон'))],render_kw={"class" : "comment-field"}) 
 
-    client_field=StringField(_('Клиент'), validators=[DataRequired()], render_kw={"class" : "comment-field"}, default="")
-    adress_client_field=StringField(_('Адрес'), validators=[DataRequired()], render_kw={"class" : "comment-field"}, default="")
     node_field=TextAreaField(_('Примечание'), validators=[DataRequired()], render_kw={"class" : "comment-field"}, default="")
     time_empty_field=SelectField(_('Занять'), validators=[DataRequired()], choices=[(1, _('Свободно')), (0, _('Занято'))],render_kw={"class" : "comment-field"}) 
     reserve_time_for_client_field = SelectField(_('Резерв времени'), validators=[DataRequired()], choices=[('one', _('Один час')), ('two', _('Два часа')), ('three', _('Три часа'))],render_kw={"class" : "comment-field"})

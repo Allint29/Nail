@@ -1,0 +1,106 @@
+﻿{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+
+{% block app_content  %}
+<h1 class="visually-hidden">Администратор расписания</h1>
+<section class="site-map">
+    <p> <a href="{{ url_for('welcome.index') }}">Главная страница</a><span>&#9830;</span><a>Записать клиента</a></p>
+</section>
+<section class="schedule-master-details-container">
+    <form action="" method="post" >
+    {{form.hidden_tag()}}
+        <ul>
+            <li>
+                {{form.id_time.label}}
+                {{form.id_time.data}}
+            </li>
+            <li>
+                {{form.name_time.label}}
+                {{form.name_time.data}}
+            </li>
+            <hr />
+            <li>
+                {{form.client_id_field.label}}
+                {{form.client_id_field.data}}
+            </li>
+            <li>
+                {{form.client_field.label}}
+                <!--здесь если клиент еще не выбран то кнопка выбора иначе имя-->
+                {{form.client_field.data}}
+                <a href="{{url_for('admin_my.find_users', dic_val={'time_date_id' : time_date_id , 'client_id' : client_id})}}">{{form.take_client_button}}</a>
+            </li>
+            <hr />
+            <li>
+                {{form.adress_client_field.label}}
+                {{form.adress_client_field.data}}
+            </li>
+            <li>
+                {{form.phone_client_field.label}}
+                {{form.phone_client_field.data}}
+            </li>
+            <li>
+                {{form.email_client_field.label}}
+                {{form.email_client_field.data}}
+            </li>
+            <li>
+                {{form.type_connection_field.label}}
+                {{form.type_connection_field.data}}
+            </li>
+            <hr />
+            <li>
+                {{form.work_type_field.label}}
+                {{form.work_type_field}}
+            </li>
+            <hr />
+            <li>
+                {{form.price_field.label}}
+                {{form.price_field}}
+            </li>
+            <hr />
+            <li>
+                {{form.node_field.label}}
+                {{form.node_field}}
+            </li>
+            <hr />
+            <li>
+                {{form.time_empty_field.label}}
+                {{form.time_empty_field}}
+            </li>
+            <hr />
+            <li>
+                {{form.reserve_time_for_client_field.label}}
+                {{form.reserve_time_for_client_field}}
+            </li>
+            <hr />
+            <li>
+                {{form.client_come.label}}
+                {{form.client_come}}
+            </li>
+            <hr />
+            <li>
+                {{form.submit}}
+                {{form.clear_field}}
+            </li>
+            <li>
+                {{form.cancel_field}}
+            </li>
+
+        </ul>
+
+
+
+    </form>
+
+
+
+
+
+
+
+
+
+</section>
+
+
+{% endblock %}

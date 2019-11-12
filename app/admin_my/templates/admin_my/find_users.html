@@ -2,7 +2,7 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
-    <div class="edit-user-container">
+    <div class="find-user-container">
         {% if find_form %}
         <form action="" method="post">
             {{find_form.hidden_tag()}}
@@ -15,7 +15,7 @@
                     {{find_form.to_find_button}}
                 </li>
                 <li>
-                    {{find_form.to_create_button}}
+                    <a href="{{ url_for('admin_my.edit_user_form', dic_val = {'time_date_id': time_date_id, 'client_id': -1 } ) }}">{{find_form.to_create_button}}</a>
                 </li>
             </ul>
             
@@ -29,6 +29,14 @@
                 <li>
                     <!-- {{form.id_user.label}}: ""-->
                     {{form.id_user.data}}
+                </li>
+                <li>
+                    <!--При просмотре клиентов если идет выдор для тайминга то отображается кнопка "Записать", при простом просмотре "Редактировать"-->
+                    {%if time_date_id == -1%}
+                    <a href="{{ url_for('admin_my.edit_user_form', dic_val = {'time_date_id': time_date_id, 'client_id': form.id_user.data } ) }}">{{form.to_edit_button}}</a>
+                    {%else %}
+                    <a href="{{ url_for('master_schedule.show_schedule_master_details', dic_val = {'time_date_id': time_date_id, 'client_id': form.id_user.data } ) }}">{{form.to_schedule_button}}</a>
+                    {%endif%}
                 </li>
                 <li>
                     {{form.username_field.label}}:
@@ -66,38 +74,28 @@
                     {{form.type_connection_field.label}}:
                     "{{form.type_connection_field.data}}"
                 </li>
+
                 <li>
-                    {%if time_date_id == -1%}
-                    {{form.to_edit_button}}
-                    {%else %}
-                    {{form.to_schedule_button}}
-                    {%endif%}
-                </li>
-                <li>
-                    {%for phone, phone_form in phone_list.items()%}
+                    {%for phone_form in phone_list%}
                     {{ phone_form.hidden_tag() }}
                     <ul>
                         <!-- <li>
-                            {{phone_form.id_phone.label}}
-                            {{phone_form.id_phone.data}};
-                            </li>-->
+    {{phone_form.id_phone_field.label}}
+    {{phone_form.id_phone_field.data}};
+    </li>-->
                         <li>
-                            {{phone_form.number_phone_field.label}}:
-                            "{{phone_form.number_phone_field.data}}";
+                            {{phone_form.number_phone.label}}:
+                            "{{phone_form.number_phone.data}}";
                         </li>
                         <li>
                             {{phone_form.phone_confirmed_field.label}}:
                             "{{phone_form.phone_confirmed_field.data}}";
                         </li>
-                        <!--<li>
-         {{phone_form.date_to_expire_field.label}}:
-        "{{phone_form.date_to_expire_field.data.strftime('%d/%m/%Y %H:%M')}}";
-     </li>-->
                         <li>
-                            {{phone_form.black_list_field.label}}:
-                            "{{phone_form.black_list_field.data}}";
+                            {{phone_form.to_black_list.label}}:
+                            "{{phone_form.to_black_list.data}}";
                         </li>
-                        <li>{%if time_date_id == -1%}{{phone_form.to_edit_button}}{% endif %}</li>
+                        <li>{%if time_date_id == -1%}<a href="{{url_for('admin_my.edit_phone', dic_val = {'time_date_id': time_date_id, 'client_id': form.id_user.data }, id_phone = phone_form.id_phone_field.data)}}">{{phone_form.to_edit_button}}</a>{% endif %}</li>
                     </ul>
                     {%endfor%}
                 </li>

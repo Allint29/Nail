@@ -1,0 +1,48 @@
+﻿{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+    <div class="edit-phone-container">
+        {% if form %}
+        <form action="" method="post">
+            {{form.hidden_tag()}}
+            {{form.id_phone_field}}
+            {% for error in form.id_phone_field.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+            {{form.user_id_field}}
+            {% for error in form.user_id_field.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+            <ul>
+                <li>
+                    {{form.number_phone.label}}
+                    {{form.number_phone}}
+                    {% for error in form.number_phone.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                    {% endfor %}
+                </li>
+                <li>
+                    {{form.to_black_list.label}}
+                    {{form.to_black_list}}
+                    {% for error in form.to_black_list.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                    {% endfor %}
+
+                </li>
+                <li>
+                    {{form.to_save_submit}}
+                    <a href="{{url_for('admin_my.find_users', dic_val ={'time_date_id' : dic_val['time_date_id'] , 'client_id' : -1})}}">{{form.to_cancel_button}}</a>
+                    <a href="{{url_for('admin_my.delete_phone', id_phone=form.id_phone_field.data, dic_val=dic_val)}}">{{form.to_delete_button}}</a>
+                </li>
+                <li>
+                    {% for error in form.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                    {% endfor %}
+                </li>
+            </ul>
+        </form>
+        {% endif %}
+    </div>
+{% endblock %}
+

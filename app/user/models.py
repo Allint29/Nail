@@ -8,7 +8,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
 from app import db, loginF
 from app.main_func import utils as main_utils
-from wtforms.validators import DataRequired, Length
+from wtforms import validators #validators import DataRequired, Length
 from app.master_schedule.models import ScheduleOfDay
 #from wtforms import StringField, TextAreaField, SubmitField, BooleanField
 from sqlalchemy.orm import relationship
@@ -37,6 +37,7 @@ class ConnectionType(db.Model):
 
     def __repr__(self):
         return '<Connection_type={}, id ={}, checked={}>'.format(self.id, self.name_of_type)
+
 
 
 class UserPhones(db.Model):
@@ -74,13 +75,23 @@ class UserPhones(db.Model):
         Функция возвращает правду если хеш сходится
         '''
         return check_password_hash(self.phone_hash_code, code)
-
-   # def set_id(self):
-   #     return UserPhones.query.order_by(UserPhones.id.desc()).first().id + 1
-   #      
+ 
 
     def __repr__(self):
         return '<Phone={}, id ={}, checked={}>'.format(self.number, self.id, self.phone_checked)
+
+
+class UserInternetAccount(db.Model):
+    '''
+    Класс описывает электронный аккаунт и связь с пользователем
+    '''
+    id = db.Column(db.Integer, primary_key=True)
+    adress_accaunt = db.Column(db.Integer, primary_key=True, index=True, unique=True, nullable=False)
+
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+    def __repr__(self):
+        return '<UserInternetAccount={}>'.format(self.adress_accaunt)
 
 
 class User(UserMixin, db.Model):
@@ -115,6 +126,7 @@ class User(UserMixin, db.Model):
     expire_date_request_bufer_mail = db.Column(db.DateTime, default=main_utils.min_date_for_calculation())
     bufer_email = db.Column(db.String(120))
 
+    
     #дата регистрации пользователя
     registration_date = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -126,9 +138,13 @@ class User(UserMixin, db.Model):
     role = db.Column(db.String(10), index=True);
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
 
+    #типы связи с клиентом
     connection_type_id = db.Column(db.Integer, db.ForeignKey('connection_type.id'))
-
+    #телефоны клиента
     phones = db.relationship('UserPhones', backref='user', lazy='dynamic')
+    #электронные аккаунты клиента
+    internet_accaunts = db.relationship('UserInternetAccount', backref='user', lazy='dynamic')
+
     #обратная ссылка из таблицы расписания для связи зарегистрированного пользователя и времени записи на прием
     date_of_schedules = db.relationship('ScheduleOfDay', backref='user', lazy='dynamic')
     posts = db.relationship('Post', backref='author', lazy='dynamic')

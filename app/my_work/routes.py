@@ -98,7 +98,7 @@ def delete_comment(comment_id):
                 db.session.commit()
                 flash('Комментарий удален!')
                 return redirect(utils.get_redirect_target())
-            return redirect(utils.get_redirect_target())      
+            return redirect(utils.get_redirect_target())
         
 
 @bp.route('/change_comment_work_<comment_id>', methods=['GET', 'POST'])
