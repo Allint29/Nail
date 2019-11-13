@@ -2,6 +2,14 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
+    <section class="site-map">
+        <p> <a href="{{ url_for('welcome.index') }}">{{_('Главная страница')}}</a>
+            <span>&#9830;</span>
+            <a href="{{ url_for('admin_my.admin_index') }}">{{_('Администрация')}}</a>
+            <span>&#9830;</span>
+            <a>{{_('Список пользователей')}}</a>
+            </p>
+    </section>
     <div class="find-user-container">
         {% if find_form %}
         <form action="" method="post">
@@ -103,10 +111,6 @@
             </ul>
         </form>
             <hr />
-
-            <!-- {% for error in form.id_user.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}-->
             {% endfor %}
             {% endif %}
     </div>

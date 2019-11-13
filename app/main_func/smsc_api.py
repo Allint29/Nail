@@ -114,9 +114,8 @@ class SMSC(object):
         
         m = self._smsc_send_cmd("send", 
                                 "cost=1&phones=" + quote(phones) + "&mes=" + quote(message) + ifs(sender == False, "", "&sender=" + quote(str(sender))) + "&translit=" + str(translit) + ifs(format > 0, "&" + formats[format-1], "") + ifs(query, "&" + query, "")
-                                )
+                                )        
         
-        print(m)
         if current_app.config['SMSC_DEBUG']:
             print ('debug')
             if m[1] > "0":

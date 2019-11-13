@@ -1,8 +1,9 @@
-﻿from datetime import datetime
+﻿from re import *
+from datetime import datetime
 from flask_wtf import FlaskForm;
 from app.user.models import *
 from wtforms import Form, HiddenField, StringField, SubmitField, TextAreaField, DateField, SelectField, IntegerField, FormField
-from wtforms.validators import DataRequired, ValidationError, Length, InputRequired, NumberRange, URL
+from wtforms.validators import DataRequired, ValidationError, Length, InputRequired, NumberRange, URL, Email
 from flask_babel import Babel, _, lazy_gettext as _l
 from app.main_func import utils as main_utils
 
@@ -44,12 +45,55 @@ class EditUsersForm(FlaskForm):
     
     to_save_button = SubmitField(_('Сохранить'), render_kw={"class": "button fl-button-field-user-edit", "type": "submit"})
     to_edit_phone_button = SubmitField(_('Добавить телефон'), render_kw={"class": "button fl-button-field-user-edit", "type": "button"})
-    to_edit_internet_account_button = SubmitField(_('Добавить соц.сеть'), render_kw={"class": "button fl-button-field-user-edit", "type": "submit"})
+    to_edit_internet_account_button = SubmitField(_('Добавить соц.сеть'), render_kw={"class": "button fl-button-field-user-edit", "type": "button"})
     to_delete_button = SubmitField(_('Удалить'), render_kw={"class": "button fl-button-field-user-edit", "type": "submit"})
     to_schedule_button = SubmitField(_('Записать'), render_kw={"class": "button fl-button-field-user-edit", "type": "button"})
 
     to_edit_button = SubmitField(_('Ред. пользователя'), render_kw={"class": "button fl-button-field-user-edit", "type": "button"})
     
+    def validate_email_field(self, email_field):
+        if self.email_field.data != None:
+            if self.email_field.data != "":
+                exists_email = User.query.filter(User.email == self.email_field.data).count()
+                this_email = User.query.filter(User.email == self.email_field.data).first()
+
+                if exists_email > 0 and str(this_email.id) != str(self.id_user.data):            
+                    raise ValidationError(_l('Эта почта зарегистрирована у другого пользователя.'))
+                
+                '''
+                ef get_address():
+    '''
+    проверка email по шаблону    
+    '''
+    pattern = compile('(^|\s)[-a-z0-9_.]+@([-a-z0-9]+\.)+[a-z]{2,6}(\s|$)')
+    address = input('inter you email address:')
+    is_valid = pattern.match(address)
+    if is_valid:
+        print('правильный email:', is_valid.group())
+        # объект is_valid содержит 3 метода
+        print('методы: start:', is_valid.start(), 'end:',\
+        is_valid.end(), 'group:', is_valid.group())
+    else:
+        print('неверный email! введите email...\n')
+
+
+get_address()
+'''
+ввел правильный email ya@yandex.ru
+вывод:
+inter you email address:ya@yandex.ru
+правильный email: ya@yandex.ru
+методы: start: 0 end: 12 group: ya@yandex.ru
+
+ввел неправильный email ya.ya.ru
+вывод:
+inter you email address:ya.ya.ru
+неверный email! введите email...
+'''
+
+
+
+                '''
 
 class RouterUserForm(FlaskForm):
     '''
@@ -77,17 +121,17 @@ class EditPhoneUserForm(FlaskForm):
     
     to_save_submit = SubmitField(_('Сохр.'), render_kw={"class": "button fl-button-field-user-edit", "type": "submit"})
 
-    def validate_number_phone(self, number_phone):       
+    def validate_number_phone(self, number_phone):
         exists_phone = UserPhones.query.filter(UserPhones.number == self.number_phone.data).count()
-        
+        this_phone = UserPhones.query.filter(UserPhones.number == self.number_phone.data).first()
         #str_number_phone = str(number_phone)
         
         
         if self.number_phone.data is None or self.number_phone.data == "":
             raise ValidationError(_l('Нужно ввести номер телефона.'))
 
-      #  if exists_phone > 0:            
-      #          raise ValidationError(_l('Этот номер уже зарегистрирован.'))
+        if exists_phone > 0 and str(this_phone.id) != str(self.id_phone_field.data):            
+            raise ValidationError(_l('Этот номер уже зарегистрирован.'))
 
         if len(self.number_phone.data) < 10:
             print('enter min')
@@ -115,9 +159,25 @@ class EditSocialForm(FlaskForm):
     '''
     Форма форма редактирования соцсети к пользователю из админки
     '''
-    id_social_field = StringField(_('Id_соц.записи'), validators=[DataRequired()], default=-1, render_kw={"class" : "visually-hidden"})
+    id_social_field = StringField(_('Id_соц.записи'),  default=-1, render_kw={"class" : "visually-hidden"})
     user_id_field =  StringField(_('Id_пользователя'), validators=[DataRequired()], default=-1, render_kw={"class" : "visually-hidden"})
     adress_social = StringField(_l('адрес соц. сети'), validators=[DataRequired(), URL(message=_('Неправильно набран адрес'))], render_kw={"class" : "fl-text-field-user-edit", "type": "text"})
-    to_save_button = SubmitField(_('Сохр.'), render_kw={"class": "button fl-button-field-user-edit", "type": "button"})
-    to_delete_button = SubmitField(_('Удал.'), render_kw={"class": "button fl-button-field-user-edit", "type": "button"})
+    to_black_list = SelectField(_('В черный список'), choices=[('0', _('Отключено')), ('1', _('Включено'))])
 
+    to_edit_button = SubmitField(_('Ред. соц.'), render_kw={"class": "button fl-button-field-user-edit", "type": "button"})
+
+    to_save_button = SubmitField(_('Изм.'), render_kw={"class": "button fl-button-field-user-edit", "type": "button"})
+    to_delete_button = SubmitField(_('Удал.'), render_kw={"class": "button fl-button-field-user-edit", "type": "button"})
+    to_cancel_button = SubmitField(_('Отм.'), render_kw={"class": "button fl-button-field-user-edit", "type": "button"})
+    
+    to_save_submit = SubmitField(_('Сохр.'), render_kw={"class": "button fl-button-field-user-edit", "type": "submit"})
+
+    def validate_adress_social(self, adress_social):       
+        exists_socials =  UserInternetAccount.query.filter(UserInternetAccount.adress_accaunt == self.adress_social.data).count()
+        this_social =  UserInternetAccount.query.filter(UserInternetAccount.adress_accaunt == self.adress_social.data).first()
+                
+        if self.adress_social.data is None or self.adress_social.data == "":
+            raise ValidationError(_l('Нужно ввести адрес соцсети.'))
+
+        if exists_socials > 0 and str(this_social.id) != str(self.adress_social.data):
+            raise ValidationError(_l('Этот адрес уже зарегистрирован.'))

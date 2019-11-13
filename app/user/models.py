@@ -86,8 +86,8 @@ class UserInternetAccount(db.Model):
     Класс описывает электронный аккаунт и связь с пользователем
     '''
     id = db.Column(db.Integer, primary_key=True)
-    adress_accaunt = db.Column(db.Integer, primary_key=True, index=True, unique=True, nullable=False)
-
+    adress_accaunt = db.Column(db.Integer, index=True, unique=True)
+    black_list = db.Column(db.Integer, default=0)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __repr__(self):

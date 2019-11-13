@@ -530,7 +530,6 @@ input[type="radio"].visually-hidden {
 }
 
 
-
 .user-navigation input {
     margin: 0 !important;
     width: 130px !important;
@@ -540,39 +539,98 @@ input[type="radio"].visually-hidden {
     background-color: rgba(255,110,210, 1);
 }
 
-@media (max-width:576px) {
-    .login-link .login-link-hide {
-        display: none;
+
+.right-align-li {
+    align-self: end !important;
+    margin-left: auto;
+    position: relative;
+    max-height: 40px;
+    
+}
+
+.navbar-my {
+    position: relative;
+    
+}
+
+.navbar-my ul {
+    min-width: 200px;
+    position: absolute;
+    top: 60px;
+    right: -40px;
+    display: block;
+    background-color: rgba(255,110,210, 0.95) !important;
+    z-index: 1;
+}
+
+.user-navigation .button {
+    margin: 0 15px 0 0 !important;
+    padding: 15px 10px 15px 50px !important;
+    height: auto;
+    background-color: transparent;
+    border: none;
+}
+    .user-navigation .button:hover,
+    .user-navigation .button:focus {
+        box-shadow: 0 0 20px 10px rgba(255, 0, 0, 0.05);
+        background-color: rgba(255, 0, 0, 0.05) !important;
+    }
+    @media (max-width:768px) {
+        .right-align-li {
+        align-self: start !important;
+        margin-left: 0px !important;
     }
 
-    .user-navigation-dropdown .login-link {
-        height: 70px;
-        width: 80px;
+    .navbar-my {
+        position: static;
+        background-color: transparent !important;
     }
 
-    .login-link::before {
-        top: 0px;
-        left: 0px;
-        background-image: url('images/user40.png');
-        width: 70px;
-        height: 70px;
-    }
-
-    .user-navigation .user-navigation-dropdown {
-        position: relative;
-    }
-
-    .user-navigation .dropdown-menu {
-        position: absolute;
-        top: 80px;
-        left: -100px;
+    .navbar-my ul {
+        position: static;
+        bottom: 0px;
+        right: 0px;
+        display: block;
     }
 }
 
 
 
+@media (max-width:576px) {
+    /*  .login-link .login-link-hide {
+        display: none;
+    }*/
+
+    .user-navigation-dropdown ul {
+        width: 100%;
+    }
+
+     .login-link::before {
+        top: 0px;
+        left: 0px;
+        background-image:none !important;
+        width: 40px;
+        height: 40px;
+    }
+
+    /*.user-navigation .user-navigation-dropdown {
+        position: relative;
+    }*/
+
+    /* .user-navigation .dropdown-menu {
+        position: absolute;
+        top: 80px;
+        left: -100px;
+        
+    } */
+
+}
+
+
 
 /*-----------внешний вид бара ---------------*/
+
+
 .navbar-light {
     margin: 0;
     padding: 0;
@@ -1603,7 +1661,6 @@ button.bg-light:hover {
 }
 
 
-
 .modal-show {
     display: block;
     animation-name: bounce;
@@ -1611,8 +1668,8 @@ button.bg-light:hover {
 }
 
 .dropdown-menu {
-    animation-name: bounce_login;
-    animation-duration: 0.1s;
+    /* animation-name: bounce_login;
+    animation-duration: 0.1s;*/
 }
 
 @keyframes bounce_login {
@@ -2046,15 +2103,15 @@ button.bg-light:hover {
     padding: 0 !important;
     list-style: none;
 }
-    .edit-user-container li {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        margin: 0 !important;
-        padding: 0 !important;
-        list-style: none;
-        border-bottom: 1px solid rgba(255,110,210, 0.3)
-    }
+.edit-user-container li {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin: 0 !important;
+    padding: 0 !important;
+    list-style: none;
+    border-bottom: 1px solid rgba(255,110,210, 0.3)
+}
 
 .phone-form-container {
     margin: 0 !important;
@@ -2069,3 +2126,10 @@ button.bg-light:hover {
     padding: 0 !important;
     font-size: 14px;
 }
+
+.edit-phone-container ul{
+    list-style: none;
+
+}
+
+

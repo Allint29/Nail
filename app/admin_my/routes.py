@@ -127,7 +127,7 @@ def edit_user_form(dic_val):
     edit_users_form.last_seen_field.data = u.last_seen if u and u.last_seen else datetime.utcnow()
 
     edit_users_form.type_connection_field.choices  = groups_list #[0,1,4,5]#conection_type.name_of_type if conection_type else 0
-    edit_users_form.type_connection_field.data = u.connection_type_id
+    edit_users_form.type_connection_field.data = u.connection_type_id if u else 0
 
     phones = UserPhones.query.filter(UserPhones.user_id==u.id).all() if u else []
     phone_forms = []
@@ -135,6 +135,7 @@ def edit_user_form(dic_val):
         phone_form = EditPhoneUserForm()
         phone_form.id_phone_field.data = p.id
         phone_form.number_phone.data = p.number
+        phone_form.to_black_list.data = p.black_list
         phone_forms.append(phone_form)
    
     socials = UserInternetAccount.query.filter(UserInternetAccount.user_id == u.id).all() if u else []
@@ -143,14 +144,21 @@ def edit_user_form(dic_val):
         soc_form = EditSocialForm()
         soc_form.id_social_field.data = s.id
         soc_form.adress_social.data = s.adress_accaunt
+        soc_form.to_black_list.data = s.black_list
         social_forms.append(soc_form)
 
     if request.method == "POST":
-        pass
+       # if edit_users_form.validate_on_submit():
+       #     pass
+
+        return render_template('admin_my/edit_user.html', edit_users_form = edit_users_form, phone_forms=None, social_forms=None, dic_val = dic_val)
+
     elif request.method == "GET":
         pass 
 
     return render_template('admin_my/edit_user.html', edit_users_form = edit_users_form, phone_forms=phone_forms, social_forms=social_forms, dic_val = dic_val)
+
+#Дейтсвия с телефоном пользователя
 
 @bp.route('/change_phone_<dic_val>_<id_phone>', methods=['GET', 'POST'])
 @admin_required
@@ -172,12 +180,6 @@ def edit_phone(dic_val, id_phone=-1):
     user = User.query.filter_by(id=client_id).first()
     
     if form.validate_on_submit():
-        #ищем дубликат номера у другого юзера по введенным данным
-        double_number_phone = UserPhones.query.filter_by(number = form.number_phone.data).first()
-        if double_number_phone and double_number_phone.user_id != number_for_edit.user_id:            
-            flash(_('Ошибка: Этот номер зарегистрирован у другого пользователя'))
-            return render_template('admin_my/edit_phone.html', form=form, dic_val=dic_val)
-
         if number_for_edit:
             #если номер существует
             number_for_edit.number = form.number_phone.data
@@ -230,10 +232,6 @@ def delete_phone(dic_val, id_phone=-1):
     except:
         id_phone = -1
 
-   # dic_val = parser_time_client_from_str(dic_val)
-   # time_date_id = dic_val['time_date_id']
-   # client_id = dic_val['client_id']
-
     phone_to_del = UserPhones.query.filter_by(id = id_phone).first()
     
     if phone_to_del:
@@ -243,3 +241,93 @@ def delete_phone(dic_val, id_phone=-1):
     else:
         return redirect(url_for('admin_my.edit_phone', dic_val = dic_val, id_phone=id_phone))
     
+#Дейтсвия с соцсетью пользователя
+
+@bp.route('/change_socials_<dic_val>_<id_socials>', methods=['GET', 'POST'])
+@admin_required
+def edit_socials(dic_val, id_socials=-1):
+    '''
+    Действие сохраняет изменения в телефоне пользователя
+    '''    
+    try:
+        id_socials = int(id_socials)
+    except:
+        id_socials = -1
+
+    dic_val = parser_time_client_from_str(dic_val)
+    time_date_id = dic_val['time_date_id']
+    client_id = dic_val['client_id']
+
+    form = EditSocialForm()
+    adress_for_edit = UserInternetAccount.query.filter_by(id = id_socials).first()
+    user = User.query.filter_by(id=client_id).first()
+
+    if form.validate_on_submit():
+        if adress_for_edit:
+            #если номер существует
+            adress_for_edit.adress_accaunt = form.adress_social.data
+            adress_for_edit.black_list = 0 if form.to_black_list.data == '0' else 1            
+            db.session.add(adress_for_edit)
+            db.session.commit();
+            flash(_('Адрес соцю сети изменен.'))
+        else:
+            #если не существует            
+            if user:                
+                #клиент есть - создаем для него новый телефон
+                adress_for_edit = UserInternetAccount()
+                
+                adress_for_edit.user_id = user.id
+                adress_for_edit.adress_accaunt = form.adress_social.data
+                adress_for_edit.black_list = 0
+
+                print('adress_for_edit.user_id:' , adress_for_edit.user_id, \
+                    'adress_for_edit.adress_accaunt: ' , adress_for_edit.adress_accaunt, \
+                    'adress_for_edit.black_list: ', adress_for_edit.black_list)
+                db.session.add(adress_for_edit)
+                db.session.commit();  
+                flash(_(f'Для пользователя {user.username} внесены изменения в адрес соц.сети: {form.adress_social.data}.'))
+            else:                
+                #нет клиента и нет номера - ошибка
+                flash(_('Ошибка: Отсутствует клиент для которого изменяются дпнные соцсети. Вернитесь и вберите клиента.'))
+
+    elif request.method =="GET":
+        #возвращаю данные по соц. сети
+        if adress_for_edit:
+            #редактирование имеющегося телефона - здесь не нужно знать ид пользователя     
+            form.id_social_field.data=adress_for_edit.id
+            form.user_id_field.data = adress_for_edit.user_id
+            form.to_black_list.data = '0' if adress_for_edit.black_list == 0 else '1'
+            form.adress_social.data = adress_for_edit.adress_accaunt 
+        else:
+            form.id_social_field.data='-1'
+            form.user_id_field.data = client_id if client_id>=0 else '-1'
+            form.to_black_list.data = 0
+            form.adress_social.data = ''
+
+    return render_template('admin_my/edit_socials.html', form=form, dic_val=dic_val)
+
+@bp.route('/delete_socials_<dic_val>_<id_socials>', methods=['GET', 'POST'])
+@admin_required
+def delete_socials(dic_val, id_socials=-1):
+    '''
+    Действие удаляет телефон перенаправляе на страницу поиска клиента 
+    '''    
+    try:
+        id_socials = int(id_socials)
+    except:
+        id_socials = -1
+            
+    socials_to_del = UserInternetAccount.query.filter_by(id = id_socials).first()
+    
+    if socials_to_del:
+        try:
+            db.session.delete(socials_to_del)
+            db.session.commit()
+        except:
+            flash(_(f'Ошибка: Удалить соц.сеть {socials_to_del.adress_accaunt} не удалось.'))
+            return redirect(url_for('admin_my.edit_socials', dic_val = dic_val, id_socials=id_socials))
+        flash(_(f'Удалена соц.сеть {socials_to_del.adress_accaunt}.'))
+        return redirect(url_for('admin_my.find_users', dic_val = dic_val))
+    else:
+        flash(_(f'Ошибка: Не выбрана соц. сеть для удаления.'))
+        return redirect(url_for('admin_my.edit_socials', dic_val = dic_val, id_socials=id_socials))
