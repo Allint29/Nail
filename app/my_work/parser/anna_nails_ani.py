@@ -40,10 +40,10 @@ def get_anna_nails_content():
     global locker
 
     if locker == 1:
-        print(f"От ворот поворот.Цикл закончен locker = {locker}")
+    #    print(f"От ворот поворот.Цикл закончен locker = {locker}")
         return False    
     locker = 1
-    print(f"Прорвались! locker = {locker}")
+    #   print(f"Прорвались! locker = {locker}")
     try:
 
         agent = WebAgent()

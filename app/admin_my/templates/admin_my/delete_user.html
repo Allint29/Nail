@@ -9,7 +9,7 @@
         <span>&#9830;</span>
         <a href="{{ url_for('admin_my.find_users', dic_val = {'time_date_id' : dic_val['time_date_id'] , 'client_id' : -1}) }}">{{_('Список пользователей')}}</a>
         <span>&#9830;</span>
-        <a>{{_('Редактор пользователя')}}</a>
+        <a>{{_('Удаление пользователя')}}</a>
     </p>
 </section>
 
@@ -27,49 +27,49 @@
                 </li>
                 <li>
                     {{edit_users_form.username_field.label}}
-                    {{edit_users_form.username_field}}
+                    {{edit_users_form.username_field.data}}
                     {% for error in edit_users_form.username_field.errors %}
                     <span style="color: red;">[{{ error }}]</span>
                     {% endfor %}
                 </li>
                 <li>
                     {{edit_users_form.about_me_field.label}}
-                    {{edit_users_form.about_me_field}}
+                    {{edit_users_form.about_me_field.data}}
                 </li>
                 <li>
                     {{edit_users_form.email_field.label}}
-                    {{edit_users_form.email_field}}
+                    {{edit_users_form.email_field.data}}
                     {% for error in edit_users_form.email_field.errors %}
                     <span style="color: red;">[{{ error }}]</span>
                     {% endfor %}
                 </li>
                 <li>
                     {{edit_users_form.email_confirmed_field.label}}
-                    {{edit_users_form.email_confirmed_field}}
+                    {{edit_users_form.email_confirmed_field.data}}
                 </li>
                 <li>
                     {{edit_users_form.registration_date_field.label}}
                     {%if edit_users_form.registration_date_field.data %}
-                    <div style="pointer-events: none">{{edit_users_form.registration_date_field}}</div>
+                    {{edit_users_form.registration_date_field.data.strftime('%d/%m/%Y %H:%M')}}
                     {%endif%}
                 </li>
                 <li>
                     {{edit_users_form.trying_to_enter_new_phone_field.label}}
-                    {{edit_users_form.trying_to_enter_new_phone_field}}
+                    {{edit_users_form.trying_to_enter_new_phone_field.data}}
                 </li>
                 <li>
                     {{edit_users_form.role_field.label}}
-                    {{edit_users_form.role_field}}
+                    {{edit_users_form.role_field.data}}
                 </li>
                 <li>
                     {{edit_users_form.last_seen_field.label}}
                     {% if edit_users_form.last_seen_field.data %}
-                    <div style="pointer-events: none">{{edit_users_form.last_seen_field}}</div>
+                    {{edit_users_form.last_seen_field.data.strftime('%d/%m/%Y %H:%M')}}
                     {%endif%}
                 </li>
                 <li>
                     {{edit_users_form.type_connection_field.label}}
-                    {{edit_users_form.type_connection_field}}
+                    {{edit_users_form.type_connection_field.data}}
                     {% for error in edit_users_form.type_connection_field.errors %}
                     <span style="color: red;">[{{ error }}]</span>
                     {% endfor %}
@@ -127,14 +127,9 @@
                 </li>
                 <hr />
                 <li>
+                    {{edit_users_form.to_delete_button}}
                     {%if edit_users_form.id_user.data %}
-                    <a href="{{url_for('admin_my.edit_phone', dic_val=dic_val, id_phone = -1)}}">{{edit_users_form.to_edit_phone_button}}</a>
-                    <a href="{{url_for('admin_my.edit_socials', dic_val=dic_val, id_socials = -1)}}">{{edit_users_form.to_edit_internet_account_button}}</a>
-                    <hr />
-                    {%endif%}
-                    {{edit_users_form.to_save_button}}
-                    {%if edit_users_form.id_user.data %}
-                    {{edit_users_form.to_schedule_button}}
+                    {{edit_users_form.to_edit_button}}
                     {%endif%}
                 </li>
 

@@ -117,11 +117,11 @@ class SMSC(object):
                                 )        
         
         if current_app.config['SMSC_DEBUG']:
-            print ('debug')
+          #  print ('debug')
             if m[1] > "0":
                 print("Стоимость рассылки: " + m[0] + ". Всего SMS: " + m[1])
             else:
-                print ('UNdebug')
+             #   print ('UNdebug')
                 print("Ошибка №" + m[1][1:])
 
         return m

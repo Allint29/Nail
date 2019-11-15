@@ -11,6 +11,8 @@ from app.user.models import User, UserPhones, ConnectionType, UserInternetAccoun
 from app.main_func.utils import parser_time_client_from_str
 from app.main_func import utils as main_utils
 
+from app.admin_my.utils import set_default_password_admin
+
 @bp.route('/', methods=['GET', 'POST'])
 @admin_required
 def admin_index():
@@ -75,8 +77,8 @@ def find_users(dic_val):
         edit_users_form.registration_date_field.data = u.registration_date if u.registration_date else datetime.utcnow()
         edit_users_form.trying_to_enter_new_phone_field.data = u.trying_to_enter_new_phone
         
-        edit_users_form.role_field.data = 'admin' if u.role == 'admin' else 'user'
-        
+        edit_users_form.role_field.data = 'admin' if u.role == 'admin' else 'user'    
+
         edit_users_form.last_seen_field.data = u.last_seen if u.last_seen else datetime.utcnow()
         edit_users_form.type_connection_field.data = conection_type.name_of_type  if conection_type else None
         
@@ -114,21 +116,12 @@ def edit_user_form(dic_val):
     con_types = ConnectionType.query.all()
     groups_list=[(i.id, i.name_of_type) for i in con_types]
 
-    edit_users_form.id_user.data = u.id if u else None
-    edit_users_form.username_field.data = u.username if u else None
-    edit_users_form.about_me_field.data =  u.about_me if u else None
-    edit_users_form.email_field.data = u.email if u else None
-    edit_users_form.email_confirmed_field.data = '0' if u and u.email_confirmed == 0 else '1' if u and u.email_confirmed == 1 else '0'         
-    edit_users_form.registration_date_field.data = u.registration_date if u and u.registration_date else datetime.utcnow()
-    edit_users_form.trying_to_enter_new_phone_field.data = u.trying_to_enter_new_phone if u else '15'
-    
-    edit_users_form.role_field.data = 'admin' if u and u.role == 'admin' else 'user' if u and u.role == 'user' else 'user'     
-    
-    edit_users_form.last_seen_field.data = u.last_seen if u and u.last_seen else datetime.utcnow()
-
+    #данные для вывода которые не завиясят от клиента и должны быть в форме
+    edit_users_form.id_user.data = u.id if u else None     
     edit_users_form.type_connection_field.choices  = groups_list #[0,1,4,5]#conection_type.name_of_type if conection_type else 0
-    edit_users_form.type_connection_field.data = u.connection_type_id if u else 0
-
+    if not u:
+        edit_users_form.trying_to_enter_new_phone_field.data = 15
+       
     phones = UserPhones.query.filter(UserPhones.user_id==u.id).all() if u else []
     phone_forms = []
     for p in phones:
@@ -145,16 +138,43 @@ def edit_user_form(dic_val):
         soc_form.id_social_field.data = s.id
         soc_form.adress_social.data = s.adress_accaunt
         soc_form.to_black_list.data = s.black_list
-        social_forms.append(soc_form)
+        social_forms.append(soc_form) 
 
     if request.method == "POST":
-       # if edit_users_form.validate_on_submit():
-       #     pass
+        if edit_users_form.validate_on_submit():
+            user_to_save = u if u else User()
+            user_to_save.username = edit_users_form.username_field.data
+            user_to_save.about_me = edit_users_form.about_me_field.data            
+            user_to_save.email = edit_users_form.email_field.data
+            user_to_save.email_confirmed = edit_users_form.email_confirmed_field.data
+            print(edit_users_form.registration_date_field.data)
+            user_to_save.registration_date = edit_users_form.registration_date_field.data
+            user_to_save.user_from_master = 1
+            user_to_save.trying_to_enter_new_phone = edit_users_form.trying_to_enter_new_phone_field.data
+            
+            if not user_to_save.password_hash or user_to_save.password_hash == "":
+                user_to_save.set_password(set_default_password_admin()[0])
 
-        return render_template('admin_my/edit_user.html', edit_users_form = edit_users_form, phone_forms=None, social_forms=None, dic_val = dic_val)
+            user_to_save.role = 'admin' if edit_users_form.role_field.data == 'admin' else 'user'
+            user_to_save.connection_type_id = edit_users_form.type_connection_field.data
+            user_to_save.last_seen = edit_users_form.last_seen_field.data
 
-    elif request.method == "GET":
-        pass 
+            db.session.add(user_to_save)
+            db.session.commit()         
+            #перенаправляю на форму с созданным клиентом
+            return redirect(url_for('admin_my.edit_user_form', dic_val= {'time_date_id' : dic_val['time_date_id'], 'client_id' : user_to_save.id }))
+
+    elif request.method == "GET":        
+     if u:
+        edit_users_form.role_field.data = 'admin' if u.role == 'admin' else 'user'
+        edit_users_form.email_field.data = u.email   
+        edit_users_form.email_confirmed_field.data = '0' if u.email_confirmed == 0 else '1'
+        edit_users_form.username_field.data = u.username
+        edit_users_form.about_me_field.data =  u.about_me        
+        edit_users_form.type_connection_field.data = u.connection_type_id
+        edit_users_form.registration_date_field.data = u.registration_date if u.registration_date != None else datetime.utcnow()
+        edit_users_form.last_seen_field.data = u.last_seen if u.last_seen !=None else datetime.utcnow()#.strftime('%d/%m/%Y %H:%M')
+        edit_users_form.trying_to_enter_new_phone_field.data = u.trying_to_enter_new_phone
 
     return render_template('admin_my/edit_user.html', edit_users_form = edit_users_form, phone_forms=phone_forms, social_forms=social_forms, dic_val = dic_val)
 
@@ -280,9 +300,9 @@ def edit_socials(dic_val, id_socials=-1):
                 adress_for_edit.adress_accaunt = form.adress_social.data
                 adress_for_edit.black_list = 0
 
-                print('adress_for_edit.user_id:' , adress_for_edit.user_id, \
-                    'adress_for_edit.adress_accaunt: ' , adress_for_edit.adress_accaunt, \
-                    'adress_for_edit.black_list: ', adress_for_edit.black_list)
+              #  print('adress_for_edit.user_id:' , adress_for_edit.user_id, \
+              #      'adress_for_edit.adress_accaunt: ' , adress_for_edit.adress_accaunt, \
+              #      'adress_for_edit.black_list: ', adress_for_edit.black_list)
                 db.session.add(adress_for_edit)
                 db.session.commit();  
                 flash(_(f'Для пользователя {user.username} внесены изменения в адрес соц.сети: {form.adress_social.data}.'))

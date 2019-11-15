@@ -144,7 +144,7 @@ def parser_time_client_from_str(dic_val):
     Функция преобразует строку из пост гет запроса словаря с ключами time_date_id , client_id в int,
     возвращает словарь с теми же ключами, но уже значения это числа, если преобразование прошло не удачно, то знаячения будут -1
     '''
-    print(dic_val)
+    #  print(dic_val)
     dic_val = json.loads(dic_val.replace("'", '"').replace("Undefined".lower(), '-1'))    
     
     try:

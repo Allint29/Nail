@@ -1,7 +1,7 @@
 ﻿# -*- coding: utf-8 -*-
 from app import db
 from app.main_func.smsc_api import SMSC
-from app.user.models import UserPhones, User
+from app.user.models import *
 from datetime import datetime, timedelta
 from flask import current_app, flash
 from flask_babel import _, get_locale
@@ -18,9 +18,12 @@ def create_default_user():
         db.session.add(user)
         db.session.commit()
 
+
 def set_default_password(user=None, number=None):
     '''
     Метод создает пароль для пользователя пароль по умолчанию
+    user - пользователь для которого создается пароль
+    number - номер телефона - который используется при регистрации пользователя
     '''
     try:
         if type(user) != str:
@@ -49,7 +52,7 @@ def set_default_password(user=None, number=None):
             num_char = random.randint(0, len_choice)
             default_password = default_password + chars_for_pass[num_char]
 
-        print(default_password)
+        #print(default_password)
         
         if default_password is None or default_password=="":
             return _('Пароль не был назначен. Ошибка в генерации паролей'), False
@@ -80,10 +83,10 @@ def save_password_by_phone_registration(user=None, password=None, password2=None
     try:
         if type(user) != str:
             user = user.username
-
     except:
         user = None
 
+    #для того чтобы обойти свойство required
     if password == "" or not password:
         password = " "
 
@@ -138,12 +141,13 @@ def cancel_user_phone(number_for_check, without_delete_user=1, user_str=None):
         db.session.delete(number_for_check)
         db.session.commit()
  
-    if user:
-        db.session.delete(user)
-        db.session.commit()
+    if without_delete_user == 0:
+       if user:
+           db.session.delete(user)
+           db.session.commit()
 
     if without_delete_user == 1:
-        return flash(_(f'Вы отменили подтверждение номер телефона.')) 
+        return flash(_(f'Вы отменили подтверждение номера телефона.')) 
     else:
         return flash(_(f'Вы отменили регистрацию по номеру телефона.')) 
 
@@ -228,11 +232,24 @@ def step_one_for_enter_phone(number_phone=None, current_user_id=None):
 
 
 def create_new_user_by_phone_registration(number_phone, user_name):
-     user = User(username=user_name, email=None, email_confirmed=0, role='user')
-     #user.set_password(form.password.data)
-     db.session.add(user)
-     db.session.commit()
-     return user.id
+     '''
+     Функция создает нового пользователя регистрируемого через телефон, нужны проверки телефона
+     '''
+     try:
+         number_phone = int(number_phone)
+     except:
+         number_phone = -1
+     if len(user_name) == 0:
+         return -1     
+     if number_phone >= 0:
+        type_connection = [t.id for t in ConnectionType.query.all() if str(t.name_of_type).lower() == "телефон"]
+        type_connection = 1 if len(type_connection) < 1 else type_connection[0]
+        user = User(username=user_name, email=None, email_confirmed=0, role='user', connection_type_id = type_connection, user_from_master = 0)
+        #user.set_password(form.password.data)
+        db.session.add(user)
+        db.session.commit()
+        return user.id
+     return -1
 
 
 def delete_non_comfirmed_phone():
@@ -241,11 +258,13 @@ def delete_non_comfirmed_phone():
     и если истек, то удаляет его из БД
     нужно для работы: db, datetime
     '''
-    phones_to_delete = UserPhones.query.filter(UserPhones.phone_checked == 0).filter(UserPhones.expire_date_hash <= datetime.utcnow()).all()
+    phones_to_delete = UserPhones.query.filter(UserPhones.phone_checked == 0 and UserPhones.user_from_master == 0).all()
     
-    for p in phones_to_delete:
-        db.session.delete(p)
-
+    p_to_del = [p.id for p in phones_to_delete \
+        if p.expire_date_hash <= datetime.utcnow()]
+    
+    deleted_objects_phones = UserPhones.__table__.delete().where(UserPhones.id.in_(p_to_del)) 
+    db.session.execute(deleted_objects_phones)
     db.session.commit()
 
 def delete_non_comfirmed_email():
@@ -257,17 +276,15 @@ def delete_non_comfirmed_email():
     for user in User.query.all():
         if user.expire_date_request_confirm_password != main_utils.min_date_for_calculation() \
             and user.expire_date_request_confirm_password <= datetime.utcnow() \
-            and user.email_confirmed == 0:
-
+            and user.email_confirmed == 0 \
+            and user.user_from_master == 0:
                 user.expire_date_request_confirm_password == main_utils.min_date_for_calculation()                
                 user.email_confirmed = 0
                 user.email = None       
 
-    for user in User.query.all():
         if user.expire_date_request_bufer_mail != main_utils.min_date_for_calculation() \
             and user.expire_date_request_bufer_mail <= datetime.utcnow() \
-            and user.email_confirmed == 0:
-                
+            and user.email_confirmed == 0:                
                 user.bufer_email = None
                 user.expire_date_request_bufer_mail = main_utils.min_date_for_calculation()
 
@@ -280,30 +297,44 @@ def delete_user_without_phone_and_confirm_email():
     или подтвержденный емайл после истечения некоторого времени с м
     омента внесения его в БД и если нет то удаляетего
     '''
-    #user_whithout_phones = 
-    list_id_users_with_phones = []
-    list_users_without_phones = User.query.all()
-    list_users_without_phones_and_confirm_emai = []
-    
-    for phone in UserPhones.query.all():
-        if not phone.user_id in list_id_users_with_phones:
-            list_id_users_with_phones.append(phone.user_id)
-
-    for id in list_id_users_with_phones:
-        for user in list_users_without_phones:
-            if id == user.id:
-                list_users_without_phones.remove(user)    
-    #если нет пользователей без телефонов то выходим из чистки юзеров
-    if len(list_users_without_phones) < 1:
-        return False
-    #если в списке пользователей без телефонов есть пользователи с 
-    #неподтвержденным адрресом электронной 
-    #почты и время регистрации превышает порог 
-    #жизни ссылки для одтвержленя удаляем этого пользователя, то 
-    for user in list_users_without_phones:
-        if user.email_confirmed == 0 and datetime.utcnow() > user.registration_date + timedelta(seconds=current_app.config['SECONDS_TO_CONFIRM_EMAIL']):
-            db.session.delete(user)
-    db.session.commit()
+    # Выбираю всех пользователей без подтвержденной почты и если дата подтверждения уже прошла    
+    u_out_conf_mail = User.query.filter(User.user_from_master == 0 and User.email_confirmed == 0).all() 
+    #во время выборки со сравнением даты и текущего времени нработает неправильно - зеркально
+    u_out_conf_mail = [ user.id for user in u_out_conf_mail if user.registration_date + timedelta(seconds=current_app.config['SECONDS_TO_CONFIRM_EMAIL']) < datetime.utcnow() ]
+    #выбрал id user
+    print(u_out_conf_mail)
+    #Выбираю все телефоны подтвержденные или с неистекшим сроком годности или подтвержденные
+    p_out_conf = [p.user_id for p in UserPhones.query.all() \
+        if p.user_id in u_out_conf_mail and p.expire_date_hash != main_utils.min_date_for_calculation() and p.expire_date_hash > datetime.utcnow() \
+        or p.user_id in u_out_conf_mail and (p.phone_checked > 0 or p.user_from_master > 0)]
+    #выбрал user_id у телефонов
+    print(p_out_conf)
+       
+    #удаляем юзеров из списка удаления если у него есть действующий телефон
+    id_to_del = [user_id for user_id in u_out_conf_mail if not user_id in p_out_conf]
+    print(id_to_del)
+    #удаляю из базы данных юзеров которые остались без подтверждения
+    #1)удаляю их телефоны
+    #2)удаляю их соцсети
+    #3)удаляю самих юзеров
+    t_to_del = [p.id for p in UserPhones.query.all() \
+        if p.user_id in id_to_del]
+    print(t_to_del)
+    s_to_del = [s.id for s in UserInternetAccount.query.all() \
+        if s.user_id in id_to_del]
+    print(s_to_del)
+    if len(t_to_del) > 0:
+        deleted_objects_phones = UserPhones.__table__.delete().where(UserPhones.id.in_(t_to_del)) 
+        db.session.execute(deleted_objects_phones)
+        db.session.commit()
+    if len(s_to_del) > 0:
+        deleted_objects_socials = UserInternetAccount.__table__.delete().where(UserInternetAccount.id.in_(s_to_del))
+        db.session.execute(deleted_objects_socials)
+        db.session.commit()   
+    if len(id_to_del) > 0:        
+        deleted_objects_user = User.__table__.delete().where(User.id.in_(id_to_del))
+        db.session.execute(deleted_objects_user)
+        db.session.commit()
 
 
 def confirm_number(code, phone_number):
@@ -315,19 +346,19 @@ def confirm_number(code, phone_number):
         return check_password_hash(phone_to_confirm.phone_hash_code, code)
 
 
-def add_phone(phone_checked, black_list=0,user_id=2, expire_date_hash = datetime.utcnow(), number=22948567, phone_hash_code=2354):
-    '''
-    функция проверяет не истек ли срок годности кода подтверждения телефона
-    и есл истек, то удаляет его из БД
-    нужно для работы: db, datetime
-    ''' 
-    phone = UserPhones(number=number,
-                       phone_hash_code = phone_hash_code,
-                       phone_checked=phone_checked,
-                       expire_date_hash=expire_date_hash,
-                       black_list = black_list,
-                       user_id=user_id,
-                       )
-
-    db.session.add(phone)
-    db.session.commit()
+#def add_phone(phone_checked, black_list=0,user_id=2, expire_date_hash = datetime.utcnow(), number=22948567, phone_hash_code=2354):
+#    '''
+#    функция проверяет не истек ли срок годности кода подтверждения телефона
+#    и есл истек, то удаляет его из БД
+#    нужно для работы: db, datetime
+#    ''' 
+#    phone = UserPhones(number=number,
+#                       phone_hash_code = phone_hash_code,
+#                       phone_checked=phone_checked,
+#                       expire_date_hash=expire_date_hash,
+#                       black_list = black_list,
+#                       user_id=user_id,
+#                       )
+#
+#    db.session.add(phone)
+#    db.session.commit()

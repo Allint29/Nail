@@ -36,7 +36,7 @@ class ConnectionType(db.Model):
     user = db.relationship('User', backref='connection_type', lazy='dynamic')
 
     def __repr__(self):
-        return '<Connection_type={}, id ={}, checked={}>'.format(self.id, self.name_of_type)
+        return '<Connection_type={}, id ={}>'.format(self.name_of_type, self.id, )
 
 
 
@@ -59,6 +59,11 @@ class UserPhones(db.Model):
     #телефон подтвержден
     phone_checked = db.Column(db.Integer, nullable=False, default=0)
     expire_date_hash = db.Column(db.DateTime, default=main_utils.min_date_for_calculation())
+    
+    #поле которое говорит о том зарегистрирован пользователь мастером или же 
+    #самостоятельно через почту или телефон по умолчанию = 0
+    user_from_master = db.Column(db.Integer, default=0)
+    
     black_list = db.Column(db.Integer, nullable=False, default=0)
     #максимальное количество попыток подтверждения номера телефона
     trying_to_enter_confirm_code = db.Column(db.Integer, default=3)
@@ -129,6 +134,10 @@ class User(UserMixin, db.Model):
     
     #дата регистрации пользователя
     registration_date = db.Column(db.DateTime, default=datetime.utcnow)
+
+    #поле которое говорит о том зарегистрирован пользователь мастером или же 
+    #самостоятельно через почту или телефон по умолчанию = 0
+    user_from_master = db.Column(db.Integer, default=0)
 
     #максимальное количество попыток зарегистрировать новый телефоны
     trying_to_enter_new_phone = db.Column(db.Integer, default=15)
@@ -282,6 +291,7 @@ class User(UserMixin, db.Model):
 
 @loginF.user_loader
 def load_user(id):
+   # print('Tere', id, '   ', type(id))
     return User.query.get(int(id))
 
 

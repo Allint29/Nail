@@ -88,7 +88,7 @@ def save_my_work(dictionary_of_my_works):
             #2019-04-27 19:36:33            
             date_p = datetime.strptime(item['date'], '%Y-%m-%d %H:%M:%S')
             #date_p == date_p.strftime('%Y-%m-%d %H:%M:%S') 
-            print("Зашел в блок добавления в базу")
+        #    print("Зашел в блок добавления в базу")
          
             my_work = MyWork(
                 id_site=item['id'], 

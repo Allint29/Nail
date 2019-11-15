@@ -22,7 +22,7 @@ from app.user.main import bp
 @bp.route('/translate', methods=['POST'])
 @login_required
 def translate_text():
-    print('!!!!!!!!!!!')
+    #print('!!!!!!!!!!!')
     return jsonify({'text': translate(request.form['text'],
                                       request.form['source_language'],
                                       request.form['dest_language'])})
@@ -263,7 +263,7 @@ def edit_profile_add_phone():
         #отмена подтверждения телефона
         elif form.phone_button_cancel.data:
             #удаляем номер из БД
-            cancel_user_phone(number_for_check)            
+            cancel_user_phone(number_for_check)           
             return redirect(url_for('main.edit_profile_add_phone'))
 
         #удаение введенного номера телефона
@@ -272,13 +272,11 @@ def edit_profile_add_phone():
             return redirect(url_for('main.edit_profile_add_phone'))
         
     elif request.method == 'GET':
-        delete_non_comfirmed_phone()  
-        
+        delete_non_comfirmed_phone()        
         if number_for_check:
             form.number_phone.data = number_for_check.number
         else:
             form.number_phone.data = ""
-
 
     return render_template('user/edit_profile/edit_profile_add_phone.html', title=_('Добавление номера телефона'), form=form, list_phones_user = list_phones_user, number_for_check = number_for_check)
 
@@ -298,8 +296,8 @@ def edit_profile_add_email(mail):
                 current_user.bufer_email = form.email.data
                 current_user.expire_date_request_bufer_mail = datetime.utcnow() + timedelta(seconds = current_app.config['SECONDS_TO_CONFIRM_EMAIL'])
                 db.session.commit()
-                print (form.email.data)
-                print (current_user)
+                #print (form.email.data)
+                #print (current_user)
                 send_mail_reset_email(current_user, form.email.data)
 
                 flash(_('Вам на почту выслано письмо со ссылкой для подтверждения регистрации.'))
@@ -334,7 +332,7 @@ def confirm_adding_email(token):
 
     if not user:
         print('Почта не подтверждена. Что-то пошло не так...')
-        flas(_('Почта не подтверждена. Что-то пошло не так...'))
+        flash(_('Почта не подтверждена. Что-то пошло не так...'))
         return redirect(url_for('main.index'))
 
     form = CreateNewEmailCongratulation()    
@@ -345,7 +343,7 @@ def confirm_adding_email(token):
         user.set_confirm_email_true()      
         db.session.commit()
         flash(flash_user_register)
-        print('Зарегили')
+        #print('Зарегили')
         return redirect(url_for('main.edit_profile'))
 
     return render_template('user/edit_profile/edit_profile_new_email_congratulation.html', title=titleVar, form=form)

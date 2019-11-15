@@ -24,7 +24,7 @@ def send_sms(phones, text, total_price=1):
     }
     # Отправка запроса
     url = "http://smsc.ru/sys/send.php?login=%s&psw=%s&phones=%s&mes=%s&cost=%d&sender=%s&fmt=3" % (login, password, phones, text, total_price, sender)
-    print(url)
+    #print(url)
     answer = json.loads(urllib.request.urlopen(url).read())
     if 'error_code' in answer:
         # Возникла ошибка

@@ -7,7 +7,7 @@ from app import db
 from app.main_func import utils as main_utils
 from app.user import bp
 from app.user.forms import LoginForm, RegistrationRequestForm, RegistrationByPhoneForm, RegistrationByPhoneConfirmForm, RegistrationMainForm, RegistrationForm, ResetPasswordRequestForm, ResetPasswordForm, RegistrationByPhoneNewPasswordForm, ResetPasswordByPhoneRequestForm, ResetPasswordMainForm
-from app.user.models import User, UserPhones
+from app.user.models import *
 from app.user.myemail import send_password_reset_email, send_new_registration_email
 from app.user.utils import delete_non_comfirmed_phone, step_one_for_enter_phone, \
                             step_two_for_enter_phone, cancel_user_phone, create_new_user_by_phone_registration, \
@@ -35,17 +35,17 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user is None or not user.check_password(form.password.data) or user.password_hash is None or user.password_hash == "":
-            print("Неправильный логин или пароль")
+            #print("Неправильный логин или пароль")
             flash(flash_uncheck)
             return redirect(url_for('user.login'))
         login_user(user, remember=form.remember_me.data)
         flash(flash_check)
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
-            print("Нет некста")
+            #print("Нет некста")
             next_page = url_for('main.index')
         return redirect(next_page)
-        print("Загрузил страницу")
+        #print("Загрузил страницу")
     return render_template('user/login.html', title=titleVar, form_login=form)
 
 @bp.route('/logout')
@@ -85,14 +85,14 @@ def registration_by_phone_send():
     
     if form.validate_on_submit():
 
-        print("method validate post")
+        #print("method validate post")
         user_id = create_new_user_by_phone_registration(number,user)
         step_one_for_enter_phone(number, user_id)
         
         return redirect(url_for('user.registration_by_phone_confirm', data={'number': number, 'user':user}))
 
     elif request.method == 'GET':
-        print("method get")
+        #print("method get")
         delete_non_comfirmed_phone()          
         form.username_for_phone.data = user
         form.number_phone.data = number
@@ -183,8 +183,11 @@ def register_request():
         return redirect(url_for('main.index'))        
 
     form_mail = RegistrationRequestForm()
-    if form_mail.validate_on_submit():
-        user = User(username=form_mail.username.data, email=form_mail.email.data, email_confirmed=0, role='user')
+
+    if form_mail.validate_on_submit():      
+        type_connection = [t.id for t in ConnectionType.query.all() if str(t.name_of_type).lower() == "почта"]
+        type_connection = 1 if len(type_connection) < 1 else type_connection[0]
+        user = User(username=form_mail.username.data, email=form_mail.email.data, email_confirmed=0, role='user', connection_type_id = type_connection, user_from_master = 0)
         #user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
