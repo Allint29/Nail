@@ -2,7 +2,9 @@
 <div class="container container-posts">
     <div class="container-posts-image" style="width: 70px">
         <a href="{{ url_for('main.user', username=post.author.username) }}">
+            {%if post.author %}
             <img src="{{ post.author.avatar(70) }}" />
+            {%endif%}
         </a>
     </div>
     <div class="container-posts-body">

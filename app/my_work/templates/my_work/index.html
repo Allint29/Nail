@@ -5,9 +5,9 @@
 <h1 class="visually-hidden">Мастер ногтевого сервиса Nail-Master-Krd. Работы и отзывы.</h1>
 
 <section class="site-map">
-    <p> <a href="{{ url_for('welcome.index') }}">Главная страница</a><span>&#9830;</span><a >Портфолио</a></p>
+    <p> <a href="{{ url_for('welcome.index') }}">Главная страница</a><span>&#9830;</span><a>Портфолио</a></p>
 </section>
-
+{% include "pagination.html"%}
 <section class="content-section">
     {% for item in comment_forms_list %}
     <ul class="content-picture">
@@ -76,7 +76,7 @@
 
 </section>
 
-    {% include "pagination.html"%}
+
 
 
 

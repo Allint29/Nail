@@ -5,77 +5,156 @@
 {% block app_content  %}
 <h1 class="visually-hidden">Администратор расписания</h1>
 <section class="site-map">
-    <p> <a href="{{ url_for('welcome.index') }}">Главная страница</a><span>&#9830;</span><a>Записать клиента</a></p>
+    <p> <a href="{{ url_for('welcome.index') }}">{{_('Главная страница')}}</a><span>&#9830;</span><a href="{{ url_for('admin_my.admin_index') }}">{{_('Администрация')}}</a><span>&#9830;</span><a>{{_('Записать клиента')}}</a></p>
 </section>
 <section class="schedule-master-details-container">
-    <form action="" method="post" >
-    {{form.hidden_tag()}}
+    <form action="" method="post">
+        {% for error in form.errors %}
+      <span style="color: red;">[{{ error }}]</span>
+      {% endfor %}
+        {{form.hidden_tag()}}
         <ul>
             <li>
                 {{form.id_time.label}}
+                <div class="visually-hidden">{{form.id_time}}</div>
                 {{form.id_time.data}}
+
+            </li>
+            <li>
+                {% for error in form.id_time.errors %}
+                <span style="color: red;">{{ error }}</span>
+                {% endfor %}
             </li>
             <li>
                 {{form.name_time.label}}
+                <div class="visually-hidden">{{form.name_time}}</div>
                 {{form.name_time.data}}
+            </li>
+            <li>
+                {% for error in form.name_time.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
             </li>
             <hr />
             <li>
                 {{form.client_id_field.label}}
+                <div class="visually-hidden">{{form.client_id_field}}</div>
                 {{form.client_id_field.data}}
+            </li>
+            <li>
+                {% for error in form.client_id_field.errors %}
+                <span style="color: red;">{{ error }}</span>
+                {% endfor %}
             </li>
             <li>
                 {{form.client_field.label}}
                 <!--здесь если клиент еще не выбран то кнопка выбора иначе имя-->
+                <div class="visually-hidden">{{form.client_field}}</div>
                 {{form.client_field.data}}
-                <a href="{{url_for('admin_my.find_users', dic_val={'time_date_id' : time_date_id , 'client_id' : client_id})}}">{{form.take_client_button}}</a>
+                <a href="{{url_for('admin_my.find_users', dic_val={'time_date_id' : dic_val['time_date_id'] , 'client_id' : dic_val['client_id']})}}">{{form.take_client_button}}</a>
+            </li>
+            <li>
+                {% for error in form.client_field.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
             </li>
             <hr />
             <li>
                 {{form.adress_client_field.label}}
-                {{form.adress_client_field.data}}
+                {{form.adress_client_field}}
+            </li>
+            <li>
+                {% for error in form.adress_client_field.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
             </li>
             <li>
                 {{form.phone_client_field.label}}
-                {{form.phone_client_field.data}}
+                {{form.phone_client_field}}
+            </li>
+            <li>
+                {% for error in form.phone_client_field.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
             </li>
             <li>
                 {{form.email_client_field.label}}
-                {{form.email_client_field.data}}
+                {{form.email_client_field}}
+            </li>
+            <li>
+                {% for error in form.email_client_field.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
             </li>
             <li>
                 {{form.type_connection_field.label}}
+                <div class="visually-hidden">{{form.type_connection_field}}</div>
                 {{form.type_connection_field.data}}
+            </li>
+            <li>
+                {% for error in form.type_connection_field.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
             </li>
             <hr />
             <li>
                 {{form.work_type_field.label}}
                 {{form.work_type_field}}
             </li>
+            <li>
+                {% for error in form.work_type_field.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </li>
             <hr />
             <li>
                 {{form.price_field.label}}
                 {{form.price_field}}
+            </li>
+            <li>
+                {% for error in form.price_field.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
             </li>
             <hr />
             <li>
                 {{form.node_field.label}}
                 {{form.node_field}}
             </li>
+            <li>
+                {% for error in form.node_field.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </li>
             <hr />
             <li>
                 {{form.time_empty_field.label}}
                 {{form.time_empty_field}}
+            </li>
+            <li>
+                {% for error in form.time_empty_field.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
             </li>
             <hr />
             <li>
                 {{form.reserve_time_for_client_field.label}}
                 {{form.reserve_time_for_client_field}}
             </li>
+            <li>
+                {% for error in form.reserve_time_for_client_field.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </li>
             <hr />
             <li>
                 {{form.client_come.label}}
                 {{form.client_come}}
+            </li>
+            <li>
+                {% for error in form.client_come.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
             </li>
             <hr />
             <li>
@@ -87,20 +166,8 @@
             </li>
 
         </ul>
-
-
-
     </form>
-
-
-
-
-
-
-
-
-
-</section>
+    </section>
 
 
 {% endblock %}

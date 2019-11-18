@@ -63,7 +63,10 @@ class ScheduleOfDay(db.Model):
 
     #тип связи
     connection_type=db.Column(db.Integer, default=0)
-    
+    #тип связи строка
+    connection_type_str=db.Column(db.String, default='телефон')
+
+
     #поле говорит о том пришел ли клиент
     client_come_in = db.Column(db.Integer, default=0)
 
@@ -71,7 +74,7 @@ class ScheduleOfDay(db.Model):
     is_empty = db.Column(db.Integer, default=1)
     
     #связь с таблицей зарегистрированных пользователей (жестко не привязана)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user_id = db.Column(db.Integer, default=-1)
     
     #связь с таблицей даты
     date_table_id = db.Column(db.Integer, db.ForeignKey('date_table.id'))

@@ -2,6 +2,7 @@
 from app import db
 from app.main_func.smsc_api import SMSC
 from app.user.models import *
+from app.my_work.models import *
 from datetime import datetime, timedelta
 from flask import current_app, flash
 from flask_babel import _, get_locale
@@ -298,31 +299,40 @@ def delete_user_without_phone_and_confirm_email():
     омента внесения его в БД и если нет то удаляетего
     '''
     # Выбираю всех пользователей без подтвержденной почты и если дата подтверждения уже прошла    
-    u_out_conf_mail = User.query.filter(User.user_from_master == 0 and User.email_confirmed == 0).all() 
+    u_out_conf_mail = [u for u in User.query.all() if u.user_from_master == 0 and u.email_confirmed == 0] 
     #во время выборки со сравнением даты и текущего времени нработает неправильно - зеркально
-    u_out_conf_mail = [ user.id for user in u_out_conf_mail if user.registration_date + timedelta(seconds=current_app.config['SECONDS_TO_CONFIRM_EMAIL']) < datetime.utcnow() ]
+    #здесь вычитаю из юзеров которых нужно удалить тех у кого не истек еще срок подтверждения почты
+    u_out_conf_mail = [ user.id for user in u_out_conf_mail if user.registration_date + timedelta(seconds=current_app.config['SECONDS_TO_CONFIRM_EMAIL']) < datetime.utcnow()] #
     #выбрал id user
-    print(u_out_conf_mail)
+    print(f'СПИСОК НА УДАЛЕНИЕ ПОЛЬЗОВАТЕЛЕЙ: {u_out_conf_mail}')
     #Выбираю все телефоны подтвержденные или с неистекшим сроком годности или подтвержденные
     p_out_conf = [p.user_id for p in UserPhones.query.all() \
         if p.user_id in u_out_conf_mail and p.expire_date_hash != main_utils.min_date_for_calculation() and p.expire_date_hash > datetime.utcnow() \
         or p.user_id in u_out_conf_mail and (p.phone_checked > 0 or p.user_from_master > 0)]
     #выбрал user_id у телефонов
-    print(p_out_conf)
+    print(f'СПИСОК ИД ПОЛЬЗОВАТЕЛЕЙ ПОДТВЕРЖДЕННЫХ: {p_out_conf}')
        
     #удаляем юзеров из списка удаления если у него есть действующий телефон
     id_to_del = [user_id for user_id in u_out_conf_mail if not user_id in p_out_conf]
-    print(id_to_del)
+    print(f'СПИСОК ИД ПОЛЬЗОВАТЕЛЕЙ КОТОРЫЕ СЕЙЧАС УДАЛЯЮ: {id_to_del}')
     #удаляю из базы данных юзеров которые остались без подтверждения
     #1)удаляю их телефоны
     #2)удаляю их соцсети
     #3)удаляю самих юзеров
     t_to_del = [p.id for p in UserPhones.query.all() \
         if p.user_id in id_to_del]
-    print(t_to_del)
+    #print(t_to_del)
     s_to_del = [s.id for s in UserInternetAccount.query.all() \
         if s.user_id in id_to_del]
-    print(s_to_del)
+    #print(s_to_del)
+    
+    post_to_del = [post.id for post in Post.query.all() \
+        if post.user_id in id_to_del]
+
+    if len(post_to_del) >0:
+        deleted_objects_posts = Post.__table__.delete().where(Post.id.in_(post_to_del)) 
+        db.session.execute(deleted_objects_posts)
+        db.session.commit()
     if len(t_to_del) > 0:
         deleted_objects_phones = UserPhones.__table__.delete().where(UserPhones.id.in_(t_to_del)) 
         db.session.execute(deleted_objects_phones)

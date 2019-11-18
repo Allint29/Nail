@@ -1,11 +1,13 @@
 ﻿#R11для проверки подленности ссылки на перенаправления
 from urllib.parse import urlparse, urljoin;
-from flask import request, url_for;
+from flask import request, url_for, flash
 from datetime import datetime, timedelta, date
 from app.master_schedule.models import DateTable, ScheduleOfDay
+from app.user.models import User, UserPhones, UserInternetAccount
 from app import db
 from app.main_func import utils as main_utils
 from app.master_schedule.forms import TimeForm
+from flask_babel import Babel, _, lazy_gettext as _l
 
 def delete_all_days_in_schedule():
     '''
@@ -160,13 +162,11 @@ def create_query_time_one_day():
         db.session.add(time_to_add)
     db.session.commit()
         
-
-
+    
 def take_empty_time_in_shedule(begin_date=None, end_date=None, to_back=None):
     '''
     Функция берет список с временем расписания и возвращает словарь с маркировкой времени расписания - занято, свободно, свободно с ограничениями
     '''    
-
     if begin_date == None and end_date == None:
         begin_date = datetime.now()
         end_date = datetime.now()
@@ -254,6 +254,7 @@ def reserve_time_shedue(id_shedule_time):
     clear_time_shedue(id_shedule_time)
     time_to_reserve = ScheduleOfDay.query.filter(ScheduleOfDay.id == id_shedule_time).first()    
     time_to_reserve.is_empty=0
+    db.session.add(time_to_reserve)
     db.session.commit() 
 
 def clear_time_shedue(id_shedule_time):
@@ -269,8 +270,131 @@ def clear_time_shedue(id_shedule_time):
     time_to_reserve.adress_of_client = 'неизвестно'.lower()
     time_to_reserve.note = 'примечание'.lower()
     time_to_reserve.connection_type = 0
+    time_to_reserve.conection_type_str = 'неизвестно'
     time_to_reserve.client_come_in = 0
-    time_to_reserve.is_empty=1
-    time_to_reserve.user_id = None          
+    time_to_reserve.is_empty = 1
+    time_to_reserve.user_id = -1        
+    db.session.add(time_to_reserve)
     db.session.commit()  
 
+def reserve_time_for_client(dict_of_form):
+    '''
+    Функция записывает в базу данных клиента на определенное время,
+    при выборе занять несколько часов - проверяет свободно ли время - 
+    и если свободно - то занимает его за этим клиентом,
+    иначе выводит сообщение что времени не хватает, при удачной записи в БД возвращает True
+    dict_of_form = {
+    'user_id': client_id,
+    'time_date_id' : time_date_id,
+    'work_type' : form_change.work_type_field.data,
+    'cost': form_change.price_field.data,
+    'name_of_client': form_change.client_field.data,
+    'mail_of_client': form_change.email_client_field.data,
+    'phone_of_client': form_change.phone_client_field.data,
+    'adress_of_client': form_change.adress_client_field.data,
+    'note': form_change.node_field.data,
+    'connection_type': form_change.type_connection_field.data,
+    'client_come_in': form_change.client_come.data,
+    'is_empty': form_change.time_empty_field.data,
+    'hours_to_reserve': 'one'
+                    }
+    '''
+    try:
+        dict_of_form = dict(dict_of_form)
+    except:
+        dict_of_form = None
+
+    print('Данные после передачей в блок записи: _____', dict_of_form)
+
+    
+
+    try:
+        user_id = int(dict_of_form['user_id'])
+    except:
+        user_id = -1
+    try:
+        time_date_id = int(dict_of_form['time_date_id'])
+    except:
+        time_date_id = -1
+                     
+    if user_id < 0:
+        flash(_('Ошибка: Не выбран клиент для внесения его в расписание. Ошибка в блоке записи расписания.'))
+        return False
+  
+    if time_date_id < 0:
+        flash(_('Ошибка: Не выбрано время для для записи клиента. Ошибка в блоке записи расписания.'))
+        return False
+  
+    s_time = ScheduleOfDay.query.filter_by(id=time_date_id).first()
+    if s_time == None:
+        flash(_('Ошибка: При определении времени для записи в расписание. Обратитесь в администрацию. Ошибка в блоке записи расписания.'))
+        return False
+  
+    s_user = User.query.filter_by(id=user_id).first()
+    if s_user == None:
+        flash(_('Ошибка: При определении клиента для записи в расписание. Обратитесь в администрацию. Ошибка в блоке записи расписания.'))
+        return False
+
+    #если все данные корректны записываю данные в таблицу расписания s_time
+    #print('Данные для записи: _____', s_time, s_user)
+    s_time_to_reserve = []    
+    if dict_of_form['hours_to_reserve'] == 'two':
+        s_time_to_reserve = [t for t in ScheduleOfDay.query.all() \
+            if t.begin_time_of_day > s_time.begin_time_of_day \
+            and t.begin_time_of_day < s_time.begin_time_of_day + timedelta(seconds=5400)]
+    elif dict_of_form['hours_to_reserve'] == 'three':
+        #print(f"i am hear {s_time_to_reserve}")
+        s_time_to_reserve = [t for t in ScheduleOfDay.query.all() \
+            if t.begin_time_of_day > s_time.begin_time_of_day \
+            and t.begin_time_of_day < s_time.begin_time_of_day + timedelta(seconds=9000)]
+        #print(f"i am hear {s_time_to_reserve}")
+    if len(s_time_to_reserve) > 0:
+            for t in s_time_to_reserve:
+                if t.is_empty == 0:
+                    flash(_('Ошибка: Время которое Вы дополнительно резервируете для клиента занято. Уменьшите время для резерва.'))
+        
+                    return False
+
+
+    s_time.work_type = \
+        'маникюр' if dict_of_form['work_type'] == 'man' else \
+        'педикюр' if dict_of_form['work_type'] == 'ped' else \
+        'ман+пед' if dict_of_form['work_type'] == 'man_ped' else \
+        'другое' if dict_of_form['work_type'] == 'some' else 'другое'
+    s_time.cost = dict_of_form['cost']
+    s_time.name_of_client = dict_of_form['name_of_client']
+    s_time.mail_of_client = dict_of_form['mail_of_client']
+
+    s_time.phone_of_client = dict_of_form['phone_of_client']
+    s_time.adress_of_client = dict_of_form['adress_of_client']
+    s_time.note = dict_of_form['note']
+
+    s_time.connection_type_str = dict_of_form['connection_type']
+    
+    try:
+        s_time.client_come_in = int(dict_of_form['client_come_in'])
+    except:
+        s_time.client_come_in = 0
+    
+    s_time.is_empty = 0
+    s_time.user_id = s_user.id
+
+    try:
+        db.session.add(s_time)
+        db.session.commit()
+    except:
+        flash(_('Ошибка: При записи в базу данных. Обратитесь в администрацию. Ошибка в блоке записи расписания.'))
+        return False
+
+
+    try:
+        if len(s_time_to_reserve) > 0:
+            for t in s_time_to_reserve:
+                t.is_empty = 0
+                db.session.add(t)
+            db.session.commit()
+    except:
+        flash(_('Ошибка: При резервировании дополнительного времени при записи в базу данных. Обратитесь в администрацию. Ошибка в блоке записи расписания.'))
+        return True
+    flash(_(f'Время для клиента {s_user.username} зарезервировано успешно.'))        
+    return True

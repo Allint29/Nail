@@ -12,7 +12,7 @@ import random
 @bp.route('/news')
 def index():
     news_list = News.query.filter(News.text.isnot("")).filter(News.text.isnot(None)).order_by(News.published.desc()) #.all()
-    work_list = MyWork.query.order_by(MyWork.published.desc()).all()
+   # work_list = MyWork.query.order_by(MyWork.published.desc()).all()
 
     page = request.args.get('page')
     if page and page.isdigit():
@@ -20,8 +20,8 @@ def index():
     else:
         page = 1
 
-    last_pict = random.randint(5, len(work_list))
-    work_list = work_list[last_pict-5 : last_pict]
+    #last_pict = random.randint(5, len(work_list))
+    #work_list = work_list[last_pict-5 : last_pict]
 
     pages_new = news_list.paginate(page=page, per_page=3)   
 
@@ -29,7 +29,7 @@ def index():
     prev_url = url_for('news.index', page=pages_new.prev_num) if pages_new.has_prev else None
 
 
-    return render_template("news/index.html", news_list=news_list, work_list=work_list, pages=pages_new, next_url=next_url, prev_url=prev_url)
+    return render_template("news/index.html", pages=pages_new, next_url=next_url, prev_url=prev_url)
 
 #после мы по этому номеру ищем в Id новости саму новость
 @bp.route('/<int:news_id>')

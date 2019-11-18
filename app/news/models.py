@@ -1,11 +1,11 @@
 ﻿from datetime import datetime
 from app import db
-from app.user.models import SearchableMixin
+#from app.user.models import SearchableMixin
 from app.main_func.search import add_to_index, remove_from_index, query_index
 from sqlalchemy.orm import relationship
 
-class News(SearchableMixin, db.Model):
-    __searchable__ = ['title']
+class News(db.Model):#(SearchableMixin, db.Model):
+    #__searchable__ = ['title']
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String, nullable=False)
     url = db.Column(db.String, unique=True, nullable=False)

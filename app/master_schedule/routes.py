@@ -1,16 +1,14 @@
 ﻿from app import db
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for, flash
 from datetime import datetime, timedelta, time, date
 from app.master_schedule import bp
 from app.decorators.decorators import admin_required
 from flask_babel import Babel, _, lazy_gettext as _l
-from app.master_schedule.forms import ScheduleTimeToShow, ScheduleMaster, TimeForm,ScheduleTimeToShowMaster
+from app.master_schedule.forms import ScheduleTimeToShow, ScheduleMaster, TimeForm, ScheduleTimeToShowMaster
 from app.user import models as user_models #User, UserPhones, ConnectionType
 from app.master_schedule.models import DateTable, ScheduleOfDay
-from app.master_schedule.utils import take_empty_time_in_shedule, clear_time_shedue, reserve_time_shedue
+from app.master_schedule.utils import take_empty_time_in_shedule, clear_time_shedue, reserve_time_shedue, reserve_time_for_client
 from app.main_func.utils import parser_time_client_from_str
-
-
 
 @bp.route('/', methods=['GET', 'POST'])
 @admin_required
@@ -61,11 +59,15 @@ def show_schedule():
 
 date_to_show = None
 @bp.route('/show_schedule_master_<dic_val>', methods=['GET', 'POST'])
-def show_schedule_master(dic_val):    
+def show_schedule_master(dic_val):
     '''
     Представление общего расписания для мастера, где есть элементы управления со временем - детали, освободить, занять 
     '''
-    dic_val = parser_time_client_from_str(dic_val)    
+    try:
+        dic_val = parser_time_client_from_str(dic_val)
+    except:
+        dic_val = {'time_date_id' : -1, 'client_id' : -1}
+ 
     time_date_id = dic_val['time_date_id']
     client_id = dic_val['client_id']
 
@@ -90,7 +92,7 @@ def show_schedule_master(dic_val):
                 clear_time_shedue(form_time.id_time.data)
             if form_time.change_button.data:
                 #здесь изменяем данные времени записи
-                return redirect(url_for('master_schedule.show_schedule_master_details', dic_val = {'time_date_id' : form_time.id_time.data, 'client_id' : -1}))
+                return redirect(url_for('master_schedule.show_schedule_master_details', dic_val = {'time_date_id' : form_time.id_time.data, 'client_id' : client_id}))
 
             if not date_to_show:
                 date_to_show=datetime.now()
@@ -111,37 +113,71 @@ def show_schedule_master_details(dic_val):
     '''
     Маршрут к странице детализации расписания мастера на день. Здесь вводим информацию о клиенте и работе
     '''
-    dic_val = parser_time_client_from_str(dic_val)    
+    try:
+        dic_val = parser_time_client_from_str(dic_val)
+    except:
+        dic_val = {'time_date_id' : -1, 'client_id' : -1}
+
     time_date_id = dic_val['time_date_id']
     client_id = dic_val['client_id']
         
-    form_change=ScheduleMaster()
-    
+    form_change=ScheduleMaster()    
 
     if form_change.cancel_field.data:
         #раз отменяю выбор времени обнуляю его счетчик, но клиента оставляю
         return redirect(url_for('master_schedule.show_schedule_master', dic_val = {'time_date_id' : -1 , 'client_id' : client_id}))
 
-    if request.method == "POST":
-        if form_change.submit.data:
-            #блок сохранения в расписании,  так же нужно обнулить индексы клиента и расписания
-            pass
-        if form_change.clear_field:
-            #здесь очищаю форму, ,  так же нужно обнулить индексы клиента и расписания
-            clear_time_shedue(time_date_id)
-            return redirect(url_for('master_schedule.show_schedule_master', dic_val = {'time_date_id' : -1 , 'client_id' : -1}))
 
-    if request.method == "GET":
+
+    if request.method == "POST":
+        if form_change.validate_on_submit():
+            if form_change.submit.data:
+                #блок сохранения в расписании,  так же нужно обнулить индексы клиента и расписания
+                dict_of_form = {
+                    'user_id': client_id,
+                    'time_date_id' : time_date_id,
+                    'work_type' : form_change.work_type_field.data,
+                    'cost': form_change.price_field.data,
+                    'name_of_client': form_change.client_field.data,
+                    'mail_of_client': form_change.email_client_field.data,
+                    'phone_of_client': form_change.phone_client_field.data,
+                    'adress_of_client': form_change.adress_client_field.data,
+                    'note': form_change.node_field.data,
+                    'connection_type': form_change.type_connection_field.data,
+                    'client_come_in': form_change.client_come.data,
+                    'is_empty': form_change.time_empty_field.data,
+                    'hours_to_reserve': form_change.reserve_time_for_client_field.data
+                    }
+                print('Данные перед передачей в блок записи: _____', dict_of_form)
+                reserve_time_for_client(dict_of_form)
+                return redirect(url_for('master_schedule.show_schedule_master', dic_val=dic_val))
+           
+
+            if form_change.clear_field:
+                #здесь очищаю форму, ,  так же нужно обнулить индексы клиента и расписания
+                clear_time_shedue(time_date_id)
+                return redirect(url_for('master_schedule.show_schedule_master', dic_val = {'time_date_id' : -1 , 'client_id' : -1}))
+
+    elif request.method == "GET":
         #TODO сделать поле связанное с типом связи с клиентом\
         time_to_details=ScheduleOfDay.query.filter_by(id=time_date_id).first()
+        if time_to_details == None:
+            flash(_('Ошибка: Время для записи клиента в расписание не выбрано.'))
+            return redirect(url_for('master_schedule.show_schedule_master', dic_val = {'time_date_id' : -1 , 'client_id' : client_id}))
+        
+        form_change.id_time.data= time_to_details.id #if time_to_details == None else time_to_details.id
+        form_change.name_time.data = time_to_details.begin_time_of_day.strftime('%d/%m/%Y %H:%M')
+        
+        account_user=None
+        phone_user=None
+        connect_type=None
+
         user = user_models.User.query.filter_by(id = client_id).first()
-        account_user = user_models.UserInternetAccount.query.filter(user_models.UserInternetAccount.user_id == client_id).first() if user else None
-        phone_user = user_models.UserPhones.query.filter(user_models.UserPhones.user_id == client_id).first() if user else None
-        connect_type = user_models.ConnectionType.query.filter_by(id = user.connection_type_id).first() if user else None
-
-        form_change.id_time.data= time_date_id if time_to_details == None else time_to_details.id
-        form_change.name_time.data= _('Время не выбрано') if time_to_details == None else time_to_details.begin_time_of_day.strftime('%d/%m/%Y %H:%M')
-
+        if user:
+            account_user = user_models.UserInternetAccount.query.filter(user_models.UserInternetAccount.user_id == client_id).first()
+            phone_user = user_models.UserPhones.query.filter(user_models.UserPhones.user_id == client_id).first()
+            connect_type = user_models.ConnectionType.query.filter_by(id = user.connection_type_id).first()
+                                   
         form_change.client_id_field.data = time_to_details.name_of_client if user == None else user.id
         form_change.client_field.data = time_to_details.name_of_client if user == None else user.username
         form_change.adress_client_field.data = time_to_details.adress_of_client if account_user == None else account_user.adress_accaunt
@@ -156,7 +192,10 @@ def show_schedule_master_details(dic_val):
         form_change.time_empty_field.data = "0" if time_to_details.is_empty == 0 else "1"        
         form_change.price_field.data = 0 if time_to_details.cost <= 0 else time_to_details.cost if time_to_details.cost > 0 else 0       
         form_change.node_field.data = time_to_details.note
-        form_change.client_come.data = time_to_details.client_come_in
+        form_change.client_come.data = \
+            "0" if time_to_details.client_come_in == 0 else \
+            "1" if time_to_details.client_come_in == 1 else \
+            "2" if time_to_details.client_come_in == 2 else "0"
 
-    return render_template('master_schedule/shedule_details.html', form=form_change, time_date_id = time_date_id, client_id = client_id)
+    return render_template('master_schedule/shedule_details.html', form=form_change, dic_val ={'time_date_id': time_date_id, 'client_id':client_id} )
 

@@ -7,45 +7,25 @@ from app.my_work.parser.utils import is_reklam, save_my_work, get_html
 import json
 from app import db
 from instagram import Account, Media, WebAgent, WebAgentAccount, Story, Location, Tag, Comment
+#import threads
+#locker=0
 
-
-locker = 0
-#def get_anna_nails_content():
-#    #R9 is_ позволяет сделать сравнение на идентичность с эталонным параметром
-#    work_without_text = MyWork.query.filter(MyWork.content.is_(None));
-#    work_with_space_text = MyWork.query.filter(MyWork.content == "")
-#
-#        #R9 после запроса заголовков по новостям мы в цикле перебираем все и не делаем сто запросов на один сайт
-#    for work in work_without_text:        
-#        html = get_html(work.url);
-#        #если html не пустая то иниц beautifulsoup - для расвознования текста на страничке
-#        if html:
-#   #         #укажем парсер
-#            soup = BeautifulSoup(html, "html.parser");
-#           # print(soup)
-#            #break
-#   #         #берем текст новости далее- но текст - это не красиво поэтому нужно взять формат html
-#            #news_text = soup.find('div', class_="b-pure-content b-pure-content_type_detail  b-story__section j-story-content js-mediator-article").decode_contents();
-#            
-#   #      #   #если текст получен, то мы берем его и сохраняем
-#          #  if soup:
-#          #      work.content = soup;
-#          #      db.session.add(work);                
-#          #      db.session.commit();
-#          #
 def get_anna_nails_content():
     '''
     func come in instagramm of human and take from it photos and comments to them
     '''
-    global locker
-
-    if locker == 1:
-    #    print(f"От ворот поворот.Цикл закончен locker = {locker}")
-        return False    
-    locker = 1
-    #   print(f"Прорвались! locker = {locker}")
+    #global locker
+#   #
+    #if locker == 1:
+    #     return False   
+   
+    #locker = BoundedSemaphore(value=1) 
+    #with locker:
+        
     try:
 
+
+        locker = 1
         agent = WebAgent()
         account = Account("anna_nails_ani")
 
@@ -62,8 +42,6 @@ def get_anna_nails_content():
         if date_to_stop_search:
              date_to_stop_search = date_to_stop_search.published - timedelta(days=14) 
 
-        #print(date_to_stop_search)
-        #print(type(date_to_stop_search))
         #создаем агента на считывание с аккаунта данных по контенту
         media=agent.get_media(account, count=count_download_photos)
 
@@ -83,7 +61,7 @@ def get_anna_nails_content():
                       count_photo = count_photo + 1
                       #если достигли определенной даты после которй не нужно загружать больше не ищем                      
                       if date_to_stop_search and photo_date <= date_to_stop_search:
-                          print('Достигли максимальной даты поиска')
+                         # print('Достигли максимальной даты поиска')
                           break
                       photo_date = photo_date.strftime('%Y-%m-%d %H:%M:%S') 
                      # print(f'{type(date_to_stop_search)}' + '!!!!!!!' + f'{type(photo_date)}')
@@ -103,18 +81,20 @@ def get_anna_nails_content():
                       
                       item = {'id' : f'{m.id}', 'caption' : f'{m.caption}', 'code' : f'{m.code}', 'date' : photo_date, 'url' : f'{m.display_url}', 'owner' : f'{m.owner}', 'likes' : f'{m.likes_count}', 'comments' : comments_for_photo}
                       photos.append(item)
-              
-    except(TypeError):
-        print("Error: Type None!")
+        
+    except Exception as e:
+        print(f"Error: Type None! {e}")
     except(AttributeError):
         print("Atribute Error!")
 
+    locker=0
+
     try:
         save_my_work(photos)
-    except:
-        print("Ошибка: sqlalchemy.exc.IntegrityError: (sqlite3.IntegrityError) UNIQUE constraint failed: my_work.url")
-    locker=0
-    print(f"Цикл закончен locker = {locker}")
+    except Exception as e:
+        print(f"Ошибка!!!!!!!: {e}")
+    
+#    print(f"Цикл закончен locker = {locker}")
 
     #print(type(photos) == list)    
 

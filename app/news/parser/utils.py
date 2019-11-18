@@ -16,7 +16,7 @@ def get_html(url):
         result = requests.get(url, headers=headers)
         result.raise_for_status()
         return result.text
-    except(requests.RequestExeption, ValueError):
+    except(requests.exceptions.RequestExeption, ValueError):
         print('Сетевая ошибка')
         return False
 

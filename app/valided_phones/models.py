@@ -4,10 +4,10 @@ from sqlalchemy.orm import relationship
 
 class RussianMobilOperator(db.Model):
    id = db.Column(db.Integer, primary_key=True)
-   Operator = db.Column(db.String, nullable=False)
-   Count = db.Column(db.String, nullable=False)
-   Count_parse = db.Column(db.Integer, nullable=True)
-   Note = db.Column(db.Text, nullable=True)
+   Operator = db.Column(db.String)
+   Count = db.Column(db.String)
+   Count_parse = db.Column(db.Integer)
+   Note = db.Column(db.Text)
 
    code_zone = db.relationship('CodeZone', backref='russian_mobil_operator', lazy='dynamic')
 
@@ -19,10 +19,10 @@ class RussianMobilOperator(db.Model):
    
 class CodeZone(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    Code = db.Column(db.Integer, nullable=False)
-    ZoneText = db.Column(db.String, nullable=True)
-    Count = db.Column(db.String, nullable=False)
-    Count_parse = db.Column(db.Integer, nullable=True)
+    Code = db.Column(db.Integer)
+    ZoneText = db.Column(db.String)
+    Count = db.Column(db.String)
+    Count_parse = db.Column(db.Integer)
 
     RussianMobilOperator_id = db.Column(db.Integer, db.ForeignKey('russian_mobil_operator.id'))
     

@@ -9,7 +9,7 @@ import jwt
 from app import db, loginF
 from app.main_func import utils as main_utils
 from wtforms import validators #validators import DataRequired, Length
-from app.master_schedule.models import ScheduleOfDay
+
 #from wtforms import StringField, TextAreaField, SubmitField, BooleanField
 from sqlalchemy.orm import relationship
 
@@ -35,6 +35,8 @@ class ConnectionType(db.Model):
 
     user = db.relationship('User', backref='connection_type', lazy='dynamic')
 
+
+
     def __repr__(self):
         return '<Connection_type={}, id ={}>'.format(self.name_of_type, self.id, )
 
@@ -52,7 +54,7 @@ class UserPhones(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
     #номер телефона пользователя
-    number = db.Column(db.Integer, nullable=False)
+    number = db.Column(db.Integer)
     #хеш для подтверждения телефона пользователя удаляется при новом подтверждении телефона
     #логика - создается код из цифр и отсылается пользователю и записывается хеш этих цифр в БД, после проверяетя как пароль
     phone_hash_code = db.Column(db.String(128))  
@@ -64,7 +66,7 @@ class UserPhones(db.Model):
     #самостоятельно через почту или телефон по умолчанию = 0
     user_from_master = db.Column(db.Integer, default=0)
     
-    black_list = db.Column(db.Integer, nullable=False, default=0)
+    black_list = db.Column(db.Integer, default=0)
     #максимальное количество попыток подтверждения номера телефона
     trying_to_enter_confirm_code = db.Column(db.Integer, default=3)
 
@@ -91,7 +93,7 @@ class UserInternetAccount(db.Model):
     Класс описывает электронный аккаунт и связь с пользователем
     '''
     id = db.Column(db.Integer, primary_key=True)
-    adress_accaunt = db.Column(db.Integer, index=True, unique=True)
+    adress_accaunt = db.Column(db.Integer, unique=True)
     black_list = db.Column(db.Integer, default=0)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
@@ -120,11 +122,11 @@ class User(UserMixin, db.Model):
     '''
     id = db.Column(db.Integer, primary_key=True)
     
-    username = db.Column(db.String(64), index=True, unique=True)
+    username = db.Column(db.String(64), unique=True)
     about_me = db.Column(db.String(140))
 
     email = db.Column(db.String(120))
-    email_confirmed = db.Column(db.Integer)
+    email_confirmed = db.Column(db.Integer, default = 0)
     expire_date_request_confirm_password = db.Column(db.DateTime, default=main_utils.min_date_for_calculation())
 
     
@@ -155,7 +157,8 @@ class User(UserMixin, db.Model):
     internet_accaunts = db.relationship('UserInternetAccount', backref='user', lazy='dynamic')
 
     #обратная ссылка из таблицы расписания для связи зарегистрированного пользователя и времени записи на прием
-    date_of_schedules = db.relationship('ScheduleOfDay', backref='user', lazy='dynamic')
+   # date_of_schedules = db.relationship('ScheduleOfDay', backref='user', lazy='dynamic')
+    
     posts = db.relationship('Post', backref='author', lazy='dynamic')
 
     followed = db.relationship(
@@ -295,107 +298,107 @@ def load_user(id):
     return User.query.get(int(id))
 
 
-class SearchableMixin(object):
-    '''
-    Для поддержки поиска - класс SearchableMixin, который при подключении к модели 
-    даст ему возможность автоматически управлять полнотекстовым индексом, связанным 
-    с моделью SQLAlchemy. Класс mixin будет выступать в качестве "связующего" слоя 
-    между мирами SQLAlchemy и Elasticsearch 
-    '''
-    @classmethod
-    #classmethod- это тоже самое что static в c#
-    def search(cls, expression, page, per_page):
-        '''
-        Функция search() возвращает запрос, 
-        который заменяет список идентификаторов, 
-        а также передает общее количество результатов 
-        поиска в качестве второго возвращаемого значения.
-        '''
-        #здесь cls - тоже что и self чтобы было ясно, что этот метод получает в
-        # качестве первого аргумента класс, а не экземпляр.
-        #Метод класса search() обертывает функцию query_index() из app/search.py 
-        #заменяя список идентификаторов объектов на фактические объекты.
-        ids, total = query_index(cls.__tablename__, expression, page, per_page)
-        #переопределяю переменную на определение нашедшихся данных ксли возвращается словарь
-        # то беру поле словаря, если число само число
-        #почему-то в разных вариантах ведет себя по разному
-        totalVal = 50
-      
-        if type(total) is not int:
-            totalVal = total['value']
-        elif type(total) is int:
-            totalVal = total
-        
-        if totalVal == 0:
-            return cls.query.filter_by(id=0), 0
-        when = []
-        for i in range(len(ids)):
-            when.append((ids[i], i))
-        return cls.query.filter(cls.id.in_(ids)).order_by(
-            db.case(when, value=cls.id)), totalVal
-
-    @classmethod
-    def before_commit(cls, session):
-        '''
-        Обработчик before полезен, потому что сеанс еще не был зафиксирован, 
-        поэтому я могу глянув на него выяснить, какие объекты будут добавлены, 
-        изменены и удалены, доступны как session.new session.dirty 
-        и session.deleted соответственно.
-        Я использую session._changes словарь для записи этих объектов в месте,
-        которое переживет все фиксации сеанса, потому что, как только сеанс пофиксится 
-        я буду использовать их для обновления индекса Elasticsearch.
-        '''
-        session._changes = {
-            'add': list(session.new),
-            'update': list(session.dirty),
-            'delete': list(session.deleted)
-        }
-
-    @classmethod
-    def after_commit(cls, session):
-        '''
-        Вызов обработчика after_commit() означает, что сеанс успешно завершен, 
-        поэтому сейчас самое время внести изменения на стороне Elasticsearch.
-        Объект сеанса имеет переменную _changes, которую я добавил в before_commit(), 
-        поэтому теперь я могу перебирать добавленные, измененные и удаленные объекты и 
-        выполнять соответствующие вызовы для функций индексирования в app/search.py.
-        '''
-        for obj in session._changes['add']:
-            if isinstance(obj, SearchableMixin):
-                add_to_index(obj.__tablename__, obj)
-        for obj in session._changes['update']:
-            if isinstance(obj, SearchableMixin):
-                add_to_index(obj.__tablename__, obj)
-        for obj in session._changes['delete']:
-            if isinstance(obj, SearchableMixin):
-                remove_from_index(obj.__tablename__, obj)
-        session._changes = None
-
-    @classmethod
-    def reindex(cls):
-        '''
-        Метод класса reindex() — это простой вспомогательный метод, 
-        который можно использовать для обновления индекса со всеми 
-        данными из реляционной стороны. Вы видели, как я делал что-то 
-        подобное из сеанса оболочки Python выше, чтобы выполнить начальную 
-        загрузку всех сообщений в тестовый индекс. Используя этот метод, 
-        я могу опубликовать Post.reindex(), чтобы добавить все записи в базу 
-        данных в индекс поиска (search index).        '''
-
-        for obj in cls.query:
-            add_to_index(cls.__tablename__, obj)
-
-#Обратите внимание, что вызовы db.event.listen() не входят в класс, а следуют после него. 
-#Они устанавливают обработчики событий, которые вызывают before и after для каждой фиксации. 
-#Теперь модель Post автоматически поддерживает индекс полнотекстового поиска для сообщений.
+#class SearchableMixin(object):
+#    '''
+#    Для поддержки поиска - класс SearchableMixin, который при подключении к модели 
+#    даст ему возможность автоматически управлять полнотекстовым индексом, связанным 
+#    с моделью SQLAlchemy. Класс mixin будет выступать в качестве "связующего" слоя 
+#    между мирами SQLAlchemy и Elasticsearch 
+#    '''
+#    @classmethod
+#    #classmethod- это тоже самое что static в c#
+#    def search(cls, expression, page, per_page):
+#        '''
+#        Функция search() возвращает запрос, 
+#        который заменяет список идентификаторов, 
+#        а также передает общее количество результатов 
+#        поиска в качестве второго возвращаемого значения.
+#        '''
+#        #здесь cls - тоже что и self чтобы было ясно, что этот метод получает в
+#        # качестве первого аргумента класс, а не экземпляр.
+#        #Метод класса search() обертывает функцию query_index() из app/search.py 
+#        #заменяя список идентификаторов объектов на фактические объекты.
+#        ids, total = query_index(cls.__tablename__, expression, page, per_page)
+#        #переопределяю переменную на определение нашедшихся данных ксли возвращается словарь
+#        # то беру поле словаря, если число само число
+#        #почему-то в разных вариантах ведет себя по разному
+#        totalVal = 50
+#      
+#        if type(total) is not int:
+#            totalVal = total['value']
+#        elif type(total) is int:
+#            totalVal = total
+#        
+#        if totalVal == 0:
+#            return cls.query.filter_by(id=0), 0
+#        when = []
+#        for i in range(len(ids)):
+#            when.append((ids[i], i))
+#        return cls.query.filter(cls.id.in_(ids)).order_by(
+#            db.case(when, value=cls.id)), totalVal
 #
-#Чтобы включить класс SearchableMixin в модель Post, я должен добавить его в качестве подкласса, 
-#и мне также необходимо подключить befor и after события фиксации:
+#    @classmethod
+#    def before_commit(cls, session):
+#        '''
+#        Обработчик before полезен, потому что сеанс еще не был зафиксирован, 
+#        поэтому я могу глянув на него выяснить, какие объекты будут добавлены, 
+#        изменены и удалены, доступны как session.new session.dirty 
+#        и session.deleted соответственно.
+#        Я использую session._changes словарь для записи этих объектов в месте,
+#        которое переживет все фиксации сеанса, потому что, как только сеанс пофиксится 
+#        я буду использовать их для обновления индекса Elasticsearch.
+#        '''
+#        session._changes = {
+#            'add': list(session.new),
+#            'update': list(session.dirty),
+#            'delete': list(session.deleted)
+#        }
+#
+#    @classmethod
+#    def after_commit(cls, session):
+#        '''
+#        Вызов обработчика after_commit() означает, что сеанс успешно завершен, 
+#        поэтому сейчас самое время внести изменения на стороне Elasticsearch.
+#        Объект сеанса имеет переменную _changes, которую я добавил в before_commit(), 
+#        поэтому теперь я могу перебирать добавленные, измененные и удаленные объекты и 
+#        выполнять соответствующие вызовы для функций индексирования в app/search.py.
+#        '''
+#        for obj in session._changes['add']:
+#            if isinstance(obj, SearchableMixin):
+#                add_to_index(obj.__tablename__, obj)
+#        for obj in session._changes['update']:
+#            if isinstance(obj, SearchableMixin):
+#                add_to_index(obj.__tablename__, obj)
+#        for obj in session._changes['delete']:
+#            if isinstance(obj, SearchableMixin):
+#                remove_from_index(obj.__tablename__, obj)
+#        session._changes = None
+#
+#    @classmethod
+#    def reindex(cls):
+#        '''
+#        Метод класса reindex() — это простой вспомогательный метод, 
+#        который можно использовать для обновления индекса со всеми 
+#        данными из реляционной стороны. Вы видели, как я делал что-то 
+#        подобное из сеанса оболочки Python выше, чтобы выполнить начальную 
+#        загрузку всех сообщений в тестовый индекс. Используя этот метод, 
+#        я могу опубликовать Post.reindex(), чтобы добавить все записи в базу 
+#        данных в индекс поиска (search index).        '''
+#
+#        for obj in cls.query:
+#            add_to_index(cls.__tablename__, obj)
+#
+##Обратите внимание, что вызовы db.event.listen() не входят в класс, а следуют после него. 
+##Они устанавливают обработчики событий, которые вызывают before и after для каждой фиксации. 
+##Теперь модель Post автоматически поддерживает индекс полнотекстового поиска для сообщений.
+##
+##Чтобы включить класс SearchableMixin в модель Post, я должен добавить его в качестве подкласса, 
+##и мне также необходимо подключить befor и after события фиксации:
+#
+#db.event.listen(db.session, 'before_commit', SearchableMixin.before_commit)
+#db.event.listen(db.session, 'after_commit', SearchableMixin.after_commit)
 
-db.event.listen(db.session, 'before_commit', SearchableMixin.before_commit)
-db.event.listen(db.session, 'after_commit', SearchableMixin.after_commit)
-
-class Post(SearchableMixin, db.Model):
+class Post(db.Model):#(SearchableMixin, db.Model):
     '''
     class of users posts
     id - 
@@ -403,13 +406,16 @@ class Post(SearchableMixin, db.Model):
     timestamp -
     user_id - 
     '''
-    __searchable__ = ['body']
+ #   __searchable__ = ['body']
 
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.String(140))
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     language = db.Column(db.String(5))
 
     def __repr__(self):
         return '<Post {}>'.format(self.body)
+
+    #добавил вхождение данного модуля сюда так как образуется зацикливание при импортах блоков
+    from app.master_schedule.models import ScheduleOfDay

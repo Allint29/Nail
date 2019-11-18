@@ -11,7 +11,7 @@ from app.user.models import User, UserPhones, ConnectionType, UserInternetAccoun
 from app.main_func.utils import parser_time_client_from_str
 from app.main_func import utils as main_utils
 
-from app.admin_my.utils import set_default_password_admin
+from app.admin_my.utils import set_default_password_admin, user_delete_admin
 
 @bp.route('/', methods=['GET', 'POST'])
 @admin_required
@@ -41,12 +41,14 @@ def find_users(dic_val):
     list_edit_users_form = []
     find_form = RouterUserForm()
     users = []
-
-    dic_val = parser_time_client_from_str(dic_val)    
-    time_date_id = dic_val['time_date_id']
-    client_id = dic_val['client_id']
-
     
+    try:
+        dic_val = parser_time_client_from_str(dic_val)
+    except:
+        dic_val = {'time_date_id' : -1, 'client_id' : -1}
+
+    time_date_id = dic_val['time_date_id']
+    client_id = dic_val['client_id']    
 
     if request.method == "POST":
         if find_form.validate_on_submit():
@@ -104,8 +106,12 @@ def find_users(dic_val):
 def edit_user_form(dic_val):
     '''
     Маршрут создания или редактирования пользователя
-    '''    
-    dic_val = parser_time_client_from_str(dic_val)
+    '''   
+    try:
+        dic_val = parser_time_client_from_str(dic_val)
+    except:
+        dic_val = {'time_date_id' : -1, 'client_id' : -1}
+
     time_date_id = dic_val['time_date_id']
     client_id = dic_val['client_id']
 
@@ -148,7 +154,8 @@ def edit_user_form(dic_val):
             user_to_save.email = edit_users_form.email_field.data
             user_to_save.email_confirmed = edit_users_form.email_confirmed_field.data
             print(edit_users_form.registration_date_field.data)
-            user_to_save.registration_date = edit_users_form.registration_date_field.data
+            if edit_users_form.id_user.data == None or edit_users_form.id_user.data =="":
+                user_to_save.registration_date =  datetime.utcnow()#edit_users_form.registration_date_field.data
             user_to_save.user_from_master = 1
             user_to_save.trying_to_enter_new_phone = edit_users_form.trying_to_enter_new_phone_field.data
             
@@ -178,6 +185,66 @@ def edit_user_form(dic_val):
 
     return render_template('admin_my/edit_user.html', edit_users_form = edit_users_form, phone_forms=phone_forms, social_forms=social_forms, dic_val = dic_val)
 
+@bp.route('/delete_users_form_<dic_val>', methods=['GET', 'POST'])
+@admin_required
+def delete_user_form(dic_val):
+    try:
+        dic_val = parser_time_client_from_str(dic_val)
+    except:
+        dic_val = {'time_date_id' : -1, 'client_id' : -1}
+    
+    client_id = int(dic_val['client_id'])
+    
+    u = User.query.filter_by(id = client_id).first()
+
+    if u == None:
+        flash=_('Ошибка: Пользователь для удаления отсутствует.')
+        return redirect(url_for('admin_my.find_users', dic_val={'time_date_id' : -1, 'client_id' : -1}))
+
+    edit_users_form = EditUsersForm()
+    conection_type = ConnectionType.query.filter(ConnectionType.id == u.connection_type_id).first() if u else None
+    con_types = ConnectionType.query.all()
+    groups_list=[(i.id, i.name_of_type) for i in con_types]
+
+    if request.method == "POST":
+        #Для удаления пользователя нужно удалить телефоны, соцсети, индексы юзера в расписании переделать на -1
+        user_delete_admin(u.id)
+        return redirect(url_for('admin_my.find_users', dic_val ={'time_date_id' : -1 , 'client_id' : -1}))
+        
+    elif request.method == "GET":
+        edit_users_form.id_user.data = u.id
+        edit_users_form.type_connection_field.choices = groups_list
+
+        phones = UserPhones.query.filter(UserPhones.user_id==u.id).all() if u else []
+        phone_forms = []
+        for p in phones:
+            phone_form = EditPhoneUserForm()
+            phone_form.id_phone_field.data = p.id
+            phone_form.number_phone.data = p.number
+            phone_form.to_black_list.data = p.black_list
+            phone_forms.append(phone_form)
+   
+        socials = UserInternetAccount.query.filter(UserInternetAccount.user_id == u.id).all() if u else []
+        social_forms =[]
+        for s in socials:
+            soc_form = EditSocialForm()
+            soc_form.id_social_field.data = s.id
+            soc_form.adress_social.data = s.adress_accaunt
+            soc_form.to_black_list.data = s.black_list
+            social_forms.append(soc_form) 
+
+        edit_users_form.role_field.data = 'admin' if u.role == 'admin' else 'user'
+        edit_users_form.email_field.data = u.email   
+        edit_users_form.email_confirmed_field.data = '0' if u.email_confirmed == 0 else '1'
+        edit_users_form.username_field.data = u.username
+        edit_users_form.about_me_field.data =  u.about_me        
+        edit_users_form.type_connection_field.data = u.connection_type_id
+        edit_users_form.registration_date_field.data = u.registration_date if u.registration_date != None else datetime.utcnow()
+        edit_users_form.last_seen_field.data = u.last_seen if u.last_seen !=None else datetime.utcnow()#.strftime('%d/%m/%Y %H:%M')
+        edit_users_form.trying_to_enter_new_phone_field.data = u.trying_to_enter_new_phone
+                             
+    return render_template('admin_my/delete_user.html', edit_users_form = edit_users_form, phone_forms=phone_forms, social_forms=social_forms, dic_val = dic_val)
+
 #Дейтсвия с телефоном пользователя
 
 @bp.route('/change_phone_<dic_val>_<id_phone>', methods=['GET', 'POST'])
@@ -191,7 +258,12 @@ def edit_phone(dic_val, id_phone=-1):
     except:
         id_phone = -1
 
-    dic_val = parser_time_client_from_str(dic_val)
+    try:
+        dic_val = parser_time_client_from_str(dic_val)
+    except:
+        dic_val = {'time_date_id' : -1, 'client_id' : -1}
+
+
     time_date_id = dic_val['time_date_id']
     client_id = dic_val['client_id']
 
@@ -207,6 +279,7 @@ def edit_phone(dic_val, id_phone=-1):
             db.session.add(number_for_edit)
             db.session.commit();
             flash(_('Номер изменен.'))
+            return redirect(url_for('admin_my.edit_user_form', dic_val = dic_val))
         else:
             #если не существует            
             if user:                
@@ -219,9 +292,11 @@ def edit_phone(dic_val, id_phone=-1):
                 db.session.add(number_for_edit)
                 db.session.commit();  
                 flash(_(f'Для пользователя {user.username} добавлен новый номер телефона: {form.number_phone.data}.'))
+                return redirect(url_for('admin_my.edit_user_form', dic_val = dic_val))
             else:                
                 #нет клиента и нет номера - ошибка
                 flash(_('Ошибка: Отсутствует клиент для которого добавляется новый телефон. Вернитесь и вберите клиента.'))
+                return redirect(url_for('admin_my.edit_user_form', dic_val = dic_val))
 
     elif request.method == 'GET':
         #возвращаю данные по телефону
@@ -236,8 +311,6 @@ def edit_phone(dic_val, id_phone=-1):
             form.user_id_field.data = client_id if client_id>=0 else '-1'
             form.to_black_list.data = 0
             form.number_phone.data = ''
-
-
     return render_template('admin_my/edit_phone.html', form=form, dic_val=dic_val)
   
 
@@ -274,7 +347,11 @@ def edit_socials(dic_val, id_socials=-1):
     except:
         id_socials = -1
 
-    dic_val = parser_time_client_from_str(dic_val)
+    try:
+        dic_val = parser_time_client_from_str(dic_val)
+    except:
+        dic_val = {'time_date_id' : -1, 'client_id' : -1}
+
     time_date_id = dic_val['time_date_id']
     client_id = dic_val['client_id']
 
@@ -290,6 +367,7 @@ def edit_socials(dic_val, id_socials=-1):
             db.session.add(adress_for_edit)
             db.session.commit();
             flash(_('Адрес соцю сети изменен.'))
+            return redirect(url_for('admin_my.edit_user_form', dic_val = dic_val))
         else:
             #если не существует            
             if user:                
@@ -306,9 +384,11 @@ def edit_socials(dic_val, id_socials=-1):
                 db.session.add(adress_for_edit)
                 db.session.commit();  
                 flash(_(f'Для пользователя {user.username} внесены изменения в адрес соц.сети: {form.adress_social.data}.'))
+                return redirect(url_for('admin_my.edit_user_form', dic_val = dic_val))
             else:                
                 #нет клиента и нет номера - ошибка
                 flash(_('Ошибка: Отсутствует клиент для которого изменяются дпнные соцсети. Вернитесь и вберите клиента.'))
+                return redirect(url_for('admin_my.edit_user_form', dic_val = dic_val))
 
     elif request.method =="GET":
         #возвращаю данные по соц. сети

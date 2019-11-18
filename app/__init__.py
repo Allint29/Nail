@@ -45,8 +45,8 @@ def create_app(config_class=Config):
     bootstrap.init_app(app_web)
     moment.init_app(app_web)
     babel.init_app(app_web)
-    app_web.elasticsearch = Elasticsearch([app_web.config['ELASTICSEARCH_URL']]) \
-        if app_web.config['ELASTICSEARCH_URL'] else None 
+   # app_web.elasticsearch = Elasticsearch([app_web.config['ELASTICSEARCH_URL']]) \
+   #     if app_web.config['ELASTICSEARCH_URL'] else None 
     
     from app.welcome import bp as welcome_bp
     app_web.register_blueprint(welcome_bp)

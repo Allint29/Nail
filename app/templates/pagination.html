@@ -15,7 +15,7 @@
         <ul class="pagination-pages">
             {% for page in pages.iter_pages() %}
             {% if page == pages.page %}
-            <li class="page-item active" aria-current="page"><a class="page-link" href="news?page={{page}}" title="{{_('страница')}} {{page}}">{{ page }}</a></li>
+            <li class="page-item active" aria-current="page"><a class="page-link" href="?page={{page}}" title="{{_('страница')}} {{page}}">{{ page }}</a></li>
             {% elif page == None %}
             <li class="page-item disabled"><a class="page-link" href="">...</a></li>
             {% else %}

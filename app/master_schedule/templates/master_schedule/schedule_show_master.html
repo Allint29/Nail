@@ -6,7 +6,7 @@
 <div class="schedule-container-master">
     <h1 class="visually-hidden">Страница записи клиентов</h1>
     <section class="site-map">
-        <p> <a href="{{ url_for('welcome.index') }}">Главная страница</a><span>&#9830;</span><a>Запись клиентов</a></p>
+        <p> <a href="{{ url_for('welcome.index') }}">{{_('Главная страница')}}</a><span>&#9830;</span><a href="{{ url_for('admin_my.admin_index') }}">{{_('Администрация')}}</a><span>&#9830;</span><a>{{_('Запись клиентов')}}</a></p>
     </section>
 
     <form action="" method="post">
@@ -50,7 +50,7 @@
                         {{item_list['form_edit'].id_time}}
                         <ul class="schedule-container-days-content-buttons">
                             <li>{{item_list['form_edit'].change_button}}</li>
-                            {%if item_list['empty'] == 'free' %}
+                            {%if item_list['empty'] == 'free' or item_list['empty'] == 'some_free'%}
                             <li>{{item_list['form_edit'].reserve_button}}</li>
                             {%else%}
                             <li>{{item_list['form_edit'].delete_button}}</li>

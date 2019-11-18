@@ -13,7 +13,7 @@
     </p>
 </section>
 
-<div class="edit-user-container">
+<span class="edit-user-container">
     {% if edit_users_form %}
     {% for error in edit_users_form.errors %}
     <span style="color: red;">[{{ error }}]</span>
@@ -23,10 +23,12 @@
             <ul>
                 <li>
                     {{edit_users_form.id_user.label}}
+                    <span class="visually-hidden">{{edit_users_form.id_user}}</span>
                     {{edit_users_form.id_user.data}}
                 </li>
                 <li>
                     {{edit_users_form.username_field.label}}
+                    <span class="visually-hidden">{{edit_users_form.username_field}}</span>
                     {{edit_users_form.username_field.data}}
                     {% for error in edit_users_form.username_field.errors %}
                     <span style="color: red;">[{{ error }}]</span>
@@ -34,10 +36,12 @@
                 </li>
                 <li>
                     {{edit_users_form.about_me_field.label}}
+                    <span class="visually-hidden">{{edit_users_form.about_me_field}}</span>
                     {{edit_users_form.about_me_field.data}}
                 </li>
                 <li>
                     {{edit_users_form.email_field.label}}
+                    <span class="visually-hidden">{{edit_users_form.email_field}}</span>
                     {{edit_users_form.email_field.data}}
                     {% for error in edit_users_form.email_field.errors %}
                     <span style="color: red;">[{{ error }}]</span>
@@ -45,30 +49,34 @@
                 </li>
                 <li>
                     {{edit_users_form.email_confirmed_field.label}}
+                    <span class="visually-hidden">{{edit_users_form.email_confirmed_field}}</span>
                     {{edit_users_form.email_confirmed_field.data}}
                 </li>
                 <li>
                     {{edit_users_form.registration_date_field.label}}
                     {%if edit_users_form.registration_date_field.data %}
-                    {{edit_users_form.registration_date_field.data.strftime('%d/%m/%Y %H:%M')}}
+                    <div style="pointer-events: none">{{edit_users_form.registration_date_field}}</div>
                     {%endif%}
                 </li>
                 <li>
                     {{edit_users_form.trying_to_enter_new_phone_field.label}}
+                    <span class="visually-hidden">{{edit_users_form.trying_to_enter_new_phone_field}}</span>
                     {{edit_users_form.trying_to_enter_new_phone_field.data}}
                 </li>
                 <li>
                     {{edit_users_form.role_field.label}}
+                    <span class="visually-hidden">{{edit_users_form.role_field}}</span>
                     {{edit_users_form.role_field.data}}
                 </li>
                 <li>
                     {{edit_users_form.last_seen_field.label}}
                     {% if edit_users_form.last_seen_field.data %}
-                    {{edit_users_form.last_seen_field.data.strftime('%d/%m/%Y %H:%M')}}
+                    <div style="pointer-events: none">{{edit_users_form.last_seen_field}}</div>
                     {%endif%}
                 </li>
                 <li>
                     {{edit_users_form.type_connection_field.label}}
+                    <span class="visually-hidden">{{edit_users_form.type_connection_field}}</span>
                     {{edit_users_form.type_connection_field.data}}
                     {% for error in edit_users_form.type_connection_field.errors %}
                     <span style="color: red;">[{{ error }}]</span>
@@ -87,7 +95,7 @@
                                     {{p.number_phone.data}}
                                     {{_('Ч/C:')}}
                                     {{p.to_black_list.data}}
-                                    <a href="{{url_for('admin_my.edit_phone', dic_val=dic_val, id_phone = p.id_phone_field.data)}}">{{p.to_save_button}}</a>
+                                    <!--<a href="{{url_for('admin_my.edit_phone', dic_val=dic_val, id_phone = p.id_phone_field.data)}}">{{p.to_save_button}}</a>-->
                                     <!--{{p.to_delete_button}}-->
                                 </form>
                             </li>
@@ -111,7 +119,7 @@
                                     {{s.adress_social.data}}
                                     {{_('Ч/C:')}}
                                     {{s.to_black_list.data}}
-                                    <a href="{{url_for('admin_my.edit_socials', dic_val=dic_val, id_socials = s.id_social_field.data)}}">{{s.to_save_button}}</a>
+                                    <!--<a href="{{url_for('admin_my.edit_socials', dic_val=dic_val, id_socials = s.id_social_field.data)}}">{{s.to_save_button}}</a>-->
                                 </form>
                             </li>
                             {%endfor%}
@@ -127,9 +135,9 @@
                 </li>
                 <hr />
                 <li>
-                    {{edit_users_form.to_delete_button}}
+                    {{edit_users_form.to_confirm_delete_button}}
                     {%if edit_users_form.id_user.data %}
-                    {{edit_users_form.to_edit_button}}
+                    <a href="{{ url_for('admin_my.edit_user_form', dic_val = dic_val ) }}">{{edit_users_form.to_edit_button}}</a>
                     {%endif%}
                 </li>
 

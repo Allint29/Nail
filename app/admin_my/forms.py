@@ -44,6 +44,7 @@ class EditUsersForm(FlaskForm):
     type_connection_field=SelectField(_('Связь'), coerce=int, validators=[DataRequired()], render_kw={"class" : "fl-text-field-user-edit"}) #choices=[('whatsapp', _('WhatsApp')), ('vk', _('ВКонтакте')), ('instagram', _('Instagram')), ('_number_phone', _('Телефон'))]
     
     to_save_button = SubmitField(_('Сохранить'), render_kw={"class": "button fl-button-field-user-edit", "type": "submit"})
+    to_confirm_delete_button = SubmitField(_('Удалить'), render_kw={"class": "button fl-button-field-user-edit", "type": "submit"})
     to_edit_phone_button = SubmitField(_('Добавить телефон'), render_kw={"class": "button fl-button-field-user-edit", "type": "button"})
     to_edit_internet_account_button = SubmitField(_('Добавить соц.сеть'), render_kw={"class": "button fl-button-field-user-edit", "type": "button"})
     to_delete_button = SubmitField(_('Удалить'), render_kw={"class": "button fl-button-field-user-edit", "type": "button"})

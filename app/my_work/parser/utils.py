@@ -17,7 +17,7 @@ def get_html(url):
         result = requests.get(url, headers=headers)
         result.raise_for_status()
         return result.text
-    except(requests.RequestExeption, ValueError):
+    except(requests.exceptions.RequestExeption, ValueError):
         print('Сетевая ошибка')
         return False
 
@@ -80,16 +80,18 @@ def save_my_work(dictionary_of_my_works):
     
     for item in dictionary_of_my_works:
 
-        work_exists1 = MyWork.query.filter(MyWork.url == item['url']).count();
-        work_exists2 = MyWork.query.filter(MyWork.code == item['code']).count();
-        work_exists3 = MyWork.query.filter(MyWork.id_site == item['id']).count();
-        print(f"work_exists1={work_exists1}")
-        if work_exists1 < 1: # and work_exists2 < 1 and work_exists3 < 1:
+       # work_exists1 = MyWork.query.filter(MyWork.url == item['url']).count();
+       # work_exists2 = MyWork.query.filter(MyWork.code == item['code']).count();
+       # work_exists3 = MyWork.query.filter(MyWork.id_site == item['id']).count();
+
+        work_exists = [w for w in  MyWork.query.all() if w.url == item['url'] or w.code == item['code'] or w.id_site == item['id']]
+        
+        #print(f"work_exists={work_exists}")
+        if len(work_exists) == 0: # and work_exists2 < 1 and work_exists3 < 1:
             #2019-04-27 19:36:33            
             date_p = datetime.strptime(item['date'], '%Y-%m-%d %H:%M:%S')
             #date_p == date_p.strftime('%Y-%m-%d %H:%M:%S') 
-        #    print("Зашел в блок добавления в базу")
-         
+                 
             my_work = MyWork(
                 id_site=item['id'], 
                 published=date_p,
@@ -102,19 +104,22 @@ def save_my_work(dictionary_of_my_works):
 
                 source="instagram"
                 )
-            db.session.add(my_work)
-            db.session.commit()
-
+            try:
+                db.session.add(my_work)
+                db.session.commit()
+            except:
+                print(f"Ошибка в блоке сохранения работ мастера")
 
         #после проверки БД на новые работы проверяем новые комментарии
         for c in item['comments']:
                 #item_comments = c['id']
                 #print(item_comments)                
                 comment_exists = CommentsToMyWorks.query.filter(CommentsToMyWorks.id_site == c['id']).count(); 
-                
+                #comment_exists = [c for c in CommentsToMyWorks.query.all() if c.id_site == c['id']]
+
                 if comment_exists < 1:
                     my_work_id_c = MyWork.query.filter(MyWork.code == c['media']).first().id;
-                    #print(my_work_id_c)
+                    
                     date_c = datetime.strptime(c['date'], '%Y-%m-%d %H:%M:%S')
                     comment_to_my_work = CommentsToMyWorks(
                         id_site = c['id'],
@@ -127,8 +132,11 @@ def save_my_work(dictionary_of_my_works):
 
                         my_work_id = my_work_id_c
                         )       
-                    db.session.add(comment_to_my_work)
-                    db.session.commit()
+                    try:
+                        db.session.add(comment_to_my_work)
+                        db.session.commit()
+                    except:
+                        print(f"Ошибка в блоке сохранения комментариев работ мастера")
 
         
     
