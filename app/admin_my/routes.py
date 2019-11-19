@@ -1,12 +1,13 @@
 ﻿import re
 from flask import render_template, url_for, redirect, request, flash
-from datetime import datetime
+from datetime import datetime, timedelta, date
 from app.admin_my import bp
 from app import db
 from app.decorators.decorators import admin_required
 from flask_babel import _
-from app.admin_my.forms import AdminMenu, EditUsersForm,  RouterUserForm, EditPhoneUserForm, EditSocialForm
+from app.admin_my.forms import *
 from app.user.models import User, UserPhones, ConnectionType, UserInternetAccount
+from app.my_work.models import *
 
 from app.main_func.utils import parser_time_client_from_str
 from app.main_func import utils as main_utils
@@ -25,6 +26,9 @@ def admin_index():
     if form_admin_menu.to_schedule.data:
         #при вызове расписания из пункта меню пользователя передаем никакого клиента в форму
         return redirect(url_for('master_schedule.show_schedule_master', dic_val ={'time_date_id' : -1 , 'client_id' : -1}))
+
+    if form_admin_menu.to_works.data:
+        return redirect(url_for('admin_my.list_my_work'))
 
     if form_admin_menu.to_users.data:        
         return redirect(url_for('admin_my.find_users', dic_val ={'time_date_id' : -1 , 'client_id' : -1}))
@@ -311,8 +315,7 @@ def edit_phone(dic_val, id_phone=-1):
             form.user_id_field.data = client_id if client_id>=0 else '-1'
             form.to_black_list.data = 0
             form.number_phone.data = ''
-    return render_template('admin_my/edit_phone.html', form=form, dic_val=dic_val)
-  
+    return render_template('admin_my/edit_phone.html', form=form, dic_val=dic_val)  
 
 @bp.route('/delete_phone_<dic_val>_<id_phone>', methods=['GET', 'POST'])
 @admin_required
@@ -431,3 +434,65 @@ def delete_socials(dic_val, id_socials=-1):
     else:
         flash(_(f'Ошибка: Не выбрана соц. сеть для удаления.'))
         return redirect(url_for('admin_my.edit_socials', dic_val = dic_val, id_socials=id_socials))
+
+
+@bp.route('/list_my_work_form', methods=['GET', 'POST'])
+@admin_required
+def list_my_work():
+    '''
+    Вывод страницы c работами мастера
+    '''
+    titleVar='Редактирование отображения работ'
+    list_edit_users_form = []
+    time_form = MyWorkTimeToShowForm()    
+    list_my_works=[]
+    list_comment=[]
+    users = []
+    start_date = date.today() - timedelta(days=30)
+    end_date = date.today()
+                
+    if request.method == "POST":
+        if time_form.validate_on_submit():
+            print('Проверку прошли')
+            start_date = time_form.date_field_start.data
+            end_date =time_form.date_field_end.data
+            list_my_works = [w for w in MyWork.query.all() if w.published.date() >= start_date and w.published.date() <= end_date]
+            list_codes = [w.code for w in list_my_works]
+            list_work_id = [w.id for w in list_my_works]
+            list_comment = [c for c in CommentsToMyWorks.query.all() if c.media in list_codes or c.my_work_id in list_work_id]
+            
+
+    elif request.method == "GET":
+        time_form.date_field_start.data=start_date
+        time_form.date_field_end.data=end_date
+        list_my_works = [w for w in MyWork.query.all() if w.published.date() >= start_date and w.published.date() <= end_date]
+        list_codes = [w.code for w in list_my_works]
+        list_work_id = [w.id for w in list_my_works]
+        list_comment = [c for c in CommentsToMyWorks.query.all() if c.media in list_codes or c.my_work_id in list_work_id]
+        
+    
+               
+    return render_template('admin_my/list_my_work.html', time_form = time_form, list_my_works=list_my_works, list_comment=list_comment)
+
+
+@bp.route('/edit_my_work_<id>', methods=['GET', 'POST'])
+@admin_required
+def edit_my_work(id):
+    '''
+    Вывод страницы редактирования работы
+    '''
+    try:
+        id = int(id)
+    except:
+        id=-1
+
+@bp.route('/edit_comment_to_my_work_<id>', methods=['GET', 'POST'])
+@admin_required
+def edit_comment_to_my_work(id):
+    '''
+    Вывод страницы редактирования работы
+    '''
+    try:
+        id = int(id)
+    except:
+        id = -1

@@ -12,8 +12,8 @@ import random
 @bp.route('/news')
 def index():
     news_list = News.query.filter(News.text.isnot("")).filter(News.text.isnot(None)).order_by(News.published.desc()) #.all()
-   # work_list = MyWork.query.order_by(MyWork.published.desc()).all()
-
+    # work_list = MyWork.query.order_by(MyWork.published.desc()).all()
+    
     page = request.args.get('page')
     if page and page.isdigit():
         page = int(page)

@@ -2055,13 +2055,17 @@ button.bg-light:hover {
     font-size: 14px;
 }
 
+      .find-user-container-date li {
+        max-height: 70px;
+    }
+
     .find-user-container a {
         margin: 0px !important;
         padding: 0px !important;
     }
 
-    .find-user-container ul {
 
+    .find-user-container ul {
         display: flex;
         flex-wrap: wrap;
         padding: 0px;
@@ -2129,7 +2133,36 @@ button.bg-light:hover {
 
 .edit-phone-container ul{
     list-style: none;
-
 }
 
+/*стили для редактирвания работ мастера*/
 
+.edit-container-work {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+
+}
+.edit-container-work ul {
+    /* pointer-events: none;*/ 
+    list-style: none;
+    margin: 0;
+    padding: 0 10px 0 10px;
+}
+
+.edit-container-work a {
+    /* pointer-events: none;*/
+    list-style: none;
+    margin: 0;
+    padding: 0 10px 0 10px;
+}
+
+.edit-container-work textarea {
+  /* pointer-events: none;*/ 
+}
+
+.edit-container-work-img {
+    max-width: 60px;
+}

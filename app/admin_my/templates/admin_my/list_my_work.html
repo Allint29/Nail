@@ -1,0 +1,97 @@
+﻿{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+    <section class="site-map">
+        <p> <a href="{{ url_for('welcome.index') }}">{{_('Главная страница')}}</a>
+            <span>&#9830;</span>
+            <a href="{{ url_for('admin_my.admin_index') }}">{{_('Администрация')}}</a>
+            <span>&#9830;</span>
+            <a>{{_('Список работ мастера')}}</a>
+            </p>
+    </section>
+<div class="find-user-container">
+    {% if time_form %}
+    
+        <form action="" method="post">
+            {{time_form.hidden_tag()}}
+            {% for error in time_form.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+            <ul class ="find-user-container-date">
+                <li >
+                    {{time_form.date_field_start.label}}
+                    {{time_form.date_field_start}}
+                    {% for error in time_form.date_field_start.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                    {% endfor %}
+                </li>
+                <li>
+                    {{time_form.date_field_end.label}}
+                    {{time_form.date_field_end}}
+                    {% for error in time_form.date_field_end.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                    {% endfor %}
+                </li>
+                <li>
+                    {{time_form.submit}}
+                </li>
+            </ul>
+        </form>
+    
+    {%endif%}
+    {%if list_my_works%}
+    <ul>
+        {% for w in list_my_works%}
+        <li>
+            <section>
+                {{w.published}}
+                <div class="edit-container-work">
+                    <ul>
+                        <li><div><img class="edit-container-work-img" src="{{w.url}}" /></div></li>
+                        <li>{{_('Заголовок')}}:</li>
+                        <li><textarea class="comment-field">{{w.title}}</textarea></li>
+                        <li>{{_('Код')}}: {{w.code}}</li>
+                        <li>{{_('Автор')}}: {{w.owner}}</li>
+                        <li>{{_('Ресурс')}}: {{w.source}}</li>
+                        <li>{{_('Лайки')}}: {{w.likes}}</li>
+                        <li>{{_('Для показа')}}: {%if w.show==True%}Да{% else %}Нет{%endif%}</li>
+                        <li><a class="button" href="{{url_for('admin_my.edit_my_work', id = w.id)}}">{{_('Ред. фото')}} </a></li>
+                    </ul>
+                </div>
+                
+            </section>
+        </li>
+        <li>{{_('Комментарии:')}}</li>
+        {%if list_comment%}
+        <li>
+            <ul>
+                {%for c in list_comment%}
+                {%if c.media == w.code or c.my_work_id == w.id %}
+                <li>
+                    <ul>
+                        <li>
+                            {{_('Автор')}}: {{c.owner}}
+                        </li>
+                        <li>
+                            {{_('Текст')}}: {{c.text}}
+                        </li>
+                        <li>
+                            <a class="button" href="{{url_for('admin_my.edit_comment_to_my_work', id = c.id)}}">{{_('Ред. коммент')}} </a>
+                        </li>
+                    </ul>
+                </li>
+                {%endif%}
+                {%endfor%}
+            </ul>
+        </li>
+        {%endif%}
+    
+        <li><hr></li>
+        {%endfor%}
+    </ul>
+    {%endif%}
+</div>
+
+{% endblock %}
+

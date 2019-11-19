@@ -13,6 +13,7 @@ class News(db.Model):#(SearchableMixin, db.Model):
     published = db.Column(db.DateTime, nullable=False)
     source = db.Column(db.String, nullable=False)
     text = db.Column(db.Text, nullable=True)
+    
 
     def page_news():
         '''

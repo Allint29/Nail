@@ -35,7 +35,8 @@ def index():
         comment_form = CommentForm(work_id = work.id)      
         comment_forms_list.append({'work' : work, 'comment_form' : comment_form})
 
-    return render_template("my_work/index.html", comment_forms_list = comment_forms_list, next_url = next_url, prev_url = prev_url, pages = pages_work) #work_list=work_list, comment_forms_list = comment_forms_list)
+    return render_template("my_work/index.html", comment_forms_list = comment_forms_list, \
+        next_url = next_url, prev_url = prev_url, pages = pages_work) #work_list=work_list, comment_forms_list = comment_forms_list)
 
 
 #R11Создадим обработчик который будет сохранять новый комментарий, если его не будет то удет выводиться ошибка

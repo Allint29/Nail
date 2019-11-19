@@ -41,7 +41,7 @@ def show_schedule():
                 d_start = date.today()
             else:
                 if d_start > d_end:
-                    d_end=d_start
+                    d_end = d_start
               
             form.date_field_start.render_kw={"class" : "shedule-text-field comment-field", "type": "date", "placeholder" : _('Выберите дату'), "value" : d_start.strftime("%Y-%m-%d")}
             form.date_field_end.render_kw={"class" : "shedule-text-field comment-field", "type": "date", "placeholder" : _('Выберите дату'), "value" : d_end.strftime("%Y-%m-%d")}

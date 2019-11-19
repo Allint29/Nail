@@ -12,20 +12,8 @@ class AdminMenu(FlaskForm):
     Форма перенаправления из админки: Редактирование Работ, Пользователей, Расписание
     '''    
     to_users = SubmitField(_('Клиенты'), render_kw={"class": "button", "type": "submit"})
-    to_works = SubmitField(_('Работы'), render_kw={"class": "button ", "type": "button"})
+    to_works = SubmitField(_('Работы'), render_kw={"class": "button ", "type": "submit"})
     to_schedule = SubmitField(_('Расписание'),  render_kw={"class" : "button ", "type": "submit"})
-
-
-#class EditUsersPhoneForm(FlaskForm):
-#    '''
-#    Форма телефонов клиента для отображения на станице поиска клиентов
-#    '''
-#    id_phone = IntegerField(_('ID телефона'),  render_kw={"class" : "fl-text-field-user-edit", "type": "text"})
-#    number_phone_field = IntegerField(_('Номер'),  render_kw={"class" : "fl-text-field-user-edit", "type": "text"})
-#    phone_confirmed_field = IntegerField(_('Подтвержден'), validators=[DataRequired()], render_kw={"class" : "fl-text-field-user-edit", "type": "checkbox"})
-#    date_to_expire_field = DateField (_('Дата до удаления'), validators=[DataRequired()], render_kw={"class" : "fl-text-field-user-edit", "type": "date"})
-#    black_list_field = IntegerField(_('Черный список'),  render_kw={"class" : "fl-text-field-user-edit", "type": "checkbox"})
-#    to_edit_button = SubmitField(_('Редактор'), render_kw={"class": "button fl-button-field-user-edit", "type": "button"})
 
 class EditUsersForm(FlaskForm):
     '''
@@ -173,3 +161,60 @@ class EditSocialForm(FlaskForm):
 
         if exists_socials > 0 and str(this_social.id) != str(self.adress_social.data):
             raise ValidationError(_l('Этот адрес уже зарегистрирован.'))
+
+
+class MyWorkTimeToShowForm(FlaskForm):
+    '''
+    Форма для задания запроса на фильтрацию по времени работ мастера
+    '''    
+    date_field_start = DateField (_('с'), validators=[DataRequired()], render_kw={"class" : "shedule-text-field comment-field", "type": "date", "placeholder" : _('Выберите дату')})
+    date_field_end = DateField (_('по'), validators=[DataRequired()], render_kw={"class" : "shedule-text-field comment-field", "type": "date", "placeholder" : _('Выберите дату')})
+    
+    submit = SubmitField(_('Выбрать'), render_kw={"class": "button"});
+
+    def validate_date_field_end(self, date_field_end):
+        #print('--------------------- Check MyWorkTimeToShowForm --------------------')
+        if self.date_field_end.data < self.date_field_start.data:
+            raise ValidationError(_l('Конечная дата не может быть меньше начальной.'))
+
+
+class EditMyWorksForm(FlaskForm):
+    '''
+    форма для редактирования контента работ мастера
+    '''
+    id_my_work_field = StringField(_('Id_работы'),  default=-1, render_kw={"class" : ""})
+    id_site_field = StringField(_('Id на сайте Instagram'),  default="", render_kw={"class" : ""})
+    published_field = StringField(_('Опубликовано'), default="", render_kw={"class" : ""})
+    title_field = StringField(_('Код в Instagram'),validators=[],render_kw={"class" : ""} )
+    url_field = StringField(_('Url'),validators=[],render_kw={"class" : ""} )
+    owner_field = StringField(_('Держатель в Instagram'),validators=[],render_kw={"class" : ""} )
+    likes_field = IntegerField(_('Код в Instagram'),validators=[],default=0,render_kw={"class" : ""} )
+    show_list_field = SelectField(_('Показать на сайте'), choices=[('0', _('Показать')), ('1', _('Не показывать'))])
+    source_field = StringField(_('Источник контента'),validators=[],render_kw={"class" : ""} )
+    content_field = StringField(_('Дополнительный контент'),validators=[],render_kw={"class" : ""} )
+
+    to_save_submit = SubmitField(_('Сохр.'), render_kw={"class": "button fl-button-field-user-edit", "type": "submit"})
+    
+    to_change_button = SubmitField(_('Изм.'), render_kw={"class": "button fl-button-field-user-edit", "type": "button"})
+    to_cancel_button = SubmitField(_('Отм.'), render_kw={"class": "button fl-button-field-user-edit", "type": "button"})
+    
+
+
+class EditMyWorksCommentsForm(FlaskForm):
+    '''
+    форма для редактирования комментария работ мастера
+    '''
+    id_my_work_field = StringField(_('Id_коментария'),  default=-1, render_kw={"class" : ""})
+    id_site_field = StringField(_('Id на сайте Instagram'),  default="", render_kw={"class" : ""})
+    media_field = StringField(_('Media в Instagram'),validators=[],render_kw={"class" : ""} )
+    owner_field = StringField(_('Держатель в Instagram'),validators=[],render_kw={"class" : ""} )
+    published_field = StringField(_('Опубликовано'), default="", render_kw={"class" : ""})
+    text_field = TextAreaField(_('Текст комментария'), default="", render_kw={"class" : ""})
+    show_list_field = SelectField(_('Показать на сайте'), choices=[('0', _('Показать')), ('1', _('Не показывать'))])
+    source_field = StringField(_('Источник контента'),validators=[],render_kw={"class" : ""} )
+    
+    to_save_submit = SubmitField(_('Сохр.'), render_kw={"class": "button fl-button-field-user-edit", "type": "submit"})
+    
+    to_change_button = SubmitField(_('Изм.'), render_kw={"class": "button fl-button-field-user-edit", "type": "button"})
+    to_cancel_button = SubmitField(_('Отм.'), render_kw={"class": "button fl-button-field-user-edit", "type": "button"})
+    
