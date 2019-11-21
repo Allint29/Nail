@@ -143,6 +143,7 @@ def parser_time_client_from_str(dic_val):
     '''
     Функция преобразует строку из пост гет запроса словаря с ключами time_date_id , client_id в int,
     возвращает словарь с теми же ключами, но уже значения это числа, если преобразование прошло не удачно, то знаячения будут -1
+    dic_val = {'time_date_id': string number, 'client_id': string number}
     '''
     #  print(dic_val)
     dic_val = json.loads(dic_val.replace("'", '"').replace("Undefined".lower(), '-1'))    
@@ -160,3 +161,40 @@ def parser_time_client_from_str(dic_val):
     dic_val = {'time_date_id' : time_date_id, 'client_id' : client_id}
     
     return dic_val
+
+def parser_start_end_date_from_str(dic_date):
+    '''
+    Функция преобразует строку из гет запроса словаря с ключами start_date , end_date в int,
+    возвращает словарь с датами типа datetime, если преодразование не удалось, 
+    возвращает текущую дату как начальную и конечную дату как текущая дата минус 30 дней
+     dic_date = {'start_date': '%Y/%m/%d_%H:%M', 'end_date': '%Y/%m/%d_%H:%M'} - словарь хранит две даты начальную и конечную
+    '''
+    
+    dic_date = json.loads(dic_date.replace("'", '"').replace("Undefined".lower(), '-1'))    
+    
+    try:
+        start_date = datetime.strptime(dic_date['start_date'], '%Y-%m-%d_%H-%M')
+        
+    except:
+        start_date = -1
+    try:
+        end_date = datetime.strptime(dic_date['end_date'], '%Y-%m-%d_%H-%M')
+    except:
+        end_date = -1
+
+    if start_date == -1 and end_date == -1:
+        dic_date['start_date'] = dic_date['start_date'] - timedelta(days=30)
+        dic_date['end_date'] = datetime.utcnow()
+
+    elif start_date!=1 and end_date != -1:
+        dic_date['start_date'] = start_date
+        dic_date['end_date'] = end_date
+    else:
+        if start_date == -1:
+            dic_date['start_date'] = end_date - timedelta(days=30)
+            dic_date['end_date'] = end_date
+        if end_date == -1:
+            dic_date['start_date'] = start_date 
+            dic_date['end_date'] = start_date + timedelta(days=30)
+   
+    return dic_date

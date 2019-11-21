@@ -10,16 +10,16 @@
             <a>{{_('Список работ мастера')}}</a>
             </p>
     </section>
-<div class="find-user-container">
-    {% if time_form %}
-    
+    <div class="find-user-container">
+        {% if time_form %}
+
         <form action="" method="post">
             {{time_form.hidden_tag()}}
             {% for error in time_form.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
-            <ul class ="find-user-container-date">
-                <li >
+            <ul class="find-user-container-date">
+                <li>
                     {{time_form.date_field_start.label}}
                     {{time_form.date_field_start}}
                     {% for error in time_form.date_field_start.errors %}
@@ -38,12 +38,36 @@
                 </li>
             </ul>
         </form>
-    
-    {%endif%}
-    {%if list_my_works%}
+
+        {%endif%}
+
+        {%if list_my_works_and_comments_forms%}
+        <ul>
+            {% for tuple in list_my_works_and_comments_forms %}
+            <li>
+                <form action="" method="post">
+                    {{tuple['my_work_form'].hidden_tag()}}
+                    {{tuple['my_work_form'].id_my_work_field()}}
+                </form>
+                    <ul>
+                        <li>
+
+                        </li>
+
+                    </ul>
+            </li>
+              
+            <li><hr></li>
+            {%endfor%}
+        </ul>
+        {%endif%}
+
+
+        <!--  {%if list_my_works%}
     <ul>
         {% for w in list_my_works%}
         <li>
+            <div class="visually-hidden"><input type="text" id="wIdField">{{w.id}}</div>
             <section>
                 {{w.published}}
                 <div class="edit-container-work">
@@ -56,10 +80,10 @@
                         <li>{{_('Ресурс')}}: {{w.source}}</li>
                         <li>{{_('Лайки')}}: {{w.likes}}</li>
                         <li>{{_('Для показа')}}: {%if w.show==True%}Да{% else %}Нет{%endif%}</li>
-                        <li><a class="button" href="{{url_for('admin_my.edit_my_work', id = w.id)}}">{{_('Ред. фото')}} </a></li>
+                        <li><a class="button" href="{{url_for('admin_my.edit_my_work', dic_date = dic_date, id = w.id)}}">{{_('Ред. фото')}} </a></li>
                     </ul>
                 </div>
-                
+
             </section>
         </li>
         <li>{{_('Комментарии:')}}</li>
@@ -86,12 +110,12 @@
             </ul>
         </li>
         {%endif%}
-    
+
         <li><hr></li>
         {%endfor%}
     </ul>
-    {%endif%}
-</div>
+    {%endif%}-->
+    </div>
 
 {% endblock %}
 

@@ -12,7 +12,7 @@ from flask_babel import _, get_locale
 @bp.route('/')
 def index():
 
-    work_list = MyWork.query.order_by(MyWork.published.desc())#.all()
+    work_list = MyWork.query.filter_by(show=1).order_by(MyWork.published.desc())#.all()
 
     comment_forms_list = []  
 

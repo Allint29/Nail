@@ -23,7 +23,7 @@ import json
 @bp.route('/', methods=['GET', 'POST'])
 def index():
     form_login = LoginForm()
-    list_gallary = MyWork.query.order_by(MyWork.published).all()
+    list_gallary = MyWork.query.filter_by(show=1).order_by(MyWork.published).all()
     list_with_z_index = []
     z=100;
     display='none'

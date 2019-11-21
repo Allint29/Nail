@@ -185,11 +185,13 @@ class EditMyWorksForm(FlaskForm):
     id_my_work_field = StringField(_('Id_работы'),  default=-1, render_kw={"class" : ""})
     id_site_field = StringField(_('Id на сайте Instagram'),  default="", render_kw={"class" : ""})
     published_field = StringField(_('Опубликовано'), default="", render_kw={"class" : ""})
-    title_field = StringField(_('Код в Instagram'),validators=[],render_kw={"class" : ""} )
-    url_field = StringField(_('Url'),validators=[],render_kw={"class" : ""} )
+    title_field = TextAreaField(_('Заголовок'),validators=[],render_kw={"class" : ""} )
+    url_field = TextAreaField(_('Url'),validators=[],render_kw={"class" : ""} )
+    code_field = StringField(_('Code'),validators=[],render_kw={"class" : ""} )
+    
     owner_field = StringField(_('Держатель в Instagram'),validators=[],render_kw={"class" : ""} )
-    likes_field = IntegerField(_('Код в Instagram'),validators=[],default=0,render_kw={"class" : ""} )
-    show_list_field = SelectField(_('Показать на сайте'), choices=[('0', _('Показать')), ('1', _('Не показывать'))])
+    likes_field = IntegerField(_('Лайков'),validators=[],default=0,render_kw={"class" : ""} )
+    show_list_field = SelectField(_('Показать на сайте'), choices=[('1', _('Показать')), ('0', _('Не показывать'))])
     source_field = StringField(_('Источник контента'),validators=[],render_kw={"class" : ""} )
     content_field = StringField(_('Дополнительный контент'),validators=[],render_kw={"class" : ""} )
 
@@ -210,7 +212,7 @@ class EditMyWorksCommentsForm(FlaskForm):
     owner_field = StringField(_('Держатель в Instagram'),validators=[],render_kw={"class" : ""} )
     published_field = StringField(_('Опубликовано'), default="", render_kw={"class" : ""})
     text_field = TextAreaField(_('Текст комментария'), default="", render_kw={"class" : ""})
-    show_list_field = SelectField(_('Показать на сайте'), choices=[('0', _('Показать')), ('1', _('Не показывать'))])
+    show_list_field = SelectField(_('Показать на сайте'), choices=[('1', _('Показать')), ('0', _('Не показывать'))])
     source_field = StringField(_('Источник контента'),validators=[],render_kw={"class" : ""} )
     
     to_save_submit = SubmitField(_('Сохр.'), render_kw={"class": "button fl-button-field-user-edit", "type": "submit"})

@@ -1,0 +1,132 @@
+﻿{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+<section class="site-map">
+    <p>
+        <a href="{{ url_for('welcome.index') }}">{{_('Главная страница')}}</a>
+        <span>&#9830;</span>
+        <a href="{{ url_for('admin_my.admin_index') }}">{{_('Администрация')}}</a>
+        <span>&#9830;</span>
+        <a href="{{ url_for('admin_my.list_my_work', dic_date=dic_date) }}">{{_('Список работ мастера')}}</a>
+        <span>&#9830;</span>
+        <a>{{_('Редактор работы')}}</a>
+    </p>
+</section>
+
+<div class="find-user-container">
+    {% if my_work_form %}
+    <form action="" method="post">
+        {{my_work_form.hidden_tag()}}
+        {% for error in my_work_form.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+        <ul class="find-user-container-date">
+            <li>
+                {{my_work_form.id_my_work_field.label}}
+                {{my_work_form.id_my_work_field.data}}
+                {% for error in my_work_form.id_my_work_field.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </li>
+            <li>
+                {{my_work_form.id_site_field.label}}
+                {{my_work_form.id_site_field.data}}
+                {% for error in my_work_form.id_site_field.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </li>
+            <li>
+                {{my_work_form.published_field.label}}
+                {{my_work_form.published_field.data}}
+                {% for error in my_work_form.published_field.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </li>
+            <li>
+                {{my_work_form.title_field.label}}
+                {{my_work_form.title_field}}
+                {% for error in my_work_form.title_field.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </li>
+            <li>
+                {{my_work_form.code_field.label}}
+                {{my_work_form.code_field.data}}
+                {% for error in my_work_form.code_field.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </li>
+            <li>
+                <img class="edit-container-work-img" src="{{my_work_form.url_field.data}}" />
+            </li>
+            <li>
+                {{my_work_form.owner_field.label}}
+                {{my_work_form.owner_field.data}}
+                {% for error in my_work_form.owner_field.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </li>
+            <li>
+                {{my_work_form.likes_field.label}}
+                {{my_work_form.likes_field.data}}
+                {% for error in my_work_form.likes_field.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </li>
+            <li>
+                {{my_work_form.show_list_field.label}}
+                {{my_work_form.show_list_field}}
+                {% for error in my_work_form.show_list_field.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </li>
+            <li>
+                {{my_work_form.source_field.label}}
+                {{my_work_form.source_field.data}}
+                {% for error in my_work_form.source_field.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </li>
+            <li>
+                {{my_work_form.content_field.label}}
+                {{my_work_form.content_field}}
+                {% for error in my_work_form.content_field.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </li>
+            <li>
+                {{my_work_form.to_save_submit}}
+            </li>
+            <li>
+                <a href="{%if cancel_url%} {{cancel_url}}{%else%}#{%endif%}">{{my_work_form.to_cancel_button}}</a>
+            </li>
+        </ul>
+    </form>
+    {%if list_comments_forms%}
+        <ul>
+            {%for f in list_comments_forms%}
+            <li>
+                <form action="{{ url_for('admin_my.edit_comment_to_my_work') }}" method="post">
+                    {{f.hidden_tag()}}
+                    <ul>
+                        <li><div class="visually-hidden">{{f.id_my_work_field}}</div>
+                            {{f.id_my_work_field.label}}: {{f.id_my_work_field.data}}</li>
+                        <li>{{f.id_site_field.label}}: {{f.id_site_field.data}}</li>
+                        <li>{{f.media_field.label}}: {{f.media_field.data}}</li>
+                        <li>{{f.owner_field.label}}: {{f.owner_field.data}}</li>
+                        <li>{{f.published_field.label}}: {{f.published_field.data}}</li>
+                        <li>{{f.text_field.label}}: {{f.text_field}}</li>
+                        <li>{{f.label}}: {{f.show_list_field}}</li>
+                        <li>{{f.source_field.label}}: {{f.source_field.data}}</li>
+                        <li>{{f.to_save_submit}}</li>
+                    </ul>
+                </form>
+                    
+            </li>
+            {%endfor%}
+        </ul>
+    {%endif%}
+    {%endif%}
+    </div>
+{% endblock %}
