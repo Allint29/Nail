@@ -43,6 +43,7 @@ def get_sevendays_news_manikur():
             title = news.find('a', class_='b-story__text').text
             url = source + news.find('a', class_='b-story__text')['href']
             published = news.find('div', class_='b-story__meta').find('span', class_='b-story__date').text.replace(' ', '').replace('в', ' ').replace('|', '').replace('.', '/')
+            
             #print(image_source, title)
             #print(url)
             #print(f'Дата публикации: {published}')

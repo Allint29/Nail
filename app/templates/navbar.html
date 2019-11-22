@@ -47,7 +47,7 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mr-auto site-navigation">
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('news.index') }}"> {{ _('Статьи') }}</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('news.index') }}"> {{ _('Новости') }}</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('news.index') }}"> {{ _('Мода') }}</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('my_work.index') }}"> {{ _('Портфолио') }}</a></li>
                     <li class="right-align-li user-navigation">
                         <button id="navbar-button2" class="button login-link" type="button" data-toggle="collapse" data-target="#navbarSupportedContent2" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -119,53 +119,3 @@
         </div>
     </div>
 </nav>
-
-
-<!--
-
-
-
-
-                <ul class="navbar-nav mr-auto user-navigation">
-                    <li class="nav-item dropdown user-navigation-dropdown">
-                        <a class="nav-link dropdown-toggle login-link" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="login-link-hide">
-                                {% if not current_user.is_anonymous %}
-                                {{ current_user.username }}
-                                {%else%}
-                                {{ _('Вход') }}
-                                {%endif%}
-                            </span>
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-
-                            {% if current_user.is_anonymous %}
-
-                            <a class="dropdown-item login-link-item" href="{{ url_for('user.login') }}"> {{ _('Войти') }} </a>
-                            <a class="dropdown-item" href="{{ url_for('user.registration_main') }}"> {{ _('Регистрация') }} </a>
-
-                            {% else %}
-                            {% if g.search_form %}
-                            <form class="form-inline" method="get" action="{{ url_for('main.search') }}">
-                                <div class="form-group mr-sm-5">
-                                    {{
-                                    g.search_form.q(size=30, class='form-control', color='red',
-                                    placeholder=g.search_form.q.label.text)
-                                    }}
-                                </div>
-                            </form>
-                            {% endif %}
-                            {%if current_user.is_admin %}
-
-                            <a class="dropdown-item" href="{{ url_for('admin_my.admin_index')}}"> {{ _('Администратор') }}</a>
-                            {%endif%}
-                            <a class="dropdown-item" href="{{ url_for('main.explore')}}"> {{ _('Песочница') }}</a>
-                            <a class="dropdown-item" href="{{ url_for('main.index') }}">{{ _('Мой блог') }}</a>
-                            <a class="dropdown-item" href="{{ url_for('main.user', username=current_user.username) }}">{{ _('Профиль') }}</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="{{ url_for('user.logout') }}">{{ _('Выйти') }}</a>
-                            {% endif %}
-
-                        </div>
-                    </li>
-                </ul>-->

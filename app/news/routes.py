@@ -11,7 +11,7 @@ import random
 
 @bp.route('/news')
 def index():
-    news_list = News.query.filter(News.text.isnot("")).filter(News.text.isnot(None)).order_by(News.published.desc()) #.all()
+    news_list = News.query.filter(News.text.isnot("")).filter(News.text.isnot(None)).filter(News.show==1).order_by(News.published.desc()) #.all()
     # work_list = MyWork.query.order_by(MyWork.published.desc()).all()
     
     page = request.args.get('page')
@@ -34,16 +34,15 @@ def index():
 #после мы по этому номеру ищем в Id новости саму новость
 @bp.route('/<int:news_id>')
 def single_news(news_id):
-    my_news = News.query.filter(News.id == news_id).first();
-    news_list = News.query.order_by(News.published.desc()).all()[0:3];           
+    my_news = News.query.filter(News.id == news_id).first();    
     if not my_news:
         abort(404);    
     comment_form = CommentForm(news_id=my_news.id);
-    return render_template('news/single_news.html', page_title=my_news.title, news = my_news, news_list=news_list, comment_form = comment_form);
+    return render_template('news/single_news.html', page_title=my_news.title, news = my_news, comment_form = comment_form);
 
 
 #R11Создадим обработчик который будет сохранять новый комментарий, если его не будет то удет выводиться ошибка
-@bp.route('/news/comments', methods=['POST'])
+@bp.route('/news_comments', methods=['POST'])
 @login_required
 def add_comment():
     '''
@@ -51,7 +50,7 @@ def add_comment():
     '''
     form = CommentForm();
     if form.validate_on_submit():
-            comment = CommentsToNews(text=form.comment_text.data, news_id=form.news_id.data, user_id=current_user.id)
+            comment = CommentsToNews(text=form.comment_text.data, news_id=form.news_id.data, user_id=current_user.id, show = 1)
             db.session.add(comment)
             db.session.commit();
             flash(_('Спасибо за комментарий!'));

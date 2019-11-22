@@ -8,7 +8,7 @@
         <span>&#9830;</span>
         <a href="{{ url_for('admin_my.admin_index') }}">{{_('Администрация')}}</a>
         <span>&#9830;</span>
-        <a>{{_('Список работ мастера')}}</a>
+        <a>{{_('Список новостей для редактора')}}</a>
     </p>
 </section>
 <div class="find-user-container">
@@ -42,72 +42,55 @@
 
     {%endif%}
 
-    {%if list_my_works_and_comments_forms%}
+    {%if list_news_and_comments_forms%}
     <ul>
-        {% for tuple in list_my_works_and_comments_forms %}
+        {% for tuple in list_news_and_comments_forms %}
         <li>
-            <form action="{{url_for('admin_my.save_my_work')}}" method="post">
-                {{tuple['my_work_form'].hidden_tag()}}
+            <form action="{{url_for('admin_my.save_news')}}" method="post">
+                {{tuple['news_form'].hidden_tag()}}
                 <ul>
                     <li>
-                        <span class="visually-hidden">{{tuple['my_work_form'].id_my_work_field}}</span>
-                        {{tuple['my_work_form'].id_my_work_field.label}}: {{tuple['my_work_form'].id_my_work_field.data}}
+                        <span class="visually-hidden">{{tuple['news_form'].id_news_field}}</span>
+                        {{tuple['news_form'].id_news_field.label}}: {{tuple['news_form'].id_news_field.data}}
                     </li>
                     <li>
-                        <span class="visually-hidden">{{tuple['my_work_form'].published_field}}</span>
-                        {{tuple['my_work_form'].published_field.label}}: {{tuple['my_work_form'].published_field.data}}
+                        {{tuple['news_form'].title_field.label}}: {{tuple['news_form'].title_field}}
                     </li>
                     <li>
-                        {{tuple['my_work_form'].title_field.label}}: {{tuple['my_work_form'].title_field}}
+                        <span class="visually-hidden">{{tuple['news_form'].published_field}}</span>
+                        {{tuple['news_form'].published_field.label}}: {{tuple['news_form'].published_field.data}}
                     </li>
                     <li>
-                        <span class="visually-hidden">{{tuple['my_work_form'].code_field}}</span>
-                        {{tuple['my_work_form'].code_field.label}}: {{tuple['my_work_form'].code_field.data}}
+                        <span class="visually-hidden">{{tuple['news_form'].url_field}}</span>
+                        <img class="edit-container-work-img" src="{{tuple['news_form'].main_picture_url.data}}" />
                     </li>
                     <li>
-                        <span class="visually-hidden">{{tuple['my_work_form'].url_field}}</span>
-                        <img class="edit-container-work-img" src="{{tuple['my_work_form'].url_field.data}}" />
+                        <span class="visually-hidden">{{tuple['news_form'].source_field}}</span>
+                        {{_('Источник')}}: {{tuple['news_form'].source_field.data}}
                     </li>
                     <li>
-                        <span class="visually-hidden">{{tuple['my_work_form'].owner_field}}</span>
-                        {{tuple['my_work_form'].owner_field.label}}: {{tuple['my_work_form'].owner_field.data}}
+                        {{_('Для показа')}}: {{tuple['news_form'].show_list_field}}
                     </li>
-                    <li>
-                        <span class="visually-hidden">{{tuple['my_work_form'].likes_field}}</span>
-                        {{tuple['my_work_form'].likes_field.label}}: {{tuple['my_work_form'].likes_field.data}}
-                    </li>
-                    <li>
-                        {{_('Для показа')}}: {{tuple['my_work_form'].show_list_field}}
-                    </li>
-                    <li>
-                        <span class="visually-hidden">{{tuple['my_work_form'].source_field}}</span>
-                        {{_('Источник')}}: {{tuple['my_work_form'].source_field.data}}
-                    </li>
-                    <li>
-                        {{tuple['my_work_form'].content_field}}
-                    </li>
-                    <li>{{tuple['my_work_form'].to_save_submit}}</li>
+                    <li>{{tuple['news_form'].to_save_submit}}</li>
                 </ul>
             </form>
             {%if tuple['list_comment_form']%}
             {%for f in tuple['list_comment_form']%}
             <ul>
                 <li>
-                    <form action="{{ url_for('admin_my.edit_comment_to_my_work') }}" method="post">
+                    <form action="{{ url_for('admin_my.edit_comment_to_news') }}" method="post">
                         {{f.hidden_tag()}}
                         <ul>
                             <li>
                                 <div class="visually-hidden">{{f.id_my_work_field}}</div>
                                 {{f.id_my_work_field.label}}: {{f.id_my_work_field.data}}
                             </li>
-                            <li>{{f.id_site_field.label}}: {{f.id_site_field.data}}</li>
-                            <li>{{f.media_field.label}}: {{f.media_field.data}}</li>
-                            <li>{{f.owner_field.label}}: {{f.owner_field.data}}</li>
-                            <li>{{f.published_field.label}}: {{f.published_field.data}}</li>
                             <li>{{f.text_field.label}}: {{f.text_field}}</li>
+                            <li>{{f.published_field.label}}: {{f.published_field.data}}</li>
                             <li>{{f.label}}: {{f.show_list_field}}</li>
-                            <li>{{f.source_field.label}}: {{f.source_field.data}}</li>
+
                             <li>{{f.to_save_submit}}</li>
+                            <li>{{f.to_delete_submit}}</li>
                         </ul>
                     </form>
                 </li>

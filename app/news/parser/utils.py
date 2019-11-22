@@ -37,7 +37,8 @@ def save_news(title, image_source, url, published, source, text):
             url=url, 
             published=published, 
             source=source, 
-            text=text)
+            text=text,
+            show=1)
         db.session.add(news_news)
         db.session.commit()
 

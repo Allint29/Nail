@@ -13,6 +13,7 @@ class AdminMenu(FlaskForm):
     '''    
     to_users = SubmitField(_('Клиенты'), render_kw={"class": "button", "type": "submit"})
     to_works = SubmitField(_('Работы'), render_kw={"class": "button ", "type": "submit"})
+    to_news = SubmitField(_('Новости'), render_kw={"class": "button ", "type": "submit"})
     to_schedule = SubmitField(_('Расписание'),  render_kw={"class" : "button ", "type": "submit"})
 
 class EditUsersForm(FlaskForm):
@@ -195,12 +196,8 @@ class EditMyWorksForm(FlaskForm):
     source_field = StringField(_('Источник контента'),validators=[],render_kw={"class" : ""} )
     content_field = StringField(_('Дополнительный контент'),validators=[],render_kw={"class" : ""} )
 
-    to_save_submit = SubmitField(_('Сохр.'), render_kw={"class": "button fl-button-field-user-edit", "type": "submit"})
+    to_save_submit = SubmitField(_('Сохр. работу'), render_kw={"class": "button fl-button-field-user-edit", "type": "submit"})
     
-    to_change_button = SubmitField(_('Изм.'), render_kw={"class": "button fl-button-field-user-edit", "type": "button"})
-    to_cancel_button = SubmitField(_('Отм.'), render_kw={"class": "button fl-button-field-user-edit", "type": "button"})
-    
-
 
 class EditMyWorksCommentsForm(FlaskForm):
     '''
@@ -215,8 +212,31 @@ class EditMyWorksCommentsForm(FlaskForm):
     show_list_field = SelectField(_('Показать на сайте'), choices=[('1', _('Показать')), ('0', _('Не показывать'))])
     source_field = StringField(_('Источник контента'),validators=[],render_kw={"class" : ""} )
     
-    to_save_submit = SubmitField(_('Сохр.'), render_kw={"class": "button fl-button-field-user-edit", "type": "submit"})
+    to_save_submit = SubmitField(_('Сохр. коммент'), render_kw={"class": "button fl-button-field-user-edit", "type": "submit"})
     
-    to_change_button = SubmitField(_('Изм.'), render_kw={"class": "button fl-button-field-user-edit", "type": "button"})
-    to_cancel_button = SubmitField(_('Отм.'), render_kw={"class": "button fl-button-field-user-edit", "type": "button"})
+class EditNewsForm(FlaskForm):
+    '''
+    форма для редактирования контента новостей
+    '''
+    id_news_field = StringField(_('Id_новости'),  default=-1, render_kw={"class" : ""})
+    title_field = StringField(_('Id на сайте Instagram'),  default="", render_kw={"class" : ""})
+    url_field = TextAreaField(_('Url новости'),validators=[],render_kw={"class" : ""} )
+    main_picture_url = TextAreaField(_('Главное фото новости'),validators=[],render_kw={"class" : ""} )
+    published_field = StringField(_('Опубликовано'), default="", render_kw={"class" : ""})
+    source_field = StringField(_('Источник контента'),validators=[],render_kw={"class" : ""} )
+    show_list_field = SelectField(_('Показать на сайте'), choices=[('1', _('Показать')), ('0', _('Не показывать'))])
+
+    to_save_submit = SubmitField(_('Сохр. новость', render_kw={"class": "button fl-button-field-user-edit", "type": "submit"}))
+ 
+class EditNewsCommentsForm(FlaskForm):
+    '''
+    форма для редактирования комментария новостей
+    '''
+    id_my_work_field = StringField(_('Id_коментария'),  default=-1, render_kw={"class" : ""})
+    text_field = TextAreaField(_('Текст комментария'), default="", render_kw={"class" : ""})
+    published_field = StringField(_('Опубликовано'), default="", render_kw={"class" : ""})
+    show_list_field = SelectField(_('Показать на сайте'), choices=[('1', _('Показать')), ('0', _('Не показывать'))])
+
+    to_save_submit = SubmitField(_('Сохр. коммент'), render_kw={"class": "button fl-button-field-user-edit", "type": "submit"})
+    to_delete_submit = SubmitField(_('Удалить. коммент'), render_kw={"class": "button fl-button-field-user-edit", "type": "submit"})
     

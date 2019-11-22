@@ -8,6 +8,7 @@ from flask_babel import _
 from app.admin_my.forms import *
 from app.user.models import User, UserPhones, ConnectionType, UserInternetAccount
 from app.my_work.models import *
+from app.news.models import *
 
 from app.main_func.utils import parser_time_client_from_str, parser_start_end_date_from_str
 from app.main_func import utils as main_utils
@@ -27,10 +28,11 @@ def admin_index():
         #при вызове расписания из пункта меню пользователя передаем никакого клиента в форму
         return redirect(url_for('master_schedule.show_schedule_master', dic_val ={'time_date_id' : -1 , 'client_id' : -1}))
 
-    if form_admin_menu.to_works.data:        
-        start_date = (datetime.utcnow() - timedelta(days=30)).strftime('%Y-%m-%d_%H-%M')
-        end_date =  (datetime.utcnow()).strftime('%Y-%m-%d_%H-%M')        
-        return redirect(url_for('admin_my.list_my_work', dic_date = {'start_date': start_date, 'end_date': end_date}))
+    if form_admin_menu.to_works.data:             
+        return redirect(url_for('admin_my.list_my_work'))
+
+    if form_admin_menu.to_news.data:
+        return redirect(url_for('admin_my.list_news'))
 
     if form_admin_menu.to_users.data:        
         return redirect(url_for('admin_my.find_users', dic_val ={'time_date_id' : -1 , 'client_id' : -1}))
@@ -438,14 +440,13 @@ def delete_socials(dic_val, id_socials=-1):
         return redirect(url_for('admin_my.edit_socials', dic_val = dic_val, id_socials=id_socials))
 
 
-@bp.route('/list_my_work_form_<dic_date>', methods=['GET', 'POST'])
+@bp.route('/list_my_work_form', methods=['GET', 'POST'])
 @admin_required
-def list_my_work(dic_date):
+def list_my_work():
     '''
     Вывод страницы c работами мастера
     '''
-    dic_date = parser_start_end_date_from_str(dic_date)
-    print(dic_date['start_date'], "______________", dic_date['end_date'])
+    #dic_date = parser_start_end_date_from_str(dic_date)    
     titleVar='Редактирование отображения работ'
     list_edit_users_form = []
     time_form = MyWorkTimeToShowForm()    
@@ -453,27 +454,51 @@ def list_my_work(dic_date):
     list_my_works_and_comments_forms=[]
     list_comment=[]
     users = []
-    start_date = dic_date['start_date'].date()
-    end_date = dic_date['end_date'].date()
+    #start_date = #dic_date['start_date'].date()
+    #end_date = #dic_date['end_date'].date()
+    start_date =(datetime.utcnow() -timedelta(days=30)).date()
+    end_date = datetime.utcnow().date()
                 
-    if request.method == "POST":
+    if request.method == "POST":         
         if time_form.validate_on_submit():
+            
             #print('Проверку прошли')
             start_date = time_form.date_field_start.data
             end_date =time_form.date_field_end.data
             list_my_works = [w for w in MyWork.query.all() if w.published.date() >= start_date and w.published.date() <= end_date]
-            list_codes = [w.code for w in list_my_works]
-            list_work_id = [w.id for w in list_my_works]
-            list_comment = [c for c in CommentsToMyWorks.query.all() if c.media in list_codes or c.my_work_id in list_work_id]
-            
+            for w in list_my_works:
+                my_work_form = EditMyWorksForm(id_my_work_field = w.id,
+                                               id_site_field = w.id_site,
+                                               published_field = w.published.strftime('%d/%m/%Y %H:%M'),
+                                               title_field = w.title,
+                                               code_field = w.code,
+                                               url_field = w.url,
+                                               owner_field = w.owner,
+                                               likes_field = w.likes,
+                                               show_list_field = '0' if w.show == 0 else '1',
+                                               source_field = w.source,
+                                               content_field = w.content
+                                               )
+                list_comment = [c for c in CommentsToMyWorks.query.all() if c.media == w.code or c.my_work_id == w.id]
+                list_comment_forms = []
+                for c in list_comment:
+                    coment_form = EditMyWorksCommentsForm(
+                        id_my_work_field =c.id,
+                        id_site_field = c.id_site,
+                        media_field = c.media,
+                        owner_field = c.owner,
+                        published_field = c.published.strftime('%d/%m/%Y %H:%M'),
+                        text_field = c.text,
+                        show_list_field = '0' if c.show == 0 else '1',
+                        source_field = c.source)
+                    list_comment_forms.append(coment_form)
+        
+                list_my_works_and_comments_forms.append({'my_work_form': my_work_form, 'list_comment_form': list_comment_forms})
 
     elif request.method == "GET":
         time_form.date_field_start.data=start_date
         time_form.date_field_end.data=end_date
         list_my_works = [w for w in MyWork.query.all() if w.published.date() >= start_date and w.published.date() <= end_date]        
-        #list_codes = [w.code for w in list_my_works]
-        #list_work_id = [w.id for w in list_my_works]
-        #list_comment = [c for c in CommentsToMyWorks.query.all() if c.media in list_codes or c.my_work_id in list_work_id]   
         for w in list_my_works:
             my_work_form = EditMyWorksForm(id_my_work_field = w.id,
                                            id_site_field = w.id_site,
@@ -502,85 +527,36 @@ def list_my_work(dic_date):
                 list_comment_forms.append(coment_form)
 
             list_my_works_and_comments_forms.append({'my_work_form': my_work_form, 'list_comment_form': list_comment_forms})
-
-
-        #"""
-        #my_work_form.id_my_work_field.data = my_work.id
-        #my_work_form.id_site_field.data = my_work.id_site
-        #my_work_form.published_field.data = my_work.published.strftime('%d/%m/%Y %H:%M')
-        #my_work_form.title_field.data = my_work.title
-        #my_work_form.code_field.data = my_work.code
-        #my_work_form.url_field.data=my_work.url
-        #my_work_form.owner_field.data=my_work.owner
-        #my_work_form.likes_field.data=my_work.likes
-        #my_work_form.show_list_field.data= '0' if my_work.show == 0 else '1'
-        #my_work_form.source_field.data=my_work.source
-        #my_work_form.content_field.data=my_work.content
-        #"""
-
-    dic_date={'start_date': start_date.strftime('%Y-%m-%d_%H-%M'),'end_date': end_date.strftime('%Y-%m-%d_%H-%M')} 
+                       
+   # dic_date={'start_date': start_date.strftime('%Y-%m-%d_%H-%M'),'end_date': end_date.strftime('%Y-%m-%d_%H-%M')} 
     
-    return render_template('admin_my/list_my_work.html', time_form = time_form, list_my_works_and_comments_forms = list_my_works_and_comments_forms,  list_my_works=list_my_works, list_comment=list_comment, dic_date=dic_date)
+    return render_template('admin_my/list_my_work.html', time_form = time_form, list_my_works_and_comments_forms = list_my_works_and_comments_forms) #,  list_my_works=list_my_works, list_comment=list_comment, dic_date=dic_date
 
 
-@bp.route('/edit_my_work_<dic_date>_<id>', methods=['GET', 'POST'])
+@bp.route('/save_my_work', methods=['POST'])
 @admin_required
-def edit_my_work(dic_date, id):
+def save_my_work():
     '''
-    Вывод страницы редактирования работы
+    Действие сохранения изменений в форме работы
     '''
+    form = EditMyWorksForm()
     try:
-        id = int(id)
-    except:
-        id=-1
-    my_work_form = EditMyWorksForm()
+        id = int(form.id_my_work_field.data)        
+    except:        
+        id = -1
 
-    my_work = MyWork.query.filter_by(id = id).first()
-    list_comments_forms = []
+    if form.validate_on_submit():
+        if id >=0:        
+            work = MyWork.query.filter(MyWork.id == id).first()
+            work.title = form.title_field.data
+            work.show = 0 if form.show_list_field.data=='0' else 1
+            work.content = form.content_field.data
+            db.session.add(work)
+            db.session.commit()          
 
-    if my_work:
-        list_comments_to_my_work = CommentsToMyWorks.query.filter(CommentsToMyWorks.my_work_id == my_work.id).all()
-        
-    for c in list_comments_to_my_work:
-        comment_form = EditMyWorksCommentsForm(
-            id_my_work_field = c.id, 
-            id_site_field = c.id_site,  
-            media_field=c.media, 
-            owner_field = c.owner, 
-            published_field=c.published, 
-            text_field = c.text, 
-            show_list_field = '0' if c.show == 0  else '1', 
-            source_field=c.source)
-        list_comments_forms.append(comment_form)
+    return redirect(main_utils.get_redirect_target())
 
-    if request.method == 'POST':
-        if my_work_form.validate_on_submit():
-            my_work.show = 0 if  my_work_form.show_list_field.data == '0'  else 1
-            my_work.content = my_work_form.content_field.data
-            my_work.title = my_work_form.title_field.data
-            db.session.add(my_work)
-            db.session.commit()
-
-            return redirect(url_for('admin_my.list_my_work', dic_date=dic_date))
-        
-    elif  request.method == 'GET':
-        my_work_form.id_my_work_field.data = my_work.id
-        my_work_form.id_site_field.data = my_work.id_site
-        my_work_form.published_field.data = my_work.published.strftime('%d/%m/%Y %H:%M')
-        my_work_form.title_field.data = my_work.title
-        my_work_form.code_field.data = my_work.code
-        my_work_form.url_field.data=my_work.url
-        my_work_form.owner_field.data=my_work.owner
-        my_work_form.likes_field.data=my_work.likes
-        my_work_form.show_list_field.data= '0' if my_work.show == 0 else '1'
-        my_work_form.source_field.data=my_work.source
-        my_work_form.content_field.data=my_work.content
-
-    #ссылка на возврат к списку работ
-    cancel_url = url_for('admin_my.list_my_work', dic_date=dic_date)
-
-    return render_template('admin_my/edit_my_work.html', my_work_form = my_work_form, id_my_work = id, list_comments_forms=list_comments_forms,  cancel_url=cancel_url, dic_date=dic_date)
-
+    
 @bp.route('/edit_comment_to_my_work', methods=['GET', 'POST'])
 @admin_required
 def edit_comment_to_my_work():
@@ -589,18 +565,139 @@ def edit_comment_to_my_work():
     '''
     form = EditMyWorksCommentsForm()
     try:
-        id = int(form.id_my_work_field.data)
-        print('Good way')
-    except:
-        print('Bad way')
+        id = int(form.id_my_work_field.data)        
+    except:        
         id = -1
 
-    if id >=0:        
-        comment = CommentsToMyWorks.query.filter(CommentsToMyWorks.id == id).first()
-        comment.text = form.text_field.data
-        comment.show = 0 if form.show_list_field.data=='0' else 1
-        db.session.add(comment)
-        db.session.commit()
-        print('Good way')
+    if form.validate_on_submit():
+        if id >=0:        
+            comment = CommentsToMyWorks.query.filter(CommentsToMyWorks.id == id).first()
+            comment.text = form.text_field.data
+            comment.show = 0 if form.show_list_field.data=='0' else 1
+            db.session.add(comment)
+            db.session.commit()           
+
+    return redirect(main_utils.get_redirect_target())
+
+@bp.route('/list_news', methods=['GET', 'POST'])
+@admin_required
+def list_news():
+    '''
+    Вывод страницы c новостными лентами с других сайтов
+    '''
+    titleVar='Редактирование отображения новостей'
+    
+    time_form = MyWorkTimeToShowForm()    
+    start_date =(datetime.utcnow() -timedelta(days=360)).date()
+    end_date = datetime.utcnow().date()
+    list_news_and_comments_forms = []
+
+    if request.method == "POST":         
+        if time_form.validate_on_submit():            
+            #print('Проверку прошли')
+            start_date = time_form.date_field_start.data
+            end_date =time_form.date_field_end.data
+
+            list_news = [n for n in News.query.order_by(News.published.desc()) if n.published.date() >= start_date and n.published.date() <= end_date]        
+            for n in list_news:
+                news_form = EditNewsForm(id_news_field = n.id,
+                                               title_field = n.title,
+                                               url_field = n.url,
+                                               main_picture_url = n.main_picture_url,
+                                               published_field = n.published.strftime('%d/%m/%Y %H:%M'),                                           
+                                               source_field = n.source,
+                                               show_list_field = '0' if n.show == 0 else '1'
+                                               )
+                list_comment = [c for c in CommentsToNews.query.order_by(CommentsToNews.created.desc()) if c.news_id == n.id]
+                list_comment_forms = []
+                for c in list_comment:
+                    coment_form = EditNewsCommentsForm(
+                        id_my_work_field =c.id,
+                        text_field = c.text,
+                        published_field = c.created.strftime('%d/%m/%Y %H:%M'),
+                        show_list_field = '0' if c.show == 0 else '1'
+                        )
+                    list_comment_forms.append(coment_form)
+
+                list_news_and_comments_forms.append({'news_form': news_form, 'list_comment_form': list_comment_forms})
+                    
+           
+    elif request.method == "GET":
+        time_form.date_field_start.data=start_date
+        time_form.date_field_end.data=end_date
+        list_news = [n for n in News.query.order_by(News.published.desc()) if n.published.date() >= start_date and n.published.date() <= end_date]        
+        for n in list_news:
+            news_form = EditNewsForm(id_news_field = n.id,
+                                           title_field = n.title,
+                                           url_field = n.url,
+                                           main_picture_url = n.main_picture_url,
+                                           published_field = n.published.strftime('%d/%m/%Y %H:%M'),                                           
+                                           source_field = n.source,
+                                           show_list_field = '0' if n.show == 0 else '1'
+                                           )
+            list_comment = [c for c in CommentsToNews.query.order_by(CommentsToNews.created.desc()) if c.news_id == n.id]
+            list_comment_forms = []
+            for c in list_comment:
+                coment_form = EditNewsCommentsForm(
+                    id_my_work_field =c.id,
+                    text_field = c.text,
+                    published_field = c.created.strftime('%d/%m/%Y %H:%M'),
+                    show_list_field = '0' if c.show == 0 else '1'
+                    )
+                list_comment_forms.append(coment_form)
+
+            list_news_and_comments_forms.append({'news_form': news_form, 'list_comment_form': list_comment_forms})
+                       
+   # dic_date={'start_date': start_date.strftime('%Y-%m-%d_%H-%M'),'end_date': end_date.strftime('%Y-%m-%d_%H-%M')} 
+    #print(list_news_and_comments_forms)
+    return render_template('admin_my/list_news.html', time_form = time_form, list_news_and_comments_forms = list_news_and_comments_forms) #,  list_my_works=list_my_works, list_comment=list_comment, dic_date=dic_date
+
+
+@bp.route('/save_news', methods=['POST'])
+@admin_required
+def save_news():
+    '''
+    Действие сохранения изменений в форме работы
+    '''
+    form = EditNewsForm()
+    try:
+        id = int(form.id_news_field.data)          
+    except:        
+        id = -1        
+
+    if form.validate_on_submit():        
+        if id >=0:        
+            news = News.query.filter(News.id == id).first()
+            #news.title = form.title_field.data
+            news.show = 0 if form.show_list_field.data=='0' else 1
+            #news.content = form.content_field.data
+            db.session.add(news)
+            db.session.commit()          
+
+    return redirect(main_utils.get_redirect_target())
+
+@bp.route('/edit_comment_to_news', methods=['POST'])
+@admin_required
+def edit_comment_to_news():
+    '''
+    Вывод страницы редактирования комментария к новости
+    '''
+    form = EditNewsCommentsForm()
+    try:
+        id = int(form.id_my_work_field.data)        
+    except:        
+        id = -1
+
+    if form.validate_on_submit():
+        comment = CommentsToNews.query.filter(CommentsToNews.id == id).first()
+        if form.to_save_submit.data:
+            if id >=0: 
+                comment.text = form.text_field.data
+                comment.show = 0 if form.show_list_field.data=='0' else 1
+                db.session.add(comment)
+                db.session.commit()         
+        elif form.to_delete_submit.data:
+                db.session.delete(comment)
+                db.session.commit()     
 
     return redirect(main_utils.get_redirect_target())

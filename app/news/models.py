@@ -13,7 +13,7 @@ class News(db.Model):#(SearchableMixin, db.Model):
     published = db.Column(db.DateTime, nullable=False)
     source = db.Column(db.String, nullable=False)
     text = db.Column(db.Text, nullable=True)
-    
+    show = db.Column(db.Integer, default = 1)
 
     def page_news():
         '''
@@ -27,9 +27,7 @@ class News(db.Model):#(SearchableMixin, db.Model):
         '''
         method count comments to news
         '''
-        return CommentsToNews.query.filter(CommentsToNews.news_id == self.id).count();
-    
-    
+        return CommentsToNews.query.filter(CommentsToNews.news_id == self.id).filter(CommentsToNews.show == 1).count();   
 
     def __repr__(self):
         return f'<News {self.title} {self.url}>'
@@ -41,6 +39,7 @@ class CommentsToNews(db.Model):
     id = db.Column(db.Integer, primary_key=True);
     text = db.Column(db.Text, nullable=True);
     created = db.Column(db.DateTime, nullable=False, default=datetime.now());
+    show = db.Column(db.Integer, default = 1)
     news_id = db.Column(
         db.Integer,
         db.ForeignKey('news.id', ondelete='CASCADE'),
