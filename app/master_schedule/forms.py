@@ -5,7 +5,7 @@ from wtforms.validators import DataRequired, ValidationError, Length, InputRequi
 from flask_babel import Babel, _, lazy_gettext as _l
 from app.master_schedule.models import DateTable, ScheduleOfDay
 from app.main_func import utils as main_utils
-
+from app.user.models import *
 
 class CountInt(object):
     def __init__(self, min=-1, max=-1, message=None):
@@ -78,6 +78,8 @@ class ScheduleMaster(FlaskForm):
     cancel_field = SubmitField(_('Отменить'), render_kw={"class": "button fl-cancel-field"})
     clear_field = SubmitField(_('Освободить'),  render_kw={"class" : "button clear-field", "type": "submit"})
    
+    preliminary_record_field = SubmitField(_('Записаться'),  render_kw={"class" : "button clear-field", "type": "button"})
+
     def validate_client_id_field(self, client_id_field):
         '''
         проверка на наличие клиента для записи
@@ -100,3 +102,50 @@ class ScheduleMaster(FlaskForm):
         
         if price< 0 or price > 10000:            
             raise ValidationError(_l('Цена не может быть отрицательной или больше 10000'))
+
+
+class PreliminaryForm(FlaskForm):
+    '''
+    Форма для отправки данных на предварительную запись. Все поля должны быть заполнены.
+    Телефон проверяется на принадлежность к российским операторам.    
+    Перед формой есть выбор периода времени после выбора которого создается список с 
+    доступным временем для записи.
+    '''
+    id_preliminary_field = StringField(_('Id Предзаписи'), render_kw={"class" : "shedule-text-field comment-field"})
+    name_of_client_field = StringField(_('Ваше имя'),  default=-1, render_kw={"class" : "shedule-text-field comment-field"})
+    number_phone = StringField(_l('Ваш  телефон'), validators=[DataRequired()], render_kw={"class" : "shedule-text-field comment-field", "type": "text"})
+    message_of_client_field = TextAreaField(_('Сообщение мастеру'),  default=-1, render_kw={"class" : "shedule-text-field comment-field"})
+    message_worked_field = IntegerField(_('Сообщение обработано мастером'), validators=[InputRequired()], default = 0)
+    time_to_record_field = StringField(_('Дата и время'),  default=-1, render_kw={"class" : "shedule-text-field comment-field"})
+       
+    send_submit = SubmitField(_('Написать'), render_kw={"class": "button", 'type': 'submit'})
+    cancel_field = SubmitField(_('Отменить'), render_kw={"class": "button fl-cancel-field", 'type': 'button'})
+    
+    #кнопка будет ссылаться на адрес обработки заявки в расписании
+    to_work = SubmitField(_('Обработать'), render_kw={"class": "button", 'type': 'button'})
+
+
+    def validate_number_phone(self, number_phone):
+        if len(self.number_phone.data) < 10:
+            print('enter min')
+            raise ValidationError(_l('Короткий номер! Введите телефон в формате 10 цифр, например 9271102535'))
+        
+        if len(self.number_phone.data) > 10:
+            print('enter max')
+            raise ValidationError(_l('Длинный номер! Введите телефон в формате 10 цифр, например 9271102535'))
+        
+        #только цифры в номере
+        if not self.number_phone.data.isdigit():
+            raise ValidationError(_l('Нельзя использовать буквы в номере телефона! Введите телефон в формате 10 цифр, например 9271102535'))
+    
+        #здесь создаем массив из валидных операторов для отсылки смс
+        valide_mobil_code_zone = []
+        first_code = 900
+    
+        while first_code < 1000:
+            valide_mobil_code_zone.append(first_code)
+            first_code = first_code + 1
+    
+        if not int((self.number_phone.data)[:3]) in valide_mobil_code_zone:
+            raise ValidationError(_l('Данный телефон не принадлежит российским операторам сотовой связи! Введите телефон в формате 10 цифр, например 9271102535'))
+        

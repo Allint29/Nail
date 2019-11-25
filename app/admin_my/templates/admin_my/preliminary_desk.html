@@ -1,0 +1,86 @@
+﻿{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+<section class="site-map">
+    <p>
+        <a href="{{ url_for('welcome.index') }}">{{_('Главная страница')}}</a>
+        <span>&#9830;</span>
+        <a href="{{ url_for('admin_my.admin_index') }}">{{_('Администрация')}}</a>
+        <span>&#9830;</span>
+        <a>{{_('Доска заявок на запись к мастеру')}}</a>
+    </p>
+</section>
+<div class="find-user-container">
+    {% if filter_form %}
+    <form action="" method="post">
+        {{filter_form.hidden_tag()}}
+        {% for error in filter_form.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+        <ul class="find-user-container-date">
+            <li>
+                {{filter_form.date_field_start.label}}
+                {{filter_form.date_field_start}}
+                {% for error in filter_form.date_field_start.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </li>
+            <li>
+                {{filter_form.date_field_end.label}}
+                {{filter_form.date_field_end}}
+                {% for error in filter_form.date_field_end.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </li>
+            <li>
+                {{filter_form.filter_worked_field.label}}
+                {{filter_form.filter_worked_field}}
+                {% for error in filter_form.filter_worked_field.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </li>
+            <li>
+                {{filter_form.filter_include_date_field.label}}
+                {{filter_form.filter_include_date_field}}
+                {% for error in filter_form.filter_include_date_field.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </li>
+            <li>
+                {{filter_form.submit}}
+            </li>
+        </ul>
+    </form>
+
+    {%endif%}
+
+    {%if list_pre_rec%}
+    {%for pre in list_pre_rec%}
+    <ul class="find-user-container-date">
+
+        <li>{{pre.id}}</li>
+        <li>{{pre.name_of_client}}</li>
+        <li>{{pre.phone_of_client}}</li>
+        <li>{{pre.message_of_client}}</li>
+        <li>!::::{{pre.message_worked}}:::!</li>
+        <li>{{pre.time_to_record}}</li>
+        {%if pre.message_worked == 0%}
+        <li>
+            <a class="button" href="{{url_for('admin_my.preliminary_router', pre_id=pre.id)}}">{{_('Записать')}}</a>
+        </li>
+        <li>
+            <a class="button" href="{{url_for('admin_my.preliminary_message_worked', pre_id=pre.id)}}">{{_('Обработанно')}}</a>
+            
+        </li>
+        {%endif%}
+    </ul>
+    {%endfor%}
+    {%endif%}
+
+
+</div>
+
+{% endblock %}
+
+<!--<li><a class="button" href="{{url_for('Здесь путь к адресу распредеения. Где будет перенаправляться пользователь в нужное место', pre_id=pre.id)}}"></a></li>-->

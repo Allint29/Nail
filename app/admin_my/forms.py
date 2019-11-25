@@ -15,6 +15,8 @@ class AdminMenu(FlaskForm):
     to_works = SubmitField(_('Работы'), render_kw={"class": "button ", "type": "submit"})
     to_news = SubmitField(_('Новости'), render_kw={"class": "button ", "type": "submit"})
     to_schedule = SubmitField(_('Расписание'),  render_kw={"class" : "button ", "type": "submit"})
+    to_desk_preliminary_rec = SubmitField(_('Предзапись'),  render_kw={"class" : "button ", "type": "submit"})
+
 
 class EditUsersForm(FlaskForm):
     '''
@@ -240,3 +242,22 @@ class EditNewsCommentsForm(FlaskForm):
     to_save_submit = SubmitField(_('Сохр. коммент'), render_kw={"class": "button fl-button-field-user-edit", "type": "submit"})
     to_delete_submit = SubmitField(_('Удалить. коммент'), render_kw={"class": "button fl-button-field-user-edit", "type": "submit"})
     
+class FilterForm(FlaskForm):
+    '''
+    Форма хранит типы фильтрации элементов
+    '''
+    date_field_start = DateField (_('с'), validators=[DataRequired()], render_kw={"class" : "shedule-text-field comment-field", "type": "date", "placeholder" : _('Выберите дату')})
+    date_field_end = DateField (_('по'), validators=[DataRequired()], render_kw={"class" : "shedule-text-field comment-field", "type": "date", "placeholder" : _('Выберите дату')})
+    
+    #элемент для фильтрации заявок обработанных и не обработанных
+    filter_worked_field = SelectField(_('Фильтр обработки'), validators=[DataRequired()], choices=[('non_worked', _('Не обработанные')), ('all', _('Все')), ('worked', _('Обработанные'))],render_kw={"class" : "comment-field"})
+    #элемент для фильтрации заявок обработанных и не обработанных
+    filter_include_date_field = SelectField(_('Учитывать дату'), validators=[DataRequired()], choices=[('include', _('Учитывать')), ('non_include', _('Не учитывать'))],render_kw={"class" : "comment-field"})
+    
+    submit = SubmitField(_('Выбрать'), render_kw={"class": "button"});
+
+    def validate_date_field_end(self, date_field_end):
+        #print('--------------------- Check MyWorkTimeToShowForm --------------------')
+        if self.date_field_end.data < self.date_field_start.data:
+            raise ValidationError(_l('Конечная дата не может быть меньше начальной.'))
+

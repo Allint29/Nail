@@ -30,7 +30,7 @@ def get_redirect_target():
 
 def min_date_for_calculation():
     '''
-    функция возвращает минимальное значение для данной модели
+    функция возвращает минимальное значение для данной модели '1/1/2000 0:00'
     '''
     return datetime.strptime('1/1/2000 0:00', '%d/%m/%Y %H:%M')
 
@@ -143,7 +143,8 @@ def parser_time_client_from_str(dic_val):
     '''
     Функция преобразует строку из пост гет запроса словаря с ключами time_date_id , client_id в int,
     возвращает словарь с теми же ключами, но уже значения это числа, если преобразование прошло не удачно, то знаячения будут -1
-    dic_val = {'time_date_id': string number, 'client_id': string number}
+    dic_val = {'time_date_id': string number, 'client_id': string number, }
+    dic_val = {'time_date_id': string number, 'client_id': string number, 'number_phone' : string number}
     '''
     #  print(dic_val)
     dic_val = json.loads(dic_val.replace("'", '"').replace("Undefined".lower(), '-1'))    
@@ -158,7 +159,12 @@ def parser_time_client_from_str(dic_val):
     except:
         client_id = -1
 
-    dic_val = {'time_date_id' : time_date_id, 'client_id' : client_id}
+    try:
+        number_ = int(dic_val['number_phone'])
+    except:
+        number_ = ''
+
+    dic_val = {'time_date_id' : time_date_id, 'client_id' : client_id, 'number_phone' : number_}
     
     return dic_val
 

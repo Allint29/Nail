@@ -11,6 +11,3 @@ from flask_babel import Babel, _, lazy_gettext as _l
 
 #мипортируем, та как мы будеем проверять id новости
 from app.my_work.models import MyWork
-
-#class WelcomeForm(FlaskForm):
-

@@ -13,7 +13,10 @@ from app.news.models import *
 from app.main_func.utils import parser_time_client_from_str, parser_start_end_date_from_str
 from app.main_func import utils as main_utils
 
-from app.admin_my.utils import set_default_password_admin, user_delete_admin
+from app.admin_my.utils import set_default_password_admin, user_delete_admin, show_preliminary_desk
+
+from app.master_schedule.models import *
+
 
 @bp.route('/', methods=['GET', 'POST'])
 @admin_required
@@ -36,6 +39,9 @@ def admin_index():
 
     if form_admin_menu.to_users.data:        
         return redirect(url_for('admin_my.find_users', dic_val ={'time_date_id' : -1 , 'client_id' : -1}))
+
+    if form_admin_menu.to_desk_preliminary_rec.data:
+        return redirect(url_for('admin_my.preliminary_desk'))
 
     return render_template('admin_my/index.html', title=titleVar, form_admin_menu=form_admin_menu)
 
@@ -113,15 +119,16 @@ def find_users(dic_val):
 @admin_required
 def edit_user_form(dic_val):
     '''
-    Маршрут создания или редактирования пользователя
+    Маршрут создания или редактирования пользователя    
     '''   
     try:
         dic_val = parser_time_client_from_str(dic_val)
     except:
-        dic_val = {'time_date_id' : -1, 'client_id' : -1}
+        dic_val = {'time_date_id' : -1, 'client_id' : -1, 'number_phone' : ''}
 
     time_date_id = dic_val['time_date_id']
     client_id = dic_val['client_id']
+    number_ = dic_val['number_phone']
 
     edit_users_form = EditUsersForm()
 
@@ -173,24 +180,29 @@ def edit_user_form(dic_val):
             user_to_save.role = 'admin' if edit_users_form.role_field.data == 'admin' else 'user'
             user_to_save.connection_type_id = edit_users_form.type_connection_field.data
             user_to_save.last_seen = edit_users_form.last_seen_field.data
-
-            db.session.add(user_to_save)
-            db.session.commit()         
-            #перенаправляю на форму с созданным клиентом
-            return redirect(url_for('admin_my.edit_user_form', dic_val= {'time_date_id' : dic_val['time_date_id'], 'client_id' : user_to_save.id }))
+            try:
+                db.session.add(user_to_save)
+                db.session.commit()         
+                #перенаправляю на форму с созданным клиентом
+                flash(_('Изменения в профиле пользователя успешно сохранены.'))
+            except:
+                flash(_('Ошибка при записи в базу: Изменения в профиле пользователя НЕ сохранены.'))
+            return redirect(url_for('admin_my.edit_user_form', dic_val= {'time_date_id' : dic_val['time_date_id'], 'client_id' : user_to_save.id, 'number_phone' : dic_val['number_phone']}))
 
     elif request.method == "GET":        
-     if u:
-        edit_users_form.role_field.data = 'admin' if u.role == 'admin' else 'user'
-        edit_users_form.email_field.data = u.email   
-        edit_users_form.email_confirmed_field.data = '0' if u.email_confirmed == 0 else '1'
-        edit_users_form.username_field.data = u.username
-        edit_users_form.about_me_field.data =  u.about_me        
-        edit_users_form.type_connection_field.data = u.connection_type_id
-        edit_users_form.registration_date_field.data = u.registration_date if u.registration_date != None else datetime.utcnow()
-        edit_users_form.last_seen_field.data = u.last_seen if u.last_seen !=None else datetime.utcnow()#.strftime('%d/%m/%Y %H:%M')
-        edit_users_form.trying_to_enter_new_phone_field.data = u.trying_to_enter_new_phone
-
+        if u:
+            edit_users_form.role_field.data = 'admin' if u.role == 'admin' else 'user'
+            edit_users_form.email_field.data = u.email   
+            edit_users_form.email_confirmed_field.data = '0' if u.email_confirmed == 0 else '1'
+            edit_users_form.username_field.data = u.username
+            edit_users_form.about_me_field.data =  u.about_me        
+            edit_users_form.type_connection_field.data = u.connection_type_id
+            edit_users_form.registration_date_field.data = u.registration_date if u.registration_date != None else datetime.utcnow()
+            edit_users_form.last_seen_field.data = u.last_seen if u.last_seen !=None else datetime.utcnow()#.strftime('%d/%m/%Y %H:%M')
+            edit_users_form.trying_to_enter_new_phone_field.data = u.trying_to_enter_new_phone
+        else:
+            edit_users_form.role_field.data = 'user'
+        
     return render_template('admin_my/edit_user.html', edit_users_form = edit_users_form, phone_forms=phone_forms, social_forms=social_forms, dic_val = dic_val)
 
 @bp.route('/delete_users_form_<dic_val>', methods=['GET', 'POST'])
@@ -269,11 +281,12 @@ def edit_phone(dic_val, id_phone=-1):
     try:
         dic_val = parser_time_client_from_str(dic_val)
     except:
-        dic_val = {'time_date_id' : -1, 'client_id' : -1}
+        dic_val = {'time_date_id' : -1, 'client_id' : -1,  'number_phone' : ''}
 
 
     time_date_id = dic_val['time_date_id']
     client_id = dic_val['client_id']
+    number_ = dic_val['number_phone']
 
     form = EditPhoneUserForm()
     number_for_edit = UserPhones.query.filter_by(id = id_phone).first()
@@ -283,10 +296,13 @@ def edit_phone(dic_val, id_phone=-1):
         if number_for_edit:
             #если номер существует
             number_for_edit.number = form.number_phone.data
-            number_for_edit.black_list = 0 if form.to_black_list.data == '0' else 1            
-            db.session.add(number_for_edit)
-            db.session.commit();
-            flash(_('Номер изменен.'))
+            number_for_edit.black_list = 0 if form.to_black_list.data == '0' else 1   
+            try:
+                db.session.add(number_for_edit)
+                db.session.commit();
+                flash(_('Номер изменен успешно.'))
+            except:
+                flash(_('Ошибка при записи в базу: Изменения в телефоне пользователя не сохранены.'))
             return redirect(url_for('admin_my.edit_user_form', dic_val = dic_val))
         else:
             #если не существует            
@@ -296,10 +312,13 @@ def edit_phone(dic_val, id_phone=-1):
                 number_for_edit.user_id = user.id
                 number_for_edit.number = form.number_phone.data
                 number_for_edit.black_list = 0              
-                number_for_edit.phone_checked = 1                
-                db.session.add(number_for_edit)
-                db.session.commit();  
-                flash(_(f'Для пользователя {user.username} добавлен новый номер телефона: {form.number_phone.data}.'))
+                number_for_edit.phone_checked = 1      
+                try:
+                    db.session.add(number_for_edit)
+                    db.session.commit();  
+                    flash(_(f'Для пользователя {user.username} добавлен новый номер телефона: {form.number_phone.data}.'))
+                except:
+                    flash (_('Ошибка при записи в базу: Для пользователя {user.username} не удалось сохранить изменения в телефоне.'))
                 return redirect(url_for('admin_my.edit_user_form', dic_val = dic_val))
             else:                
                 #нет клиента и нет номера - ошибка
@@ -318,7 +337,7 @@ def edit_phone(dic_val, id_phone=-1):
             form.id_phone_field.data='-1'
             form.user_id_field.data = client_id if client_id>=0 else '-1'
             form.to_black_list.data = 0
-            form.number_phone.data = ''
+            form.number_phone.data = number_
     return render_template('admin_my/edit_phone.html', form=form, dic_val=dic_val)  
 
 @bp.route('/delete_phone_<dic_val>_<id_phone>', methods=['GET', 'POST'])
@@ -335,8 +354,12 @@ def delete_phone(dic_val, id_phone=-1):
     phone_to_del = UserPhones.query.filter_by(id = id_phone).first()
     
     if phone_to_del:
-        db.session.delete(phone_to_del)
-        db.session.commit()
+        try:
+            db.session.delete(phone_to_del)
+            db.session.commit()
+            flash(_(f'Телефон {phone_to_del.number} удален успешно'))
+        except:
+            flash(_('Ошибка при записи в базу: Телефон пользователя удалить не удалось.'))
         return redirect(url_for('admin_my.find_users', dic_val = dic_val))
     else:
         return redirect(url_for('admin_my.edit_phone', dic_val = dic_val, id_phone=id_phone))
@@ -347,7 +370,7 @@ def delete_phone(dic_val, id_phone=-1):
 @admin_required
 def edit_socials(dic_val, id_socials=-1):
     '''
-    Действие сохраняет изменения в телефоне пользователя
+    Действие сохраняет изменения в соц сети пользователя
     '''    
     try:
         id_socials = int(id_socials)
@@ -368,12 +391,15 @@ def edit_socials(dic_val, id_socials=-1):
 
     if form.validate_on_submit():
         if adress_for_edit:
-            #если номер существует
+            #если аккаунт существует
             adress_for_edit.adress_accaunt = form.adress_social.data
-            adress_for_edit.black_list = 0 if form.to_black_list.data == '0' else 1            
-            db.session.add(adress_for_edit)
-            db.session.commit();
-            flash(_('Адрес соцю сети изменен.'))
+            adress_for_edit.black_list = 0 if form.to_black_list.data == '0' else 1
+            try:
+                db.session.add(adress_for_edit)
+                db.session.commit();
+                flash(_('Адрес соц. сети изменен успешно.'))
+            except:
+                flash(_('Ошибка при записи в базу: Адрес соц. сети НЕ изменен.'))
             return redirect(url_for('admin_my.edit_user_form', dic_val = dic_val))
         else:
             #если не существует            
@@ -384,13 +410,12 @@ def edit_socials(dic_val, id_socials=-1):
                 adress_for_edit.user_id = user.id
                 adress_for_edit.adress_accaunt = form.adress_social.data
                 adress_for_edit.black_list = 0
-
-              #  print('adress_for_edit.user_id:' , adress_for_edit.user_id, \
-              #      'adress_for_edit.adress_accaunt: ' , adress_for_edit.adress_accaunt, \
-              #      'adress_for_edit.black_list: ', adress_for_edit.black_list)
-                db.session.add(adress_for_edit)
-                db.session.commit();  
-                flash(_(f'Для пользователя {user.username} внесены изменения в адрес соц.сети: {form.adress_social.data}.'))
+                try:
+                    db.session.add(adress_for_edit)
+                    db.session.commit();  
+                    flash(_(f'Для пользователя {user.username} внесены изменения в адрес соц.сети: {form.adress_social.data}.'))
+                except:
+                    flash(_('Ошибка при записи в базу: Адрес соц. сети НЕ изменен.'))                
                 return redirect(url_for('admin_my.edit_user_form', dic_val = dic_val))
             else:                
                 #нет клиента и нет номера - ошибка
@@ -430,6 +455,7 @@ def delete_socials(dic_val, id_socials=-1):
         try:
             db.session.delete(socials_to_del)
             db.session.commit()
+            flash(_('Профиль социальной сети клиента удален успешно.'))
         except:
             flash(_(f'Ошибка: Удалить соц.сеть {socials_to_del.adress_accaunt} не удалось.'))
             return redirect(url_for('admin_my.edit_socials', dic_val = dic_val, id_socials=id_socials))
@@ -551,11 +577,16 @@ def save_my_work():
             work.title = form.title_field.data
             work.show = 0 if form.show_list_field.data=='0' else 1
             work.content = form.content_field.data
-            db.session.add(work)
-            db.session.commit()          
+            try:
+                db.session.add(work)
+                db.session.commit()
+                flash(_('Изменения в контенте работы мастера сохранены.'))
+            except:
+                flash(_('Ошибка при записи в базу: Изменения в контенте работы мастера НЕ сохранены.'))
+    else:
+        flash(_('Ошибка: Изменения в контенте работы мастера НЕ сохранены.'))
 
     return redirect(main_utils.get_redirect_target())
-
     
 @bp.route('/edit_comment_to_my_work', methods=['GET', 'POST'])
 @admin_required
@@ -574,8 +605,13 @@ def edit_comment_to_my_work():
             comment = CommentsToMyWorks.query.filter(CommentsToMyWorks.id == id).first()
             comment.text = form.text_field.data
             comment.show = 0 if form.show_list_field.data=='0' else 1
-            db.session.add(comment)
-            db.session.commit()           
+            try:
+                db.session.add(comment)
+                db.session.commit()     
+                flash(_('Изменения в контенте комментария к работе мастера сохранены успешно.'))
+            except:
+                flash(_('Ошибка при записи в базу: Изменения в контенте комментария к работе мастера НЕ сохранены.'))
+
 
     return redirect(main_utils.get_redirect_target())
 
@@ -588,7 +624,7 @@ def list_news():
     titleVar='Редактирование отображения новостей'
     
     time_form = MyWorkTimeToShowForm()    
-    start_date =(datetime.utcnow() -timedelta(days=360)).date()
+    start_date =(datetime.utcnow() -timedelta(days=60)).date()
     end_date = datetime.utcnow().date()
     list_news_and_comments_forms = []
 
@@ -652,7 +688,6 @@ def list_news():
     #print(list_news_and_comments_forms)
     return render_template('admin_my/list_news.html', time_form = time_form, list_news_and_comments_forms = list_news_and_comments_forms) #,  list_my_works=list_my_works, list_comment=list_comment, dic_date=dic_date
 
-
 @bp.route('/save_news', methods=['POST'])
 @admin_required
 def save_news():
@@ -671,8 +706,14 @@ def save_news():
             #news.title = form.title_field.data
             news.show = 0 if form.show_list_field.data=='0' else 1
             #news.content = form.content_field.data
-            db.session.add(news)
-            db.session.commit()          
+            try:
+                db.session.add(news)
+                db.session.commit()
+                flash(_('Изменения в контенте новости сохранены успешно.'))
+            except:
+                flash(_('Ошибка при записи в базу: Изменения в контенте новости НЕ сохранены.'))
+    else:
+        flash(_('Ошибка сохранения изменений в контенте новости.'))
 
     return redirect(main_utils.get_redirect_target())
 
@@ -694,10 +735,123 @@ def edit_comment_to_news():
             if id >=0: 
                 comment.text = form.text_field.data
                 comment.show = 0 if form.show_list_field.data=='0' else 1
-                db.session.add(comment)
-                db.session.commit()         
+                try:
+                    db.session.add(comment)
+                    db.session.commit()         
+                    flash(_('Изменения к комментарию новости сохранены успешно.'))
+                except:
+                    flash(_('Ошибка при записи в базу: Изменения к комментарию новости НЕ сохранены.'))
         elif form.to_delete_submit.data:
-                db.session.delete(comment)
-                db.session.commit()     
+                try:
+                    db.session.delete(comment)
+                    db.session.commit()
+                    flash(_('Комментарий к новости удален успешно.'))
+                except:
+                    flash(_('Ошибка при записи в базу: Комментарий к новости НЕ удален.'))
+    else:
+        flash(_('Ошибка редактирования комментария.'))
+
+    return redirect(main_utils.get_redirect_target())
+
+@bp.route('/preliminary_desk', methods=['GET', 'POST'])
+@admin_required
+def preliminary_desk():
+    '''
+    Вывод страницы c заявками на запись к мастеру
+    '''
+      
+    start_date =(datetime.utcnow() - timedelta(days=30))
+    end_date = datetime.utcnow() + timedelta(days=60)
+    filter_form = FilterForm()
+    list_pre_rec =[]
+    dic_pre_rec = []
+
+    if request.method == 'POST':
+        if filter_form.validate_on_submit():
+            start_date = filter_form.date_field_start.data
+            end_date = filter_form.date_field_end.data
+
+            list_pre_rec=show_preliminary_desk(start_date, start_date, \
+                filter_form.filter_include_date_field.data, \
+                filter_form.filter_worked_field.data)
+          
+    elif request.method == 'GET':
+        filter_form.date_field_start.data = start_date.date()
+        filter_form.date_field_end.data  = end_date.date()
+        filter_form.filter_worked_field.data = 'non_worked'
+        filter_form.filter_include_date_field.data = 'non_include'       
+    
+        list_pre_rec=show_preliminary_desk(start_date.date(), start_date.date(), \
+            filter_form.filter_include_date_field.data, \
+            filter_form.filter_worked_field.data)
+
+    return render_template('admin_my/preliminary_desk.html', \
+        filter_form=filter_form, list_pre_rec=list_pre_rec)
+
+@bp.route('/preliminary_router_<pre_id>', methods=['GET', 'POST'])
+@admin_required
+def preliminary_router(pre_id):
+    '''
+    Вывод страницы c заявками на запись к мастеру
+    '''
+    try:
+        pre_id = int(pre_id)
+    except:
+        flash(_('Ошибка при определении ид предзаписи: Возврат обратно.'))
+        return redirect(main_utils.get_redirect_target())
+
+    #определиз запись для обработки
+    pre = PreliminaryRecord.query.filter(PreliminaryRecord.id == pre_id).first()
+
+    if pre == None:
+        flash(_('Ошибка данной предзаписи нет в базе: Возврат обратно.'))
+        return redirect(main_utils.get_redirect_target())
+
+    #определяю нужное время - на всякий случай принудительно привожу данный параметр округляя до часов
+    pre_time = datetime(pre.time_to_record.year, pre.time_to_record.month, pre.time_to_record.day, pre.time_to_record.hour, 0)
+    date_time = ScheduleOfDay.query.filter(ScheduleOfDay.begin_time_of_day == pre_time).first()
+    #ищу зарегистрирован ли телефон и определяю к нему клиента    
+    phone = UserPhones.query.filter(UserPhones.number == pre.phone_of_client).first()
+    user=None
+    if phone:
+        user = User.query.filter(User.id == phone.user_id).first()
+
+    if user:
+        #если клиент найден, то перенаправляю на время для резервации с ид временем и ид юзера
+        flash(_('Вы направлены на страницу расписания - выберите время для записи клиента.'))
+        return redirect(url_for('master_schedule.show_schedule_master', dic_val = {'time_date_id' : date_time.id, 'client_id' : user.id}))
+        
+    else:
+        #иначе перенаправляю на создание нового пользователя с ид времени.
+        flash(_('Вы направлены на страницу создания нового пользователя - создайте клиента и нажмите "Записать" для записи на это время.'))
+        return redirect(url_for('admin_my.edit_user_form', dic_val = {'time_date_id' : date_time.id, 'client_id' : -1, 'number_phone' : pre.phone_of_client}))
+        
+@bp.route('/preliminary_message_worked_<pre_id>', methods=['GET', 'POST'])
+@admin_required
+def preliminary_message_worked(pre_id):
+    '''
+    Вывод страницы c заявками на запись к мастеру
+    '''
+    try:
+        pre_id = int(pre_id)
+    except:
+        flash(_('Ошибка при определении ид предзаписи в блоке сохранения отработанной заявки на прием: Возврат обратно.'))
+        return redirect(main_utils.get_redirect_target())
+
+    #определиз запись для обработки
+    pre = PreliminaryRecord.query.filter(PreliminaryRecord.id == pre_id).first()
+
+    if pre == None:
+        flash(_('Ошибка данной предзаписи нет в базе: Возврат обратно.'))
+        return redirect(main_utils.get_redirect_target())
+
+    pre.message_worked = 1
+
+    try:
+        db.session.add(pre)
+        db.session.commit()
+        flash(_('Предзапись успешно помечена как обработанная.'))
+    except:
+        flash(_('Ошибка при записи в базу в блоке сохранения предзаписи как обработанной. Возврат обратно.'))
 
     return redirect(main_utils.get_redirect_target())

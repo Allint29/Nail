@@ -4,11 +4,12 @@ from datetime import datetime, timedelta, time, date
 from app.master_schedule import bp
 from app.decorators.decorators import admin_required
 from flask_babel import Babel, _, lazy_gettext as _l
-from app.master_schedule.forms import ScheduleTimeToShow, ScheduleMaster, TimeForm, ScheduleTimeToShowMaster
+from app.master_schedule.forms import ScheduleTimeToShow, ScheduleMaster, TimeForm, ScheduleTimeToShowMaster, PreliminaryForm
 from app.user import models as user_models #User, UserPhones, ConnectionType
-from app.master_schedule.models import DateTable, ScheduleOfDay
+from app.master_schedule.models import DateTable, ScheduleOfDay, PreliminaryRecord
 from app.master_schedule.utils import take_empty_time_in_shedule, clear_time_shedue, reserve_time_shedue, reserve_time_for_client
-from app.main_func.utils import parser_time_client_from_str
+from app.main_func import utils  as main_utils
+from app.master_schedule.myemail import send_preliminary_email
 
 @bp.route('/', methods=['GET', 'POST'])
 @admin_required
@@ -29,6 +30,9 @@ def index():
 
 @bp.route('/show_schedule', methods=['GET', 'POST'])
 def show_schedule():
+    '''
+    Действие показа страницы расписания для клиента
+    '''
     titleVar = _('Расписание')    
     form=ScheduleTimeToShow()
 
@@ -54,6 +58,7 @@ def show_schedule():
         form.date_field_start.data=d_start
         form.date_field_end.data=d_end
 
+    
     return render_template('master_schedule/schedule_show.html', title=titleVar, list_time_to_show=take_empty_time_in_shedule(d_start, d_end), form=form)
 
 
@@ -61,10 +66,10 @@ date_to_show = None
 @bp.route('/show_schedule_master_<dic_val>', methods=['GET', 'POST'])
 def show_schedule_master(dic_val):
     '''
-    Представление общего расписания для мастера, где есть элементы управления со временем - детали, освободить, занять 
+    Действие представление общего расписания для мастера, где есть элементы управления со временем - детали, освободить, занять 
     '''
     try:
-        dic_val = parser_time_client_from_str(dic_val)
+        dic_val = main_utils.parser_time_client_from_str(dic_val)
     except:
         dic_val = {'time_date_id' : -1, 'client_id' : -1}
  
@@ -111,10 +116,11 @@ def show_schedule_master(dic_val):
 @bp.route('/show_schedule_master_details_<dic_val>', methods=['GET', 'POST'])
 def show_schedule_master_details(dic_val):
     '''
-    Маршрут к странице детализации расписания мастера на день. Здесь вводим информацию о клиенте и работе
+    Маршрут к странице детализации расписания мастера на день. 
+    Здесь вводим информацию о клиенте и работе
     '''
     try:
-        dic_val = parser_time_client_from_str(dic_val)
+        dic_val = main_utils.parser_time_client_from_str(dic_val)
     except:
         dic_val = {'time_date_id' : -1, 'client_id' : -1}
 
@@ -198,4 +204,83 @@ def show_schedule_master_details(dic_val):
             "2" if time_to_details.client_come_in == 2 else "0"
 
     return render_template('master_schedule/shedule_details.html', form=form_change, dic_val ={'time_date_id': time_date_id, 'client_id':client_id} )
+
+@bp.route('/preliminary_record_<dic_val>', methods=['GET', 'POST'])
+def preliminary_record(dic_val):
+    '''
+    Маршрут к странице детализации расписания мастера на день.
+    Здесь вводим информацию о клиенте и работе
+    '''
+    try:
+        dic_val = main_utils.parser_time_client_from_str(dic_val)
+    except:
+        dic_val = {'time_date_id' : -1, 'client_id' : -1}
+ 
+    time_date_id = dic_val['time_date_id']
+    client_id = dic_val['client_id']
+
+    if time_date_id < 0:
+        flash(_('Ошибка: Не выбрано время для записи.'))
+        return redirect(main_utils.get_redirect_target())
+    
+    client = user_models.User.query.filter(user_models.User.id == client_id).first()    
+    date_time = ScheduleOfDay.query.filter(ScheduleOfDay.id == time_date_id).first()
+
+    if date_time == None:
+        flash(_('Ошибка: Не выбрано время для записи.'))
+        return redirect(main_utils.get_redirect_target())
+    form = PreliminaryForm()
+
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            #запись на доску запросов на запись отсылка письма мастеру
+            try:
+                date_time = datetime.strptime(form.time_to_record_field.data, '%d-%m-%Y %H:%M')
+            except:
+                flash(_('Ошибка: Невозможно определить дату.'))
+                return redirect(main_utils.get_redirect_target())
+
+            #print(type(date_time))
+            pre_record = PreliminaryRecord(name_of_client = form.name_of_client_field.data, 
+                                           phone_of_client = form.number_phone.data,
+                                           message_of_client = form.message_of_client_field.data,
+                                           message_worked = 0,
+                                           time_to_record = date_time
+                                           )
+            to_send = 0
+            try:
+                db.session.add(pre_record)
+                db.session.commit()            
+                to_send = 1
+                flash(_(f'Заявка на прием к мастеру на время {pre_record.time_to_record} отправлена успешно.'))
+            except:
+                flash(_('Ошибка записи в базу: Не удалось произвести запись. Повторите попытку позже.'))
+            #отсылаем письмо мастеру
+            if to_send == 1:
+                try:
+                    send_preliminary_email(pre_record)
+                except:
+                     flash(_('Ошибка отправки письма: Не удалось отправить сообщение мастеру. Повторите попытку позже.'))
+            return redirect(url_for('welcome.index'))
+
+    elif request.method == 'GET':
+        #если ищет время авторизированный пользователь
+        if client:
+            client_phone = user_models.UserPhones.query.filter(user_models.UserPhones.user_id == client.id).first()
+            form = PreliminaryForm(name_of_client_field = client.username, \
+                number_phone = client_phone.number if client_phone else '', \
+                message_of_client_field='', \
+                message_worked_field=0, \
+                time_to_record_field = date_time.begin_time_of_day.strftime('%d-%m-%Y %H:%M'))        
+        else:
+            form = PreliminaryForm(name_of_client_field = '', \
+                number_phone = '', \
+                message_of_client_field='', \
+                message_worked_field=0, \
+                time_to_record_field = date_time.begin_time_of_day.strftime('%d-%m-%Y %H:%M')) 
+
+
+        #print('time_date_id____',time_date_id,'client_id____',client_id)
+
+    return render_template('master_schedule/shedule_preliminary_record.html', form=form, dic_val = dic_val)
 

@@ -1,0 +1,19 @@
+﻿Здравствуйте, {{ preliminary_rec.name_of_client }} хочет записаться на прием!
+
+Выбранное время: {{preliminary_rec.time_to_record}}.
+
+Сообщение от клиента: "{{preliminary_rec.message_of_client}}".
+
+Телефон для ответа клиенту: {{ preliminary_rec.phone_of_client }} </p>
+
+Чтобы перейти к меню мастера сайта Nail-Master-Krd, перейдите по ссылке:
+{{ url_for('master_schedule.show_schedule_master', dic_val = {'time_date_id' : -1, 'client_id' : -1},  _external=True) }} , либо Вы можете самостоятельно посетить сайт для оформления 
+заявки клиента.
+
+Обязательно ответьте клиенту в самое ближайшее время. Он ждет Вашего ответа 
+по указанному номеру!
+
+Если вы получили данное письмо по ошибке, просто проигнорируйте это сообщение.
+
+С уважением, 
+Команда NailMasterKrd (Text)

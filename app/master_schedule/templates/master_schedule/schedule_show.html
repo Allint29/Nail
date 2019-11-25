@@ -40,9 +40,18 @@
 
                 <li class="schedule-container-days-content">
                     <span class="{%if item_list['empty'] == 'free' %}schedule-container-days-free{% elif item_list['empty'] == 'non_free' %}schedule-container-days-non-free{%else%}schedule-container-days-some-free{%endif%}">{{item_list['time'].begin_time_of_day.hour}}:00</span>
-
-                    <span>{%if item_list['empty'] == 'free' %}<span class="schedule-container-days-free">Свободно</span>{% elif item_list['empty'] == 'non_free' %}<span class="schedule-container-days-non-free">Занято</span>{%else%}<span class="schedule-container-days-some-free">Неполное время</span>{%endif%}</span>
-
+                    <span>
+                        {%if item_list['empty'] == 'free' %}
+                        <span class="schedule-container-days-free">
+                            {%if current_user.is_authenticated%}
+                            <a class="" href="{{url_for('master_schedule.preliminary_record', dic_val = {'time_date_id' : item_list['time'].id, 'client_id' : current_user.id })}}">Свободно</a>  
+                            {%else%}
+                            <a class="" href="{{url_for('master_schedule.preliminary_record', dic_val = {'time_date_id' : item_list['time'].id, 'client_id' : -1})}}">Свободно</a>
+                            {%endif%}
+                        </span>
+                        {% elif item_list['empty'] == 'non_free' %}<span class="schedule-container-days-non-free">Занято</span>
+                        {%else%}<span class="schedule-container-days-some-free">Неполное время</span>{%endif%}
+                    </span>
                 </li>
                 {%endfor%}
             </ul>

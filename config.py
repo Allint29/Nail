@@ -16,6 +16,7 @@ class Config(object):
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     ADMINS = ['Alexeya299@gmail.com']
+    MASTER_MAILS = ['Alexeya299@gmail.com', 'frelich25@yandex.ru']
     LANGUAGES = ['en', 'es', 'ru']
     MS_TRANSLATOR_KEY = os.environ.get('MS_TRANSLATOR_KEY')
     ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL')

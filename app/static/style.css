@@ -1223,7 +1223,7 @@ button.bg-light:hover {
     padding: 0 !important;
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
+    justify-content:space-around;
     border: 1px solid rgba(255,110,210, 1);
 }
 
@@ -1232,7 +1232,7 @@ button.bg-light:hover {
     margin: 0 0px 0 0px;
     padding: 30px 30px 30px 30px;
     list-style: none;
-    width: 50%;
+    width: 40%;
     min-width: 300px;
     background-image: url('images/back_color_galary15.png');
     margin-bottom: 0px;
@@ -1838,13 +1838,28 @@ button.bg-light:hover {
 
 .schedule-container-days li {
     min-width: 200px;
+    min-height: 25px;
     margin: auto !important;
     padding: 0 !important;
 }
 
-.schedule-container-days-free {
+
+.schedule-container-days-content a {
     color: rgba(0,103,0, 1);
+    margin: 0 !important;
+    padding: 0 !important;
 }
+
+.schedule-container-days-content a,
+.schedule-container-days-content a:hover,
+.schedule-container-days-content a:focus,
+.schedule-container-days-content a:active {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 70%;
+}
+
+
 
 .schedule-container-days-non-free {
     color: rgba(255,0,0, 1);
@@ -2005,7 +2020,7 @@ button.bg-light:hover {
     align-content: center;
     alignment: center;
     max-width: 330px;
-    
+    padding: 20px 0 0 0;
     border: 1px solid rgba(255,110,210, 1) !important;
     overflow: auto
 }
@@ -2166,3 +2181,5 @@ button.bg-light:hover {
 .edit-container-work-img {
     max-width: 60px;
 }
+
+

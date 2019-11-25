@@ -1,0 +1,28 @@
+﻿{% if time_form %}
+<form action="" method="post">
+    {{time_form.hidden_tag()}}
+    {% for error in time_form.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+    <ul class="find-user-container-date">
+        <li>
+            {{time_form.date_field_start.label}}
+            {{time_form.date_field_start}}
+            {% for error in time_form.date_field_start.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </li>
+        <li>
+            {{time_form.date_field_end.label}}
+            {{time_form.date_field_end}}
+            {% for error in time_form.date_field_end.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </li>
+        <li>
+            {{time_form.submit}}
+        </li>
+    </ul>
+</form>
+
+{%endif%}

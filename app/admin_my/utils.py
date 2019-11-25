@@ -1,10 +1,11 @@
 ﻿import re
 import json
 import random
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from app import db
 from app.user.models import User, UserPhones, UserInternetAccount, ConnectionType
-from app.master_schedule.models import ScheduleOfDay
+
+from app.master_schedule.models import *
 from app.admin_my.models import ActionLine
 
 from flask import flash
@@ -157,6 +158,7 @@ def user_delete_admin(user_id):
         deleted_objects_phones = UserPhones.__table__.delete().where(UserPhones.id.in_(p_to_del))
         db.session.execute(deleted_objects_phones)
         db.session.commit()
+        flash(_('Телефон удаляемого пользователя удален.'))
     except:
         flash(_('Ошибка: При удалении телефона пользователя в блоке удаления пользователя.'))
         return False
@@ -166,6 +168,7 @@ def user_delete_admin(user_id):
         deleted_objects_socials = UserInternetAccount.__table__.delete().where(UserInternetAccount.id.in_(s_to_del))
         db.session.execute(deleted_objects_socials)
         db.session.commit()
+        flash(_('Соц. сеть удаляемого пользователя удалена.'))
     except:
         flash(_('Ошибка: При удалении соц.сети пользователя в блоке удаления пользователя.'))
         return False
@@ -177,6 +180,7 @@ def user_delete_admin(user_id):
             s.user_id = -1
             db.session.add(s)        
         db.session.commit()
+        flash(_('Ссылки в расписании на удаляемого пользователя удалены из листа распиания.'))
     except:
         flash(_('Ошибка: При внесении изменений в расписание об удаляемом пользователе в блоке удаления пользователя.'))
         return False
@@ -184,8 +188,109 @@ def user_delete_admin(user_id):
     try:
         db.session.delete(user)
         db.session.commit()        
+        flash(_(f'Пользователь {user.username} успешно удален'))
     except:
         flash(_('Ошибка: При удалении пользователя в блоке удаления пользователя.'))
         return False
 
     return True
+
+def show_preliminary_desk(start_date=date.today(), end_date=(date.today() + timedelta(days=30)), filter_include_date_field_data='include', filter_worked_field_data='non_worked'):
+    '''
+    Функция возвращает список данных для показа на странице предзаписи
+    start_date-datetime
+    end_date-datetime
+    filter_include_date_field_data-string
+    filter_worked_field_data-string
+    '''   
+    
+    if type(start_date) != date and type(end_date) != date:
+        start_date=date.today()
+        end_date=start_date + timedelta(days=30)
+        print('обе не даты')
+    elif type(start_date) == date and type(end_date) != date:
+        start_date = start_date
+        end_date=start_date + timedelta(days=30)
+        print('первая дата вторая не дата')
+    elif type(start_date) != date and type(end_date) == date:
+        if end_date < date.today():
+            start_date = end_date - timedelta(days=30)
+            end_date = end_date
+            print('первая не дата вторая дата вторая дата меньше текущего времени')
+        else:
+            start_date = date.today()
+            end_date = end_date
+            print('первая не дата вторая дата вторая дата больше или равна текущего времени')
+    elif type(start_date) == date and type(end_date) == date:
+        start_date=start_date
+        end_date=end_date
+        print('обе даты')
+    else:
+        print('ушел в блок дейттайм')
+        if type(start_date) != datetime and type(end_date) != datetime:
+            start_date=datetime.utcnow().date()
+            end_date=(datetime.utcnow() + timedelta(days=30)).date()
+            
+        elif type(start_date) == datetime and type(end_date) != datetime:
+            start_date = start_date.date()
+            end_date=(start_date.date() + timedelta(days=30)).date()
+        elif type(start_date) != datetime and type(end_date) == datetime:
+            if end_date.date() < datetime.utcnow().date():
+                start_date = (end_date.date() - timedelta(days=30)).date()
+                end_date = end_date.date()
+            else:
+                start_date = datetime.utcnow().date()
+                end_date = end_date.date()
+        else:
+            start_date=start_date.date()
+            end_date=end_date.date()
+
+    print(f'{filter_include_date_field_data}-----------------{len(filter_worked_field_data)}-----------{len("non_include")}')
+
+    incl=filter_include_date_field_data
+    print(incl)
+    print(incl == str('non_include'))
+
+    if filter_include_date_field_data != 'include' and filter_include_date_field_data != 'non_include':
+        print("Ошибка")
+        filter_include_date_field_data = 'include'
+
+    if filter_worked_field_data != 'non_worked' and filter_worked_field_data != 'worked' and filter_worked_field_data != 'all':
+        filter_worked_field_data = 'non_worked'
+
+    print('filter_include_date_field_data: ',filter_include_date_field_data)
+    print('filter_worked_field_data: ',filter_worked_field_data)
+    print('start_date: ',start_date, type(start_date))
+    print('end_date: ',end_date, type(end_date))
+
+    #здесь при выборе даты учитываем и фильтр формы
+    if filter_include_date_field_data == 'include':
+          #если учитываю даты
+          print('учитываю даты')
+          if filter_worked_field_data == 'worked':
+              #учитываю только отработанные заявки
+              list_pre_rec = [r for r in PreliminaryRecord.query.order_by(PreliminaryRecord.time_to_record.desc()) \
+                  if r.time_to_record.date() >= start_date and r.time_to_record.date() <= end_date and r.message_worked > 0]
+          elif filter_worked_field_data == 'non_worked':
+              list_pre_rec = [r for r in PreliminaryRecord.query.order_by(PreliminaryRecord.time_to_record.desc()) \
+                  if r.time_to_record.date() >= start_date and r.time_to_record.date() <= end_date and r.message_worked == 0]
+          else:
+              list_pre_rec = [r for r in PreliminaryRecord.query.order_by(PreliminaryRecord.time_to_record.desc()) \
+                  if r.time_to_record.date() >= start_date and r.time_to_record.date() <= end_date]
+
+    else:
+        print('НЕ учитываю даты')
+        #если не учитываю даты
+        if filter_worked_field_data == 'worked':
+            #учитываю только отработанные заявки
+            list_pre_rec = [r for r in PreliminaryRecord.query.order_by(PreliminaryRecord.time_to_record.desc()) \
+                if r.message_worked > 0]
+        elif filter_worked_field_data == 'non_worked':
+            list_pre_rec = [r for r in PreliminaryRecord.query.order_by(PreliminaryRecord.time_to_record.desc()) \
+                if r.message_worked == 0]
+        else:
+            list_pre_rec = [r for r in PreliminaryRecord.query.order_by(PreliminaryRecord.time_to_record.desc())]
+         
+
+
+    return list_pre_rec

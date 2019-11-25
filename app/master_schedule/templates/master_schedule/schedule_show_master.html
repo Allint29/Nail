@@ -3,11 +3,12 @@
 
 
 {% block app_content  %}
-<div class="schedule-container-master">
+<section class="site-map">
+    <p> <a href="{{ url_for('welcome.index') }}">{{_('Главная страница')}}</a><span> &#9830;</span><a href="{{ url_for('admin_my.admin_index') }}">{{_('Администрация')}}</a><span> &#9830;</span><a>{{_('Запись клиентов')}}</a></p>
+</section>
+<div class="schedule-master-details-container">
     <h1 class="visually-hidden">Страница записи клиентов</h1>
-    <section class="site-map">
-        <p> <a href="{{ url_for('welcome.index') }}">{{_('Главная страница')}}</a><span>&#9830;</span><a href="{{ url_for('admin_my.admin_index') }}">{{_('Администрация')}}</a><span>&#9830;</span><a>{{_('Запись клиентов')}}</a></p>
-    </section>
+
 
     <form action="" method="post">
         <h2 class="visually-hidden">Выбор периода</h2>
@@ -19,17 +20,17 @@
             {{ form.date_field}}
             {{ form.submit }}
         </li>
-
-
     </ul>
 
     </form>
-    <ul class="schedule-container-days-master" >
+    <ul class="schedule-container-days-master">
         <h2 class="visually-hidden">Выбранные даты</h2>
+
         {%if list_time_to_show %}
         {% for item in list_time_to_show %}
+        <h3>{{ item['date'].day_date.strftime('%d/%m/%Y')}} {{item['date'].day_name}}</h3>
         <li>
-            <h3>{{ item['date'].day_date.strftime('%d/%m/%Y')}} {{item['date'].day_name}}</h3>
+
             <ul class="schedule-container-days-time">
                 {% for item_list in item['list_work_time']%}
 

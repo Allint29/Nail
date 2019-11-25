@@ -75,7 +75,6 @@ def create_calendar_for_two_month():
 
     db.session.commit()
 
-
 def delete_all_times_in_schedule():
     '''
     Функция быстрого удаления записей в таблице расписания
@@ -160,12 +159,12 @@ def create_query_time_one_day():
             time_to_add.is_empty=0
 
         db.session.add(time_to_add)
-    db.session.commit()
-        
+    db.session.commit()        
     
 def take_empty_time_in_shedule(begin_date=None, end_date=None, to_back=None):
     '''
-    Функция берет список с временем расписания и возвращает словарь с маркировкой времени расписания - занято, свободно, свободно с ограничениями
+    Функция берет список с временем расписания и возвращает словарь с 
+    маркировкой времени расписания - занято, свободно, свободно с ограничениями
     '''    
     if begin_date == None and end_date == None:
         begin_date = datetime.now()
@@ -218,8 +217,7 @@ def take_empty_time_in_shedule(begin_date=None, end_date=None, to_back=None):
         j=0
         while j<len(list_of_work_time):
             t=list_of_work_time[j].begin_time_of_day.hour
-            #добавляю форму для отправки запроса на редактирование
-            
+            #добавляю форму для отправки запроса на редактирование            
             edit_form = TimeForm()
             edit_form.id_time.data=list_of_work_time[j].id
             

@@ -75,6 +75,14 @@ class ScheduleOfDay(db.Model):
     
     #связь с таблицей зарегистрированных пользователей (жестко не привязана)
     user_id = db.Column(db.Integer, default=-1)
+
+    #поле которое говорит системе отослано ли сообщение клиенту, что он записан - 
+    #должно меняться при записи клиента на определенное время. 0 - не отослано 1 - отослано
+    info_message_for_client = db.Column(db.Integer, default=0)
+
+    #поле которое говорит системе отослано ли сообщение клиенту, которое напоминает клиенту, что он записан.
+    # 0 - не отослано 1 - отослано
+    remind_message_for_client = db.Column(db.Integer, default=0)
     
     #связь с таблицей даты
     date_table_id = db.Column(db.Integer, db.ForeignKey('date_table.id'))
@@ -84,3 +92,20 @@ class ScheduleOfDay(db.Model):
 
     def __repr__(self):
         return f'<Time_of_schedule {self.begin_time_of_day} {self.end_time_of_day}>'
+
+
+class PreliminaryRecord(db.Model):
+    '''
+    Таблица предзаписи клиента. Клиент оставляет заявку на запись через главную страницу сайта.    
+    '''
+    id = db.Column(db.Integer, primary_key=True)
+    #имя клиента не связано с таблицей клиента
+    name_of_client = db.Column(db.String, default='')
+    phone_of_client = db.Column(db.Integer, default = -1)
+    message_of_client = db.Column(db.String, default='')
+    #метка говорит о том что сообщение обработано
+    message_worked = db.Column(db.Integer, default = 0)
+    time_to_record = db.Column(db.DateTime, default=main_utils.min_date_for_calculation())
+
+    def __repr__(self):
+        return f'<PreliminaryRecord phone={self.phone_of_client}, name={self.name_of_client}, message={self.message_of_client}, time={self.time_to_record}>'

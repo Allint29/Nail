@@ -1,0 +1,75 @@
+﻿{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+
+{% block app_content  %}
+<h1 class="visually-hidden">{{_('Заявка на прием')}}</h1>
+<section class="site-map">
+    <p> <a href="{{ url_for('welcome.index') }}">{{_('Главная страница')}}</a><span>&#9830;</span><a href="{{ url_for('master_schedule.show_schedule') }}">{{_('Расписание')}}</a><span>&#9830;</span><a>{{_('Заявка на прием')}}</a></p>
+</section>
+<section class="schedule-master-details-container">
+    <form action="" method="post">
+        {% for error in form.errors %}
+      <span style="color: red;">[{{ error }}]</span>
+      {% endfor %}
+        {{form.hidden_tag()}}
+        <span class="visually-hidden">{{form.message_worked_field}}</span>
+        <ul>
+            <li>
+                {{_('Запись на')}}: {{form.time_to_record_field.data}}
+                <span class="visually-hidden">{{form.time_to_record_field}}</span>
+
+            </li>
+            <li>
+                 {{_('Напишите Ваше имя и телефон для приема в это время. Мастер подтвердит запись в ближайшее всремя. Спасибо.')}}
+
+            </li>
+            <li>
+                {{form.name_of_client_field.label}}
+                {{form.name_of_client_field}}
+
+            </li>
+            <li>
+                {% for error in form.name_of_client_field.errors %}
+                <span style="color: red;">{{ error }}</span>
+                {% endfor %}
+            </li>
+            <li>
+                {{form.number_phone.label}}
+                {{form.number_phone}}
+
+            </li>
+            <li>
+                {% for error in form.number_phone.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </li>
+            <li>
+                {{form.message_of_client_field.label}}
+                {{form.message_of_client_field}}
+            </li>
+            <li>
+                {% for error in form.message_of_client_field.errors %}
+                <span style="color: red;">{{ error }}</span>
+                {% endfor %}
+            </li>
+
+            <li>
+                {% for error in form.time_to_record_field.errors %}
+                <span style="color: red;">{{ error }}</span>
+                {% endfor %}
+            </li>
+            <li>
+                <ul class="schedule-container-days-content-buttons">
+                    <li> {{form.send_submit}}</li>
+                    <li><a href="{{ url_for('master_schedule.show_schedule') }}"> {{form.cancel_field}}</a></li>
+                </ul>
+            </li>
+
+
+        </ul>
+    </form>
+    </section>
+
+
+{% endblock %}
