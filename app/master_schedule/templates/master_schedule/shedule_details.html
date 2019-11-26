@@ -51,8 +51,9 @@
                 <!--здесь если клиент еще не выбран то кнопка выбора иначе имя-->
                 <div class="visually-hidden">{{form.client_field}}</div>
                 {{form.client_field.data}}
-                <a href="{{url_for('admin_my.find_users', dic_val={'time_date_id' : dic_val['time_date_id'] , 'client_id' : dic_val['client_id']})}}">{{form.take_client_button}}</a>
+               
             </li>
+            <li> <a href="{{url_for('admin_my.find_users', dic_val={'time_date_id' : dic_val['time_date_id'] , 'client_id' : dic_val['client_id']})}}">{{form.take_client_button}}</a></li>
             <li>
                 {% for error in form.client_field.errors %}
                 <span style="color: red;">[{{ error }}]</span>

@@ -558,7 +558,6 @@ def list_my_work():
     
     return render_template('admin_my/list_my_work.html', time_form = time_form, list_my_works_and_comments_forms = list_my_works_and_comments_forms) #,  list_my_works=list_my_works, list_comment=list_comment, dic_date=dic_date
 
-
 @bp.route('/save_my_work', methods=['POST'])
 @admin_required
 def save_my_work():

@@ -1859,6 +1859,9 @@ button.bg-light:hover {
     width: 70%;
 }
 
+.schedule-container-days-free {
+    color: rgba(0,103,0, 1);
+}
 
 
 .schedule-container-days-non-free {

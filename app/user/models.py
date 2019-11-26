@@ -35,8 +35,6 @@ class ConnectionType(db.Model):
 
     user = db.relationship('User', backref='connection_type', lazy='dynamic')
 
-
-
     def __repr__(self):
         return '<Connection_type={}, id ={}>'.format(self.name_of_type, self.id, )
 

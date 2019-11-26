@@ -112,8 +112,7 @@ def fill_select_connection_type(mass_type = ['WhatsApp', 'Instagram', 'Теле�
         type.name_of_type = t
         db.session.add(type)
     db.session.commit()
-
-
+    
 def set_default_password_admin():
     '''
     Метод создает пароль для пользователя по умолчанию
@@ -245,14 +244,14 @@ def show_preliminary_desk(start_date=date.today(), end_date=(date.today() + time
             start_date=start_date.date()
             end_date=end_date.date()
 
-    print(f'{filter_include_date_field_data}-----------------{len(filter_worked_field_data)}-----------{len("non_include")}')
+    #print(f'{filter_include_date_field_data}-----------------{len(filter_worked_field_data)}-----------{len("non_include")}')
 
     incl=filter_include_date_field_data
-    print(incl)
-    print(incl == str('non_include'))
+    #print(incl)
+    #print(incl == str('non_include'))
 
     if filter_include_date_field_data != 'include' and filter_include_date_field_data != 'non_include':
-        print("Ошибка")
+        #print("Ошибка")
         filter_include_date_field_data = 'include'
 
     if filter_worked_field_data != 'non_worked' and filter_worked_field_data != 'worked' and filter_worked_field_data != 'all':

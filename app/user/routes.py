@@ -76,23 +76,20 @@ def registration_main():
 
 @bp.route('/register_by_phone_send', methods=['GET', 'POST'])
 def registration_by_phone_send():
+    '''
+    Маршрут отсылает смс с кодом подтвержения на телефон к юзеру и перенаправляет на страницу подтверждения телефона
+    '''
     form = RegistrationByPhoneForm()
     title = _('Регистрация по телефонному номеру')
-
     number = form.number_phone.data
     user = form.username_for_phone.data
-
     
     if form.validate_on_submit():
-
-        #print("method validate post")
         user_id = create_new_user_by_phone_registration(number,user)
-        step_one_for_enter_phone(number, user_id)
-        
+        step_one_for_enter_phone(number, user_id)        
         return redirect(url_for('user.registration_by_phone_confirm', data={'number': number, 'user':user}))
 
     elif request.method == 'GET':
-        #print("method get")
         delete_non_comfirmed_phone()          
         form.username_for_phone.data = user
         form.number_phone.data = number

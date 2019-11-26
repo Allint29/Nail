@@ -1,6 +1,6 @@
 ﻿#R11для проверки подленности ссылки на перенаправления
 from urllib.parse import urlparse, urljoin;
-from flask import request, url_for;
+from flask import request, url_for, redirect
 from datetime import datetime, timedelta, date
 import math
 import json
@@ -70,7 +70,6 @@ def make_date_from_date_time(date_my):
             pass
 
     return {'date' : default_date, 'parsed' : False }
-
 
 def make_name_of_day_from_date(date_my=None, lang='en'):
     '''
@@ -204,3 +203,6 @@ def parser_start_end_date_from_str(dic_date):
             dic_date['end_date'] = start_date + timedelta(days=30)
    
     return dic_date
+
+
+

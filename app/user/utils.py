@@ -16,9 +16,11 @@ def create_default_user():
         user.set_password('DefaultUser_')        
         user.set_confirm_email_true()
         user.expire_date_request_confirm_password = main_utils.min_date_for_calculation()
-        db.session.add(user)
-        db.session.commit()
-
+        try:
+            db.session.add(user)
+            db.session.commit()
+        except:
+            print(_('Ошибка при создании дефолтного пользователя. Пользователь не создан'))
 
 def set_default_password(user=None, number=None):
     '''
@@ -57,14 +59,21 @@ def set_default_password(user=None, number=None):
         
         if default_password is None or default_password=="":
             return _('Пароль не был назначен. Ошибка в генерации паролей'), False
-        
-        sms = SMSC()  
-        sms.send_sms('7'+str(number), f'Логин: {user.username}. Пароль: {default_password}. Используйте для входа на сайт Nail-Master-Krd.')
-        
+        try:
+            sms = SMSC()  
+            sms.send_sms('7'+str(number), f'Логин: {user.username}. Пароль: {default_password}. Используйте для входа на сайт Nail-Master-Krd.')
+        except:            
+            flash(_('Ошибка при отправке смс с дефолтным паролем. Пароль не отослан'))
+
         user.set_password(default_password)
         user.trying_to_enter_new_phone =user.trying_to_enter_new_phone - 1
-        db.session.commit()
-        
+
+        try:
+            db.session.add(user)
+            db.session.commit()
+        except:
+            flash(_('Ошибка при записи в базу пароля по умолчанию. Пароль не сохранен.'))
+            
 
         return _('Вы не создали пароль для входа на сайт. Вам назначен пароль, который выслан Вам в смс сообщении. Используйте его.'), False
 
@@ -72,7 +81,6 @@ def set_default_password(user=None, number=None):
         return _('Отсутствует пользователь для установки пароля по умолчанию.'), False
     elif not number:
         return _('Отсутствует номер телефона для установки пароля по умолчанию.'), False
-
 
 def save_password_by_phone_registration(user=None, password=None, password2=None):
     '''
@@ -99,14 +107,18 @@ def save_password_by_phone_registration(user=None, password=None, password2=None
 
         user = User.query.filter_by(username = user).first()
         user.set_password(password)
-        db.session.commit()
+        try:
+            db.session.add(user)
+            db.session.commit()
+        except:
+            return _('Ошибка при записи в базу при создании пароля для пользователя.'), False  
+
         return _('Поздравляю Вы зарегистрированы!'), True
 
         pass
     else:
         return _('Ошибка создания пароля для пользователя'), False  
-
-    
+        
 def delete_user_phone(current_user_id, number_for_delete, list_phones_user):
     '''
     функция удаляет введенный номер телефона если он есть в БД и если он не последний
@@ -121,14 +133,16 @@ def delete_user_phone(current_user_id, number_for_delete, list_phones_user):
         return flash(_(f'У Вас нет зарегистрированных телефонов для удаления.'))
     else:
         for num in list_phones_user:             
-            if num.number == number_for_delete:                 
-                db.session.delete(num)
-                db.session.commit()
+            if num.number == number_for_delete:     
+                try:
+                    db.session.delete(num)
+                    db.session.commit()
+                except:
+                    return flash(_(f'Ошибка при внесении изменений базу. Телефон не удален.'))
                 return flash(_(f'Вы удалили номер телефона: {number_for_delete}'))          
 
     return flash(_(f'Такого номера не зарегистрированно.'))
-     
-     
+          
 def cancel_user_phone(number_for_check, without_delete_user=1, user_str=None):
     '''
     функция предназначена для отмены регистрации нового телефона. 
@@ -144,14 +158,16 @@ def cancel_user_phone(number_for_check, without_delete_user=1, user_str=None):
  
     if without_delete_user == 0:
        if user:
-           db.session.delete(user)
-           db.session.commit()
+            try:
+               db.session.delete(user)
+               db.session.commit()
+            except:
+                return flash(_(f'Ошибка при внесении изменений базу. Телефон не удален при отмене регистрации нового телефона.'))
 
     if without_delete_user == 1:
         return flash(_(f'Вы отменили подтверждение номера телефона.')) 
     else:
         return flash(_(f'Вы отменили регистрацию по номеру телефона.')) 
-
 
 def step_two_for_enter_phone(number_for_check, code):
     '''
@@ -171,16 +187,28 @@ def step_two_for_enter_phone(number_for_check, code):
         if number_for_check.check_phone_hash_code(code):
             number_for_check.phone_checked = 1
             number_for_check.phone_hash_code = ""
-            db.session.commit()
+            try:
+                db.session.add(number_for_check)
+                db.session.commit()
+            except:
+                return flash(_(f'Ошибка при записи в базу. Номер телефона не внесен в базу')), False
             return flash(_(f'Вы подтвердили номер телефона.')), True
         else:                        
             if number_for_check.trying_to_enter_confirm_code < 1:
-                db.session.delete(number_for_check)
-                db.session.commit()
+                try:
+                    db.session.delete(number_for_check)
+                    db.session.commit()
+                except:
+                    print(_(f'Ошибка при записи в базу. Номер телефона не удален при превышении попыток ввода пароля.'))
+
                 return flash(_(f'Вы не правильно ввели код поддтверждения несколько раз. Данный телефон удален из базы. Попробуйте снова зарегистрировать его.')), False
             
             number_for_check.trying_to_enter_confirm_code = number_for_check.trying_to_enter_confirm_code - 1
-            db.session.commit()
+            try:
+                db.session.add(number_for_check)
+                db.session.commit()
+            except:
+                print(_(f'Ошибка при записи в базу. Количество попыток при вводе пароля не уменьшилось.'))
             return flash(_(f'Неверный код подтверждения. Осталось попыток: ') + f'{number_for_check.trying_to_enter_confirm_code}'), False
 
     return flash(_(f'Нет номера который нужно подтвердить.')), False
@@ -210,8 +238,12 @@ def step_one_for_enter_phone(number_phone=None, current_user_id=None):
             return flash(_('Вы исчерпали количество регистраций новых телефонов. Обратитесь к администрации для возможности новой регистрации.'))
         #если нажали на выслать пароль и телефона нет в базе 
         code = '{:04d}'.format(random.randint(0, 9999))            
-        sms = SMSC()            
-        sms.send_sms('7'+str(number_phone), f'Ваш код {code} для подтверждения телефона на сайте Nail-Master-Krd.')            
+        try:
+            sms = SMSC()            
+            sms.send_sms('7'+str(number_phone), f'Ваш код {code} для подтверждения телефона на сайте Nail-Master-Krd.')            
+        except:
+            flash(_('Ошибка при отправке смс для подтверждения регистрации по телефону'))
+        
         new_phone = UserPhones(                   
             number=number_phone,                   
             phone_checked=0,
@@ -224,14 +256,17 @@ def step_one_for_enter_phone(number_phone=None, current_user_id=None):
         
         #уменьшаем количество попыток регистрации нового телефона для пользователя
         user.trying_to_enter_new_phone = user.trying_to_enter_new_phone - 1
-        db.session.add(new_phone)            
-        db.session.commit()
+        try:
+            db.session.add(new_phone)            
+            db.session.commit()
+        except:
+            return flash(_('Ошибка при записи в базу. Попробуйте зарегистрироваться еще раз.'))
+
         return flash(_('Вам на телефон направлен смс с кодом подтверждения телефона. Введите его в поле подтверждения'))
     else:
         last_time = UserPhones.query.filter_by(number = number_phone).first().expire_date_hash - datetime.utcnow()
         return flash(_(f'Проверьте телефон. Вам был направлен код подтверждения. Повторный запрос можно сделать через | {last_time} | минут '))  
-
-
+    
 def create_new_user_by_phone_registration(number_phone, user_name):
      '''
      Функция создает нового пользователя регистрируемого через телефон, нужны проверки телефона
@@ -247,12 +282,15 @@ def create_new_user_by_phone_registration(number_phone, user_name):
         type_connection = 1 if len(type_connection) < 1 else type_connection[0]
         user = User(username=user_name, email=None, email_confirmed=0, role='user', connection_type_id = type_connection, user_from_master = 0)
         #user.set_password(form.password.data)
-        db.session.add(user)
-        db.session.commit()
+        try:
+            db.session.add(user)
+            db.session.commit()
+        except:
+            flash(_('Ошибка при записи в базу. При регистрации по телефону пользователь не был внесен в базу.'))
+            return -1
         return user.id
      return -1
-
-
+ 
 def delete_non_comfirmed_phone():
     '''
     функция проверяет не истек ли срок годности кода подтверждения телефона
@@ -265,8 +303,11 @@ def delete_non_comfirmed_phone():
         if p.expire_date_hash <= datetime.utcnow()]
     
     deleted_objects_phones = UserPhones.__table__.delete().where(UserPhones.id.in_(p_to_del)) 
-    db.session.execute(deleted_objects_phones)
-    db.session.commit()
+    try:
+        db.session.execute(deleted_objects_phones)
+        db.session.commit()
+    except:
+        print(_('Ошибка при удалении неподтвержденных номеров из базы. Телефоны не удалены'))
 
 def delete_non_comfirmed_email():
     '''
@@ -281,17 +322,20 @@ def delete_non_comfirmed_email():
             and user.user_from_master == 0:
                 user.expire_date_request_confirm_password == main_utils.min_date_for_calculation()                
                 user.email_confirmed = 0
-                user.email = None       
+                user.email = None
 
         if user.expire_date_request_bufer_mail != main_utils.min_date_for_calculation() \
             and user.expire_date_request_bufer_mail <= datetime.utcnow() \
             and user.email_confirmed == 0:                
                 user.bufer_email = None
                 user.expire_date_request_bufer_mail = main_utils.min_date_for_calculation()
-
-    db.session.commit()
-
-
+                
+        db.session.add(user)
+    try:
+        db.session.commit()
+    except:
+        print(_('Ошибка при сохранении удаления неподтвержденной электронной почты номеров из базы. Почта не удалена'))
+    
 def delete_user_without_phone_and_confirm_email():
     '''
     функция проверяет есть ли у пользователя подтвержденные телефоны 
@@ -329,24 +373,35 @@ def delete_user_without_phone_and_confirm_email():
     post_to_del = [post.id for post in Post.query.all() \
         if post.user_id in id_to_del]
 
-    if len(post_to_del) >0:
-        deleted_objects_posts = Post.__table__.delete().where(Post.id.in_(post_to_del)) 
-        db.session.execute(deleted_objects_posts)
-        db.session.commit()
+    if len(post_to_del) > 0:
+        try:
+            deleted_objects_posts = Post.__table__.delete().where(Post.id.in_(post_to_del)) 
+            db.session.execute(deleted_objects_posts)
+            db.session.commit()
+        except:
+            print(_('Ошибка при удалении постов из базы при удалении пользователей. Посты не удалены'))
     if len(t_to_del) > 0:
-        deleted_objects_phones = UserPhones.__table__.delete().where(UserPhones.id.in_(t_to_del)) 
-        db.session.execute(deleted_objects_phones)
-        db.session.commit()
+        try:
+            deleted_objects_phones = UserPhones.__table__.delete().where(UserPhones.id.in_(t_to_del)) 
+            db.session.execute(deleted_objects_phones)
+            db.session.commit()
+        except:
+            print(_('Ошибка при удалении телефонов из базы при удалении пользователей. Телефоны не удалены'))
     if len(s_to_del) > 0:
-        deleted_objects_socials = UserInternetAccount.__table__.delete().where(UserInternetAccount.id.in_(s_to_del))
-        db.session.execute(deleted_objects_socials)
-        db.session.commit()   
-    if len(id_to_del) > 0:        
-        deleted_objects_user = User.__table__.delete().where(User.id.in_(id_to_del))
-        db.session.execute(deleted_objects_user)
-        db.session.commit()
-
-
+        try:
+            deleted_objects_socials = UserInternetAccount.__table__.delete().where(UserInternetAccount.id.in_(s_to_del))
+            db.session.execute(deleted_objects_socials)
+            db.session.commit()   
+        except:
+            print(_('Ошибка при удалении соц.сетей из базы при удалении пользователей. Соц.сети не удалены'))
+    if len(id_to_del) > 0:      
+        try:
+            deleted_objects_user = User.__table__.delete().where(User.id.in_(id_to_del))
+            db.session.execute(deleted_objects_user)
+            db.session.commit()
+        except:
+            print(_('Ошибка при удалении пользователя из базы при удалении пользователя. Пользователи не удалены'))
+        
 def confirm_number(code, phone_number):
         '''
         Функция возвращает правду если хеш сходится

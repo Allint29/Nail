@@ -8,6 +8,8 @@ from app import db
 from app.main_func import utils as main_utils
 from app.master_schedule.forms import TimeForm
 from flask_babel import Babel, _, lazy_gettext as _l
+from app.master_schedule.myemail import *
+from app.main_func.smsc_api import SMSC
 
 def delete_all_days_in_schedule():
     '''
@@ -270,6 +272,8 @@ def clear_time_shedue(id_shedule_time):
     time_to_reserve.connection_type = 0
     time_to_reserve.conection_type_str = 'неизвестно'
     time_to_reserve.client_come_in = 0
+    time_to_reserve.info_message_for_client = 0
+    time_to_reserve.remind_message_for_client = 0
     time_to_reserve.is_empty = 1
     time_to_reserve.user_id = -1        
     db.session.add(time_to_reserve)
@@ -302,10 +306,7 @@ def reserve_time_for_client(dict_of_form):
     except:
         dict_of_form = None
 
-    print('Данные после передачей в блок записи: _____', dict_of_form)
-
-    
-
+    #print('Данные после передачей в блок записи: _____', dict_of_form)
     try:
         user_id = int(dict_of_form['user_id'])
     except:
@@ -336,6 +337,7 @@ def reserve_time_for_client(dict_of_form):
     #если все данные корректны записываю данные в таблицу расписания s_time
     #print('Данные для записи: _____', s_time, s_user)
     s_time_to_reserve = []    
+
     if dict_of_form['hours_to_reserve'] == 'two':
         s_time_to_reserve = [t for t in ScheduleOfDay.query.all() \
             if t.begin_time_of_day > s_time.begin_time_of_day \
@@ -353,7 +355,6 @@ def reserve_time_for_client(dict_of_form):
         
                     return False
 
-
     s_time.work_type = \
         'маникюр' if dict_of_form['work_type'] == 'man' else \
         'педикюр' if dict_of_form['work_type'] == 'ped' else \
@@ -361,7 +362,7 @@ def reserve_time_for_client(dict_of_form):
         'другое' if dict_of_form['work_type'] == 'some' else 'другое'
     s_time.cost = dict_of_form['cost']
     s_time.name_of_client = dict_of_form['name_of_client']
-    s_time.mail_of_client = dict_of_form['mail_of_client']
+    s_time.mail_of_client = dict_of_form['mail_of_client'] if dict_of_form['mail_of_client'] !='' else 'неизвестно'
 
     s_time.phone_of_client = dict_of_form['phone_of_client']
     s_time.adress_of_client = dict_of_form['adress_of_client']
@@ -383,8 +384,7 @@ def reserve_time_for_client(dict_of_form):
     except:
         flash(_('Ошибка: При записи в базу данных. Обратитесь в администрацию. Ошибка в блоке записи расписания.'))
         return False
-
-
+    
     try:
         if len(s_time_to_reserve) > 0:
             for t in s_time_to_reserve:
@@ -395,4 +395,83 @@ def reserve_time_for_client(dict_of_form):
         flash(_('Ошибка: При резервировании дополнительного времени при записи в базу данных. Обратитесь в администрацию. Ошибка в блоке записи расписания.'))
         return True
     flash(_(f'Время для клиента {s_user.username} зарезервировано успешно.'))        
+    #здесь отсылаю смс о том что клиент зарегистрирован на определенное время
+
     return True
+
+def send_info_message(time_date_id):
+    '''
+    Функция рассылки сообщений клиентам о том что они записаны на прием 
+    1)Проверяет есть телефон или почта у клиента и если есть шлет сообщение
+    2)Первое сообщение о том что клиент записан, второе сообщение за день до назначенного дня
+    3)если встреча отменена то в блоке отмены встречи данные поля помечаются как исполненные    
+    '''
+    try:
+        time_date_id = int(time_date_id)
+    except:
+        time_date_id = -1
+        
+    if time_date_id < 0:
+           flash(_('Ошибка определения ид времени расписания в блоке рассылки информационных сообщений. Сообщение не отправлено. Обратитесь к администратору.'))
+           return False
+
+    time_date = ScheduleOfDay.query.filter(ScheduleOfDay.id == time_date_id).first()
+
+    if time_date == None:
+        flash(_('Ошибка время не найдено в базе данных. Сообщение не отправлено. Обратитесь к администратору.'))
+        return False
+
+    try:
+        user_id = int(time_date.user_id)
+    except:
+        user_id = -1
+
+    if user_id < 0:
+        flash(_('Ошибка определения ид клиента. Сообщение не отправлено. Обратитесь к администратору.'))
+        return False
+
+    client = User.query.filter(User.id == user_id).first()
+    
+    if client == None:
+           flash(_('Ошибка клиент не найден в базе данных. Сообщение не отправлено. Обратитесь к администратору.'))
+           return False
+    client_email = client.email
+    client_phone = UserPhones.query.filter(UserPhones.user_id == client.id).first()
+
+    try:
+        info_message_for_client = int(time_date.info_message_for_client)
+    except:
+        info_message_for_client = 1
+
+    if time_date.info_message_for_client > 0:
+        print(_('Информационное письмо было отправлено клиенту ранее.'))
+        flash(_('Информационное письмо было отправлено клиенту ранее.'))
+        return False
+
+    if client_email == None or client_email =='':        
+        print(_('У клиента не установлена электронная почта. Писмо не отправлено.'))
+    else:
+        #отсылаем письмо на почту
+        try:
+            send_info_email(client_email, time_date.begin_time_of_day)
+        except:
+            print(_('Ошибка при отправке письма в блоке информационной рассылки при первой записи клиента.'))
+        
+    if client_phone == None:
+        print(_('У клиента нет зарегистрированных телефонов. Смс не отправлено.'))        
+    else:
+        #отсылаем смс на телефон
+        try:
+            sms = SMSC()            
+            sms.send_sms('7'+str(client_phone), f'Вы записаны на маникюр на {time_date.begin_time_of_day.strftime("%d-%m-%Y %H:%M")}. С уважением, Анна. www.nail-master-krd.ru') 
+        except:
+            print(_('Ошибка при отправке смс в блоке информационной рассылки при первой записи клиента.'))
+
+    #отмечает в единице даты - времени что первое письмо отправлено
+    time_date.info_message_for_client = 1
+    try:
+        db.session.add(time_date)
+        db.session.commit()
+    except:
+        print(_('Ошибка при записи в базу отметки, что первое письмо уже отсправлено.'))
+

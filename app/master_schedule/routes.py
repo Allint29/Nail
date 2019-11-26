@@ -7,9 +7,11 @@ from flask_babel import Babel, _, lazy_gettext as _l
 from app.master_schedule.forms import ScheduleTimeToShow, ScheduleMaster, TimeForm, ScheduleTimeToShowMaster, PreliminaryForm
 from app.user import models as user_models #User, UserPhones, ConnectionType
 from app.master_schedule.models import DateTable, ScheduleOfDay, PreliminaryRecord
-from app.master_schedule.utils import take_empty_time_in_shedule, clear_time_shedue, reserve_time_shedue, reserve_time_for_client
+from app.master_schedule.utils import take_empty_time_in_shedule, clear_time_shedue, reserve_time_shedue, reserve_time_for_client, send_info_message
 from app.main_func import utils  as main_utils
 from app.master_schedule.myemail import send_preliminary_email
+
+
 
 @bp.route('/', methods=['GET', 'POST'])
 @admin_required
@@ -132,13 +134,17 @@ def show_schedule_master_details(dic_val):
     if form_change.cancel_field.data:
         #раз отменяю выбор времени обнуляю его счетчик, но клиента оставляю
         return redirect(url_for('master_schedule.show_schedule_master', dic_val = {'time_date_id' : -1 , 'client_id' : client_id}))
-
-
-
+       
     if request.method == "POST":
         if form_change.validate_on_submit():
             if form_change.submit.data:
                 #блок сохранения в расписании,  так же нужно обнулить индексы клиента и расписания
+                time_date_id = form_change.id_time.data
+                client_id = form_change.client_id_field.data
+                print('time_date_id:', time_date_id)
+                print('client_id:', client_id)
+                #connection_type = ConnectionType.query.filter(ConnectionType.id == u.connection_type_id).first() if u else None
+                #connection_type=
                 dict_of_form = {
                     'user_id': client_id,
                     'time_date_id' : time_date_id,
@@ -154,8 +160,12 @@ def show_schedule_master_details(dic_val):
                     'is_empty': form_change.time_empty_field.data,
                     'hours_to_reserve': form_change.reserve_time_for_client_field.data
                     }
-                print('Данные перед передачей в блок записи: _____', dict_of_form)
-                reserve_time_for_client(dict_of_form)
+                #print('Данные перед передачей в блок записи: _____', dict_of_form)
+                if reserve_time_for_client(dict_of_form) == True:
+                    print('отослали сообщение')
+                    send_info_message(dict_of_form['time_date_id'])
+
+
                 return redirect(url_for('master_schedule.show_schedule_master', dic_val=dic_val))
            
 
@@ -184,7 +194,7 @@ def show_schedule_master_details(dic_val):
             phone_user = user_models.UserPhones.query.filter(user_models.UserPhones.user_id == client_id).first()
             connect_type = user_models.ConnectionType.query.filter_by(id = user.connection_type_id).first()
                                    
-        form_change.client_id_field.data = time_to_details.name_of_client if user == None else user.id
+        form_change.client_id_field.data = time_to_details.user_id if user == None else user.id
         form_change.client_field.data = time_to_details.name_of_client if user == None else user.username
         form_change.adress_client_field.data = time_to_details.adress_of_client if account_user == None else account_user.adress_accaunt
         form_change.phone_client_field.data = time_to_details.phone_of_client if phone_user == None else phone_user.number
@@ -260,7 +270,7 @@ def preliminary_record(dic_val):
                 try:
                     send_preliminary_email(pre_record)
                 except:
-                     flash(_('Ошибка отправки письма: Не удалось отправить сообщение мастеру. Повторите попытку позже.'))
+                    flash(_('Ошибка отправки письма: Не удалось отправить сообщение мастеру. Повторите попытку позже.'))
             return redirect(url_for('welcome.index'))
 
     elif request.method == 'GET':
