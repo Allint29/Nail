@@ -162,7 +162,7 @@ def show_schedule_master_details(dic_val):
                     }
                 #print('Данные перед передачей в блок записи: _____', dict_of_form)
                 if reserve_time_for_client(dict_of_form) == True:
-                    print('отослали сообщение')
+                    #print('отослали сообщение')
                     send_info_message(dict_of_form['time_date_id'])
 
 

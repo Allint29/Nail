@@ -1,6 +1,6 @@
 ﻿from flask import render_template, current_app
 from flask_babel import _
-from app.main_func.myemail import send_email
+from app.main_func.myemail import send_email, send_sms
 
 
 def send_password_reset_email(user):
@@ -32,6 +32,23 @@ def send_new_registration_email(user):
                                          user=user, token=token),
                html_body=render_template('myemails/registration_info.html',
                                          user=user, token=token))
+
+
+def send_code_sms(list_message=[]):
+    '''
+    отправить сообщение смс клиенту, принимает dic_message={'number': '79271101986', 'msg': 'text message for client'}
+    '''    
+    #f'Код {code} для подтверждения телефона на сайте Nail-Master-Krd.'
+    # list_message=[{'number': '7'+str(client_phone.number), 'code': 'code'}]
+    if len(list_message) <= 0:
+        return
+    list_to_send=[]
+    for m in list_message:
+        number_=m['number']
+        msg = f'{m["code"]} - код подтвержд. тел. на сайте nail-master-krd.ru'
+        list_to_send.append({'number': str(number_), 'msg': msg})
+    #отсылаю список получателей и самих смс в модуль отправки
+    send_sms(list_to_send)
 
 #from flask_mail import Message
 #from app import mail

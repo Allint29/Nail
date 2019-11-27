@@ -9,7 +9,8 @@ from app.main_func import utils as main_utils
 from app.master_schedule.forms import TimeForm
 from flask_babel import Babel, _, lazy_gettext as _l
 from app.master_schedule.myemail import *
-from app.main_func.smsc_api import SMSC
+#from app.main_func.smsc_api import SMSC
+
 
 def delete_all_days_in_schedule():
     '''
@@ -161,8 +162,8 @@ def create_query_time_one_day():
             time_to_add.is_empty=0
 
         db.session.add(time_to_add)
-    db.session.commit()        
-    
+    db.session.commit()  
+
 def take_empty_time_in_shedule(begin_date=None, end_date=None, to_back=None):
     '''
     Функция берет список с временем расписания и возвращает словарь с 
@@ -389,6 +390,8 @@ def reserve_time_for_client(dict_of_form):
         if len(s_time_to_reserve) > 0:
             for t in s_time_to_reserve:
                 t.is_empty = 0
+                t.info_message_for_client = 1
+                t.remind_message_for_client = 1
                 db.session.add(t)
             db.session.commit()
     except:
@@ -410,7 +413,7 @@ def send_info_message(time_date_id):
         time_date_id = int(time_date_id)
     except:
         time_date_id = -1
-        
+
     if time_date_id < 0:
            flash(_('Ошибка определения ид времени расписания в блоке рассылки информационных сообщений. Сообщение не отправлено. Обратитесь к администратору.'))
            return False
@@ -431,7 +434,7 @@ def send_info_message(time_date_id):
         return False
 
     client = User.query.filter(User.id == user_id).first()
-    
+
     if client == None:
            flash(_('Ошибка клиент не найден в базе данных. Сообщение не отправлено. Обратитесь к администратору.'))
            return False
@@ -443,7 +446,7 @@ def send_info_message(time_date_id):
     except:
         info_message_for_client = 1
 
-    if time_date.info_message_for_client > 0:
+    if info_message_for_client > 0:
         print(_('Информационное письмо было отправлено клиенту ранее.'))
         flash(_('Информационное письмо было отправлено клиенту ранее.'))
         return False
@@ -461,9 +464,13 @@ def send_info_message(time_date_id):
         print(_('У клиента нет зарегистрированных телефонов. Смс не отправлено.'))        
     else:
         #отсылаем смс на телефон
-        try:
-            sms = SMSC()            
-            sms.send_sms('7'+str(client_phone), f'Вы записаны на маникюр на {time_date.begin_time_of_day.strftime("%d-%m-%Y %H:%M")}. С уважением, Анна. www.nail-master-krd.ru') 
+        try:            
+            list_message=[]
+            dic_message={'number': '7'+str(client_phone.number), 'date': f'{time_date.begin_time_of_day.strftime("%d-%m-%Y %H:%M")}'}
+            list_message.append(dic_message)
+            send_info_sms(list_message)
+     #       sms = SMSC()            
+     #       sms.send_sms('7'+str(client_phone), f'Вы записаны на маникюр на {time_date.begin_time_of_day.strftime("%d-%m-%Y %H:%M")}. С уважением, Анна. www.nail-master-krd.ru') 
         except:
             print(_('Ошибка при отправке смс в блоке информационной рассылки при первой записи клиента.'))
 
@@ -475,3 +482,96 @@ def send_info_message(time_date_id):
     except:
         print(_('Ошибка при записи в базу отметки, что первое письмо уже отсправлено.'))
 
+def send_remaind_messages():
+    '''
+    функция для включение по расписанию
+    Функция рассылки напоминаний о назначенной встрече с мастером
+    1) Слать смс за один день до назначенной встречи
+    2) слать смс один раз - если один пользователь записан несколько раз, то шлем одно смс по первому времени
+    3) слать смс в период с 12:00 до 16:00
+    4) слать смс асинхронно
+    '''
+    #дата. когда смс отсылаеся
+    offset = timedelta(hours=3)
+    next_date_time_now_offset = datetime.utcnow()+timedelta(days=1)+timedelta(hours=3)
+    
+    date_ = next_date_time_now_offset.date()
+    time_ = next_date_time_now_offset.time()
+
+    if time_.hour < 12 and time_.hour > 16:
+        print(_('Нельзя отправлять смс и письма ранее 12:00 или позднее 16:00.'))
+        return False
+
+    #выбрал все таймы на следующий день у которых есть ид юзера которые заняты и которым не отсылалис смс
+    list_dates_to_send = [d for d in ScheduleOfDay.query.all() \
+        if d.begin_time_of_day.date() == date_ \
+        and d.user_id >=0 \
+        and d.is_empty==0 \
+        and d.remind_message_for_client == 0]
+
+    list_id_users = []
+    for d in list_dates_to_send:
+        if not d.user_id in list_id_users:
+            list_id_users.append(d.user_id)
+
+    if len(list_id_users) <=0:
+        print(_('Нет пользователей для отправки сообщений.'))        
+        return False
+
+    #выбираем пользователей кому отсылать смс - 
+    list_users_for_send = [u for u in User.query.all() if u.id in list_id_users]
+    
+    if len(list_users_for_send) <= 0:
+        print(_('Нет пользователей для отправки сообщений_2.'))        
+        return False
+
+    list_phones_for_send = [p for p in UserPhones.query.all() if p.user_id in list_id_users]
+    
+    #отправляем письма напоминания
+    for u in list_users_for_send:
+        time_of_day = None
+        for d in list_dates_to_send:
+            if d.user_id == u.id:
+                # передаю строку
+                time_of_day = d
+                break
+        if u.email == None or u.email =='':        
+            print(_(f'У {u.username} не установлена электронная почта. Писмо не отправлено.'))
+        else:
+            #отсылаем письмо на почту: в начале устанавливаем время для данного юзера
+                  
+            try:
+                if time_of_day != None:
+                    send_remind_email(u.email, f'{time_of_day.begin_time_of_day.strftime("%d-%m-%Y %H:%M")}')
+            except:
+                print(_(f'Ошибка при отправке письма пользователю {u.username} в блоке информационной рассылки при первой записи клиента.'))
+        
+        client_phone=None
+
+        for p in list_phones_for_send:
+            if p.user_id == u.id:
+                client_phone=p
+                break
+        
+        if client_phone == None:
+            print(_(f'У клиента {u.username} нет зарегистрированных телефонов. Смс не отправлено.'))        
+        else:
+            #отсылаем смс на телефон
+            try:
+                if time_of_day != None:
+                    list_message=[]
+                    dic_message={'number': '7'+str(client_phone.number), 'date': f'{time_of_day.begin_time_of_day.strftime("%d-%m-%Y %H:%M")}'}
+                    list_message.append(dic_message)
+                    send_remind_sms(list_message)
+         #           sms = SMSC()            
+         #           sms.send_sms('7'+str(client_phone), f'Вы записаны на маникюр на {time_date.begin_time_of_day.strftime("%d-%m-%Y %H:%M")}. С уважением, Анна. www.nail-master-krd.ru') 
+            except:
+                print(_(f'Ошибка при отправке смс пользователю {u.username} в блоке информационной рассылки при первой записи клиента.'))
+        #отмечает в единице даты - времени что первое письмо отправлено
+        time_of_day.remind_message_for_client = 1
+        try:
+            db.session.add(time_of_day)
+            db.session.commit()
+        except:
+            print(_(f'Ошибка при записи в базу отметки у пользователя {u.username}, что первое письмо уже отсправлено.'))
+    return True    

@@ -70,8 +70,8 @@ class ScheduleOfDay(db.Model):
     #поле говорит о том пришел ли клиент
     client_come_in = db.Column(db.Integer, default=0)
 
-    #свойство  указывающе занято ли время
-    is_empty = db.Column(db.Integer, default=1)
+    #свойство  указывающе занято ли время    
+    is_empty = db.Column(db.Integer, default=0)
     
     #связь с таблицей зарегистрированных пользователей (жестко не привязана)
     user_id = db.Column(db.Integer, default=-1)

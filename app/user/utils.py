@@ -1,6 +1,6 @@
 ﻿# -*- coding: utf-8 -*-
 from app import db
-from app.main_func.smsc_api import SMSC
+#from app.main_func.smsc_api import SMSC
 from app.user.models import *
 from app.my_work.models import *
 from datetime import datetime, timedelta
@@ -8,6 +8,7 @@ from flask import current_app, flash
 from flask_babel import _, get_locale
 from flask_login import current_user
 from app.main_func import utils as main_utils
+from app.user.myemail import send_code_sms
 import random
 
 def create_default_user():
@@ -239,8 +240,11 @@ def step_one_for_enter_phone(number_phone=None, current_user_id=None):
         #если нажали на выслать пароль и телефона нет в базе 
         code = '{:04d}'.format(random.randint(0, 9999))            
         try:
-            sms = SMSC()            
-            sms.send_sms('7'+str(number_phone), f'Ваш код {code} для подтверждения телефона на сайте Nail-Master-Krd.')            
+            #sms = SMSC()            
+            #sms.send_sms('7'+str(number_phone), f'Код {code} для подтверждения телефона на сайте Nail-Master-Krd.')  
+
+            send_code_sms([{'number': '7'+str(number_phone), 'code': f'{code}'}])
+
         except:
             flash(_('Ошибка при отправке смс для подтверждения регистрации по телефону'))
         

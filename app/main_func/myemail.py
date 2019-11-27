@@ -2,6 +2,7 @@
 from flask import current_app
 from flask_mail import Message
 from app import mail
+from app.main_func.smsc_api import SMSC
 
 def send_async_email(app, msg):
     with app.app_context():
@@ -11,10 +12,23 @@ def send_email(subject, sender, recipients, text_body, html_body):
     msg = Message(subject, sender=sender, recipients=recipients)
     msg.body = text_body
     msg.html = html_body
-    #print('Body of my HTML:  ________________', msg.html)
     Thread(target=send_async_email, args=(current_app._get_current_object(), msg)).start()
 
 
+def send_async_sms(app, phone, msg):       
+    with app.app_context():
+        sms = SMSC()
+        #sms.send_sms("79271101986,79200217222", 'Test message')
+        sms.send_sms(str(phone), str(msg))
+
+def send_sms(list_message=[]):
+    '''
+    Функция отправляет очередь смс по пользователям , словарь пользователя и сообщение для него 
+    dic_message={'number': '79271101986', 'msg': 'text message for client'}    
+    '''
+    print('send_sms:', list_message)
+    for m in list_message:
+        Thread(target=send_async_sms, args=(current_app._get_current_object(), m['number'], m['msg'])).start()
 
 #from flask_mail import Message
 #from app import mail
