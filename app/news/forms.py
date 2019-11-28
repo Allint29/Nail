@@ -25,4 +25,5 @@ class CommentForm(FlaskForm):
         if not News.query.get(news_id.data):
             raise ValidationError(_('Новости с таким id не существует.'))
 
+
     

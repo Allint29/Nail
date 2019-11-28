@@ -61,3 +61,16 @@ class CommentsToNews(db.Model):
     #R10репорт об объекте в удобном для человека виде
     def __repr__(self): 
         return f"<Comment id_comment={self.id} {self.created} {self.text}>"; 
+
+
+class MasterNews(db.Model):
+    '''
+    Сущность хранит все нововведения от мастера сайта - новости сайта
+    '''
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String, nullable=False)
+    text = db.Column(db.Text, nullable=False)
+    published = db.Column(db.DateTime, nullable=False)
+
+    def __repr__(self):
+        return f'<MasterNews {self.title} {self.url}>'

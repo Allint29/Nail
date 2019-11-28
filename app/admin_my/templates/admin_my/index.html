@@ -5,6 +5,32 @@
 <section class="site-map">
     <p> <a href="{{ url_for('welcome.index') }}">{{_('Главная страница')}}</a><span>&#9830;</span><a>{{_('Администрация')}}</a></p>
 </section>
-{{ wtf.quick_form(form_admin_menu)}}
-{% endblock %}
+<div class="admin-router-container">
+    <ul>
+        <li>
+            <a class="button" href="{{url_for('admin_my.preliminary_desk')}}">{{_('Доска предзаписи')}} </a>
+        </li>
+        <li>
+            <a class="button" href="{{url_for('master_schedule.show_schedule_master', dic_val ={'time_date_id' : -1 , 'client_id' : -1})}}">{{_('Расписание')}} </a>
+        </li>
+        <li>
+            <a class="button" href="{{url_for('admin_my.find_users', dic_val ={'time_date_id' : -1 , 'client_id' : -1})}}">{{_('Редактор клиентов')}} </a>
+        </li>
+        <li>
+            <a class="button" href="{{url_for('admin_my.list_my_work')}}">{{_('Редактор работ')}} </a>
+        </li>
+        <li>
+            <a class="button" href="{{url_for('admin_my.show_master_news')}}">{{_('Редактор новостей сайта')}} </a>
+        </li>
+        <li>
+            <a class="button" href="{{url_for('admin_my.list_news')}}">{{_('Редактор новостей')}} </a>
+        </li>
+
+
+
+    </ul>
+
+</div>
+
+    {% endblock %}
 

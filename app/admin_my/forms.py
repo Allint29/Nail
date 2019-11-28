@@ -11,12 +11,12 @@ class AdminMenu(FlaskForm):
     '''
     Форма перенаправления из админки: Редактирование Работ, Пользователей, Расписание
     '''    
-    to_users = SubmitField(_('Клиенты'), render_kw={"class": "button", "type": "submit"})
-    to_works = SubmitField(_('Работы'), render_kw={"class": "button ", "type": "submit"})
-    to_news = SubmitField(_('Новости'), render_kw={"class": "button ", "type": "submit"})
-    to_schedule = SubmitField(_('Расписание'),  render_kw={"class" : "button ", "type": "submit"})
-    to_desk_preliminary_rec = SubmitField(_('Предзапись'),  render_kw={"class" : "button ", "type": "submit"})
-
+    to_users = SubmitField(_('Клиенты'), render_kw={"class": "button", "type": "button"})
+    to_works = SubmitField(_('Работы'), render_kw={"class": "button ", "type": "button"})
+    to_news = SubmitField(_('Новости'), render_kw={"class": "button ", "type": "button"})
+    to_master_news = SubmitField(_('Новости сайта'), render_kw={"class": "button ", "type": "button"})
+    to_schedule = SubmitField(_('Расписание'),  render_kw={"class" : "button ", "type": "button"})
+    to_desk_preliminary_rec = SubmitField(_('Предзапись'),  render_kw={"class" : "button ", "type": "button"})
 
 class EditUsersForm(FlaskForm):
     '''
@@ -69,14 +69,7 @@ class EditUsersForm(FlaskForm):
                 pattern_ru = compile('(^|\s)[А-Я-а-я0-9_.]+@([А-Я-а-я0-9]+\.)+[рф]{2}(\s|$)')                
                 is_valid = True if pattern_en.match(self.email_field.data) else True if pattern_ru.match(self.email_field.data) else False                
                 if is_valid == False:                    
-                    raise ValidationError(_l('Введен неправильный адрес электронной почты'))
-                
-
-              #  user_email_repit = User.query.filter(str(User.email).lower() == str(self.email_field.data).lower()).first()
-              #  
-              #  if user_email_repit is not None:
-              #      if str(this_user.id) != str(self.id_user.data):
-              #          raise ValidationError(_l('Данная почта уже зарегистрирована у другого пользователя.'))
+                    raise ValidationError(_l('Введен неправильный адрес электронной почты'))      
 
 class RouterUserForm(FlaskForm):
     '''
@@ -85,7 +78,6 @@ class RouterUserForm(FlaskForm):
     find_field= StringField(_('Имя/телефон/права'), validators=[],  render_kw={"class" : "fl-text-field-user-edit", "type": "text"})
     to_find_button = SubmitField(_('Поиск'), render_kw={"class": "button fl-button-field-user-edit", "type": "submit"})
     to_create_button = SubmitField(_('Новый'), render_kw={"class": "button fl-button-field-user-edit", "type": "button"})
-       
 
 class EditPhoneUserForm(FlaskForm):
     '''
@@ -165,7 +157,6 @@ class EditSocialForm(FlaskForm):
         if exists_socials > 0 and str(this_social.id) != str(self.adress_social.data):
             raise ValidationError(_l('Этот адрес уже зарегистрирован.'))
 
-
 class MyWorkTimeToShowForm(FlaskForm):
     '''
     Форма для задания запроса на фильтрацию по времени работ мастера
@@ -179,7 +170,6 @@ class MyWorkTimeToShowForm(FlaskForm):
         #print('--------------------- Check MyWorkTimeToShowForm --------------------')
         if self.date_field_end.data < self.date_field_start.data:
             raise ValidationError(_l('Конечная дата не может быть меньше начальной.'))
-
 
 class EditMyWorksForm(FlaskForm):
     '''
@@ -199,7 +189,6 @@ class EditMyWorksForm(FlaskForm):
     content_field = StringField(_('Дополнительный контент'),validators=[],render_kw={"class" : ""} )
 
     to_save_submit = SubmitField(_('Сохр. работу'), render_kw={"class": "button fl-button-field-user-edit", "type": "submit"})
-    
 
 class EditMyWorksCommentsForm(FlaskForm):
     '''
@@ -221,7 +210,7 @@ class EditNewsForm(FlaskForm):
     форма для редактирования контента новостей
     '''
     id_news_field = StringField(_('Id_новости'),  default=-1, render_kw={"class" : ""})
-    title_field = StringField(_('Id на сайте Instagram'),  default="", render_kw={"class" : ""})
+    title_field = StringField(_('Имя'),  default="", render_kw={"class" : ""})
     url_field = TextAreaField(_('Url новости'),validators=[],render_kw={"class" : ""} )
     main_picture_url = TextAreaField(_('Главное фото новости'),validators=[],render_kw={"class" : ""} )
     published_field = StringField(_('Опубликовано'), default="", render_kw={"class" : ""})
@@ -260,4 +249,16 @@ class FilterForm(FlaskForm):
         #print('--------------------- Check MyWorkTimeToShowForm --------------------')
         if self.date_field_end.data < self.date_field_start.data:
             raise ValidationError(_l('Конечная дата не может быть меньше начальной.'))
+
+class MasterNewsForm(FlaskForm):
+    '''
+    Форма внесения и редактирования своих новостей
+    '''
+    id_field = StringField(_('Id_новости'), validators=[InputRequired()], default=-1, render_kw={"class" : ""})
+    title_field = TextAreaField(_('Имя'),  validators=[InputRequired()], render_kw={"class" : ""})
+    text_field = TextAreaField(_('Текст'),validators=[InputRequired()],render_kw={"class" : ""} )
+    published_field = StringField(_('Опубликовано'), render_kw={"class" : ""})
+
+    to_save_submit = SubmitField(_('Сохранить', render_kw={"class": "button", "type": "submit"}))
+    to_delete_submit = SubmitField(_('Удалить', render_kw={"class": "button", "type": "submit"}))
 

@@ -9,14 +9,9 @@ from app.admin_my.forms import *
 from app.user.models import User, UserPhones, ConnectionType, UserInternetAccount
 from app.my_work.models import *
 from app.news.models import *
-
-from app.main_func.utils import parser_time_client_from_str, parser_start_end_date_from_str
 from app.main_func import utils as main_utils
-
-from app.admin_my.utils import set_default_password_admin, user_delete_admin, show_preliminary_desk
-
+from app.admin_my.utils import set_default_password_admin, user_delete_admin, show_preliminary_desk, parser_dic_master_news
 from app.master_schedule.models import *
-
 
 @bp.route('/', methods=['GET', 'POST'])
 @admin_required
@@ -25,25 +20,8 @@ def admin_index():
     Страница распределения маршрутов админки
     '''
     titleVar='Панель админа'
-    form_admin_menu = AdminMenu()
-
-    if form_admin_menu.to_schedule.data:
-        #при вызове расписания из пункта меню пользователя передаем никакого клиента в форму
-        return redirect(url_for('master_schedule.show_schedule_master', dic_val ={'time_date_id' : -1 , 'client_id' : -1}))
-
-    if form_admin_menu.to_works.data:             
-        return redirect(url_for('admin_my.list_my_work'))
-
-    if form_admin_menu.to_news.data:
-        return redirect(url_for('admin_my.list_news'))
-
-    if form_admin_menu.to_users.data:        
-        return redirect(url_for('admin_my.find_users', dic_val ={'time_date_id' : -1 , 'client_id' : -1}))
-
-    if form_admin_menu.to_desk_preliminary_rec.data:
-        return redirect(url_for('admin_my.preliminary_desk'))
-
-    return render_template('admin_my/index.html', title=titleVar, form_admin_menu=form_admin_menu)
+        
+    return render_template('admin_my/index.html', title=titleVar)#, form_admin_menu=form_admin_menu)
 
 @bp.route('/find_users_form_<dic_val>', methods=['GET', 'POST'])
 @admin_required
@@ -57,7 +35,7 @@ def find_users(dic_val):
     users = []
     
     try:
-        dic_val = parser_time_client_from_str(dic_val)
+        dic_val = main_utils.parser_time_client_from_str(dic_val)
     except:
         dic_val = {'time_date_id' : -1, 'client_id' : -1}
 
@@ -122,7 +100,7 @@ def edit_user_form(dic_val):
     Маршрут создания или редактирования пользователя    
     '''   
     try:
-        dic_val = parser_time_client_from_str(dic_val)
+        dic_val = main_utils.parser_time_client_from_str(dic_val)
     except:
         dic_val = {'time_date_id' : -1, 'client_id' : -1, 'number_phone' : ''}
 
@@ -209,7 +187,7 @@ def edit_user_form(dic_val):
 @admin_required
 def delete_user_form(dic_val):
     try:
-        dic_val = parser_time_client_from_str(dic_val)
+        dic_val = main_utils.parser_time_client_from_str(dic_val)
     except:
         dic_val = {'time_date_id' : -1, 'client_id' : -1}
     
@@ -279,7 +257,7 @@ def edit_phone(dic_val, id_phone=-1):
         id_phone = -1
 
     try:
-        dic_val = parser_time_client_from_str(dic_val)
+        dic_val = main_utils.parser_time_client_from_str(dic_val)
     except:
         dic_val = {'time_date_id' : -1, 'client_id' : -1,  'number_phone' : ''}
 
@@ -378,7 +356,7 @@ def edit_socials(dic_val, id_socials=-1):
         id_socials = -1
 
     try:
-        dic_val = parser_time_client_from_str(dic_val)
+        dic_val = main_utils.parser_time_client_from_str(dic_val)
     except:
         dic_val = {'time_date_id' : -1, 'client_id' : -1}
 
@@ -854,3 +832,95 @@ def preliminary_message_worked(pre_id):
         flash(_('Ошибка при записи в базу в блоке сохранения предзаписи как обработанной. Возврат обратно.'))
 
     return redirect(main_utils.get_redirect_target())
+
+
+@bp.route('/show_master_news', methods=['GET', 'POST'])
+@admin_required
+def show_master_news():
+    '''
+    Вывод страницы cо  всеми новостями от мастера для показа на главной странице
+    '''
+    titleVar='Лента новостей от мастера'
+    
+    time_form = MyWorkTimeToShowForm()    
+    start_date =(datetime.utcnow() -timedelta(days=60)).date()
+    end_date = datetime.utcnow().date()
+    list_news = []
+
+    if request.method == "POST":  
+        if time_form.validate_on_submit():
+            start_date = time_form.date_field_start.data
+            end_date = time_form.date_field_end.data
+            list_news = [n for n in MasterNews.query.order_by(MasterNews.published.desc()) if n.published.date() >= start_date and n.published.date() <= end_date]
+            pass
+    elif request.method == "GET":
+        time_form.date_field_start.data = start_date
+        time_form.date_field_end.data = end_date
+        list_news = [n for n in MasterNews.query.order_by(MasterNews.published.desc()) if n.published.date() >= start_date and n.published.date() <= end_date]
+
+    return render_template('admin_my/list_master_news.html', time_form = time_form, list_news=list_news)
+
+@bp.route('/edit_master_news_<dic_master_news>', methods=['GET', 'POST'])
+@admin_required
+def edit_master_news(dic_master_news):
+    '''
+    Маршрут к редактированию новости мастера
+    '''
+    dic_master_news = parser_dic_master_news(dic_master_news)
+    news_id = dic_master_news['news_id']
+
+    master_news = MasterNews.query.filter(MasterNews.id == news_id).first()
+
+    news_form = MasterNewsForm()
+
+    if request.method == 'POST':
+        if news_form.validate_on_submit():
+            if news_form.to_save_submit.data:
+                if master_news==None:
+                    try:
+                        published_ = datetime.strptime(news_form.published_field.data, '%d-%m-%Y %H:%M')
+                    except:
+                        published_ = datetime.utcnow()
+                    master_news = MasterNews(title = news_form.title_field.data, 
+                                             text = news_form.text_field.data,
+                                             published = published_)
+                else:
+                    try:
+                        published_ = datetime.strptime(news_form.published_field.data, '%d-%m-%Y %H:%M')
+                    except:
+                        published_ = datetime.utcnow()
+                    master_news.title = news_form.title_field.data
+                    master_news.text = news_form.text_field.data
+                    master_news.published = published_
+                try:
+                    db.session.add(master_news)
+                    db.session.commit()
+                    flash(_(f'Изменения успешно внесены в базу.'))
+                except Exception as e:
+                    print(f'Ошибка при редактировании новости сайта при сохранении в базе. Обратитесь к администратору.: {e}')
+                    flash(_(f'Ошибка при редактировании новости сайта при сохранении в базе. Обратитесь к администратору.'))
+            elif news_form.to_delete_submit.data:
+                try:
+                    db.session.delete(master_news)
+                    db.session.commit()
+                    flash(_(f'Изменения успешно внесены в базу.'))
+                except:
+                    flash(_('Ошибка при удалении новости сайта при сохранении в базе. Обратитесь к администратору.'))
+
+            return redirect(url_for('admin_my.show_master_news'))
+        
+    elif  request.method == 'GET':   
+        if master_news == None:
+            news_form.id_field.data='-1'
+            news_form.title_field.data=''
+            news_form.text_field.data=''
+            news_form.published_field.data = datetime.utcnow().strftime('%d-%m-%Y %H:%M')
+        else:
+            news_form.id_field.data=master_news.id
+            news_form.title_field.data=master_news.title
+            news_form.text_field.data=master_news.text
+            news_form.published_field.data = master_news.published.strftime('%d-%m-%Y %H:%M')
+
+
+    return render_template('admin_my/edit_master_news.html', news_form=news_form)
+    

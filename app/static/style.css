@@ -713,20 +713,37 @@ button.bg-light:hover {
 
 /*/////////////////Блок Main//////////////////////////*/
 .features {
-    margin-bottom: 50px;
-    
-}
-/*приемущества*/
-.features-list {
+    margin-bottom: 30px;
     display: flex;
-    justify-content: space-between;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    min-height: 170px;
+    justify-content: space-around;
+
+    background: transparent;
 }
 
-.features-list li {
+    .features .carousel {
+        max-width: 700px;
+    }
+    /*приемущества*/
+    .features-list {
+        display: flex;
+        justify-content: space-between;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        min-height: 170px;
+    }
+
+.feature-item {
+    text-align: center;
+    padding: 10px 10px 10px 10px;
+    margin: 50px;
+    max-width: 550px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,110,210, 1);
+    background-color: transparent;
+    box-shadow: 0 20px 30px rgba(0, 0, 0, 0.7);
+}
+/*.features-list li {
     display: block;
     padding: 10px 10px 10px 10px;
     margin-bottom: 10px;
@@ -735,20 +752,17 @@ button.bg-light:hover {
     background-image: url('images/back_color_galary15.png');
     background-color: transparent;
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
-}
-
-.features-list li:hover,
+}*/
+/*.features-list li:hover,
 .features-list li:focus {
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
     
-}
-
-.feature-item {
+}*/
+/*.feature-item {
     min-height: 170px;
     width: 320px;
     text-align: center;
-}
-
+}*/
 .feature-item h3 {
     margin: 0;
     margin-bottom: 50px;
@@ -764,9 +778,20 @@ button.bg-light:hover {
         display: block !important;
         width: 100%;
     }
+    .features .carousel {
+        min-width: 100%;
+        padding: 0px;
+    }
+    .features .carousel-inner {
+        min-width: 100%;
+        padding: 20px;
+    }
 
     .feature-item {
+        max-width: 100%;
         min-height: 0;
+        padding: 10px;
+        margin: 0px;
         width: 100%;
         text-align: center;
     }
@@ -2185,4 +2210,20 @@ button.bg-light:hover {
     max-width: 60px;
 }
 
+/*Стилизация роутера админа*/
+.admin-router-container {
+    margin: 0;
+    padding: 0;
+    display: block;
+    
 
+}
+.admin-router-container ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.admin-router-container .button {
+    font-size: 14px;
+}

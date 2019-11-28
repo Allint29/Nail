@@ -146,7 +146,11 @@ def parser_time_client_from_str(dic_val):
     dic_val = {'time_date_id': string number, 'client_id': string number, 'number_phone' : string number}
     '''
     #  print(dic_val)
-    dic_val = json.loads(dic_val.replace("'", '"').replace("Undefined".lower(), '-1'))    
+    try:
+        dic_val = json.loads(dic_val.replace("'", '"').replace("Undefined".lower(), '-1'))    
+    except:
+        print('Ошибка: при парсинге словаря dic-val из строки запроса методом json.loads в блоке parser_time_client_from_str ')
+        return {'time_date_id' : -1, 'client_id' : -1, 'number_phone' : -1}
     
     try:
         time_date_id = int(dic_val['time_date_id'])
@@ -174,8 +178,11 @@ def parser_start_end_date_from_str(dic_date):
     возвращает текущую дату как начальную и конечную дату как текущая дата минус 30 дней
      dic_date = {'start_date': '%Y/%m/%d_%H:%M', 'end_date': '%Y/%m/%d_%H:%M'} - словарь хранит две даты начальную и конечную
     '''
-    
-    dic_date = json.loads(dic_date.replace("'", '"').replace("Undefined".lower(), '-1'))    
+    try:
+        dic_date = json.loads(dic_date.replace("'", '"').replace("Undefined".lower(), '-1'))    
+    except:
+        print('Ошибка: при парсинге словаря dic-date из строки запроса методом json.loads в блоке parser_start_end_date_from_str ')       
+        return {'start_date' : datetime.utcnow() - timedelta(days=30), 'end_date' : datetime.utcnow()}
     
     try:
         start_date = datetime.strptime(dic_date['start_date'], '%Y-%m-%d_%H-%M')
@@ -188,7 +195,7 @@ def parser_start_end_date_from_str(dic_date):
         end_date = -1
 
     if start_date == -1 and end_date == -1:
-        dic_date['start_date'] = dic_date['start_date'] - timedelta(days=30)
+        dic_date['start_date'] = datetime.utcnow() - timedelta(days=30)
         dic_date['end_date'] = datetime.utcnow()
 
     elif start_date!=1 and end_date != -1:

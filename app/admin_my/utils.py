@@ -293,3 +293,24 @@ def show_preliminary_desk(start_date=date.today(), end_date=(date.today() + time
 
 
     return list_pre_rec
+
+def parser_dic_master_news(dic_master_news):
+    '''
+    Функция парсит словарь со строки запроса в питоновский словарь 
+    dic_master_news = {'news_id' : '-1'}
+    '''
+    print('dictionary: ',dic_master_news)
+    try:
+        dic_master_news = json.loads(dic_master_news.replace("'", '"').replace("Undefined".lower(), '-1'))   
+    except:
+        print('Ошибка: при парсинге словаря dic_master_news из строки запроса методом json.loads в блоке parser_dic_master_news ')
+        return {'news_id' : -1}
+    pass
+    print('dictionary_id: ',dic_master_news['news_id'])
+    try:
+        news_id = int(dic_master_news['news_id'])
+    except:
+        news_id = -1
+    print('news_id: ',news_id)
+
+    return {'news_id' : news_id}
