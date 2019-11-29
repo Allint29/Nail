@@ -10,26 +10,41 @@ nextGallaryButton.addEventListener("click",
     function (evt) {
         evt.preventDefault();
 
-        var i = sectionGallary.length-1;
-
+        var i = sectionGallary.length - 1;
+        
         while (i >= 0) {
             var st = sectionGallary[i].style.display;
             //alert("HКme  ккка");
-
-
-
             if (st === "block") {
                 if (i === 0) {
                     sectionGallary[i].style.display = "none";
-                    sectionGallary[sectionGallary.length - 1].style.display = "block";
+                    sectionGallary[sectionGallary.length - 1].style.display = "block"; //
+                    var animation = sectionGallary[i - 1].animate([
+                        { opacity: '0' },
+                        { opacity: '0.8' }
+                    ], 800);
+                    animation.addEventListener('finish', function () {
+                        sectionGallary[i - 1].style.opacity = '1';
+                    });
                     break;
                 }
                 sectionGallary[i].style.display = "none";
                 sectionGallary[i - 1].style.display = "block";
+                
+                var animation = sectionGallary[i - 1].animate([
+                    { opacity: '0' },
+                    { opacity: '0.8' }
+                ], 1000);
+                animation.addEventListener('finish', function () {
+                    sectionGallary[i - 1].style.opacity = '1';
+                });
+                
                 break;
             }
             i = i - 1;
         }
+
+
     });
 
 backGallagyButton.addEventListener("click",
@@ -47,11 +62,27 @@ backGallagyButton.addEventListener("click",
                 if (i === sectionGallary.length - 1) {
                     sectionGallary[i].style.display = "none";
                     sectionGallary[0].style.display = "block";
+                    var animation = sectionGallary[0].animate([
+                        { opacity: '0' },
+                        { opacity: '0.8' }
+                    ], 800);
+                    animation.addEventListener('finish', function () {
+                        sectionGallary[0].style.opacity = '1';
+                    });
+
                     break;
                 }
 
                 sectionGallary[i].style.display = "none";
                 sectionGallary[i + 1].style.display = "block";
+
+                var animation = sectionGallary[i + 1].animate([
+                    { opacity: '0' },
+                    { opacity: '0.8' }
+                ], 1000);
+                animation.addEventListener('finish', function () {
+                    sectionGallary[i + 1].style.opacity = '1';
+                });
                 break;
             }
             i = i - 1;

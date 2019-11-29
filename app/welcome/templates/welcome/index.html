@@ -6,21 +6,30 @@
 <h1 class="visually-hidden">Мастер ногтевого сервиса Nail-Master-Krd</h1>
 <section class="features">
 <div id="carouselExampleFade" class="carousel slide carousel-fade" data-ride="carousel">
-    <div class="carousel-inner">
-        <div class="carousel-item feature-item  active">
-            <section class="">
+    
+    <div class="carousel-inner features-list">
+        <div class="carousel-item feature-item   active" data-interval="200">
+            <section class="feature-item-in">
+            <img src="../../../static/images/Logo-text2-RED.png" />
+            </section>
+        </div>
+        <div class="carousel-item feature-item" data-interval="200">
+            <section class="feature-item-in">
                 <h3>Быстро и качественно</h3>
                 <p>Делаем нашу работу быстро! Полтора часа пролетят незаметно! И вот Вы уже обладательница великолепных ноготков, которые прослужат максимально долго!</p>
             </section>
         </div>
-        <div class="carousel-item feature-item">
-                        <h3>Красиво и модно</h3>
-                        <p>Следим за последними тенденциями! Ваш маникюр будет блестать на любом мероприятии! А стиль Ваших пальчиков позволит всегда быть в центре внимания!</p>
-        </div>
-        <div class="carousel-item feature-item">
-                        <h3>Красиво и модно</h3>
-                        <p>Следим за последними тенденциями! Ваш маникюр будет блестать на любом мероприятии! А стиль Ваших пальчиков позволит всегда быть в центре внимания!</p>
-
+        <div class="carousel-item feature-item" data-interval="200">
+            <section class="feature-item-in">
+                <h3>Красиво и модно</h3>
+                <p>Следим за последними тенденциями! Ваш маникюр будет блестать на любом мероприятии! А стиль Ваших пальчиков позволит всегда быть в центре внимания!</p>
+        </section>
+            </div>
+        <div class="carousel-item feature-item" data-interval="200">
+            <section class="feature-item-in">
+                <h3>Безопасно и честно</h3>
+                <p>Все инструменты проходят обезательную стерильную обработку! Цены приятно удивят, так как Вы платите только за работу мастера исключая расходы на содержание салона!</p>
+            </section>
         </div>
     </div>
     <a class="carousel-control-prev" href="#carouselExampleFade" role="button" data-slide="prev">
@@ -53,6 +62,27 @@
     </section>-->
 
 <div class="index-columns">
+
+    <section class="gallery">
+        <h2>Фотогалерея Nail-Master-Krd</h2>
+        <div class="gallery-content">
+            {%if list_with_z_index %}
+            <a class="gallary-content-a" href="{{ url_for('my_work.index') }}">
+                {%for image in list_with_z_index %}
+                <img class="js-image-gallary" src="{{ image['work'].url }}" style="display: {{image['display']}}" /> <!--z-index: {{image['z']}};-->
+                <p>{{ count }}</p>
+                {%endfor%}
+            </a>
+            {% else %}
+            <a class="gallary-content-a" href="#"><img src="../../../static/images/1.jpg" /></a>
+            {%endif%}
+        </div>
+        <div class="galary-container-button">
+
+            <button class="button js-gallery-button-back">Назад</button>
+            <button class="button js-gallery-button-next">Вперед</button>
+        </div>
+    </section>
     <section class="news">
         <h2>Новости Nail-Master-Krd</h2>
         <ul class="news-list">
@@ -60,7 +90,12 @@
                 <p>Появились новые оттенки осеннего сезона 2019, а так же много нового из дизайнерских штучек!</p>
                 <time datetime="2019-10-10">10 ноября</time>
             </li>
-
+            <li><hr /></li>
+            <li class="news-item">
+                <p>Появились новые оттенки осеннего сезона 2019, а так же много нового из дизайнерских штучек!</p>
+                <time datetime="2019-10-10">10 ноября</time>
+            </li>
+            <li><hr /></li>
             <li class="news-item">
                 <p>Спешите сделать комплекс "маникюр + педикюр" со скидкой!</p>
                 <time datetime="2019-08-10">10 августа</time>
@@ -69,31 +104,6 @@
         <a class="button" href="#">Другие новости Nail-Master-Krd</a>
     </section>
 
-    <section class="gallery">
-        <h2>Фотогалерея Nail-Master-Krd</h2>
-        <div class="gallery-content">
-            {%if list_with_z_index %}
-            <a class="gallary-content-a" href="{{ url_for('my_work.index') }}">
-
-                {%for image in list_with_z_index %}
-
-                <img class="js-image-gallary" src="{{ image['work'].url }}" style="display: {{image['display']}}" /> <!--z-index: {{image['z']}};-->
-                <p>{{ count }}</p>
-                {%endfor%}
-            </a>
-
-            {% else %}
-            <a class="gallary-content-a" href="#"><img src="../../../static/images/1.jpg" /></a>
-            {%endif%}
-
-        </div>
-
-        <div class="galary-container-button">
-
-            <button class="button js-gallery-button-back">Назад</button>
-            <button class="button js-gallery-button-next">Вперед</button>
-        </div>
-    </section>
 </div>
 
 <div class="index-columns">

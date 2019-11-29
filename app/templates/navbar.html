@@ -1,5 +1,4 @@
-﻿
-<div class="upper-line ">
+﻿<div class="upper-line ">
     <div class="container">
         <p>Мастер ногтевого сервиса Nail-Master-Krd</p>
         <p class="upper-line-hide">Краснодар, Фестивальный микрорайон</p>
@@ -10,20 +9,20 @@
         <a class="main-header-logo" href="{{ url_for('welcome.index')}}" title="{{_('На главную страницу')}}">
             <img src="../static/images/Logo5-red.png" width="200" />
         </a>
-
+        <div class="main-logitip-text-container">
+            <img src="../static/images/Logo-text2-RED.png" />
+        </div>
         <p class="hide-min-size">
             Адрес:<br>
             г.Краснодар, <br>
             ул.Атарбекова, д. 5/1
         </p>
-
         <p class="main-header-logo-link hide-min-size">
             Телефон (WhatsApp):<br>
             +7 (928) 433-71-81<br>
             Instagram:<br>
             <a class="main-header-logo-link" href="https://www.instagram.com/anna_nails_ani/" title="{{_('Профиль в Интсаграм')}}">anna_nails_ani </a>
         </p>
-
         <p class="hide-large-size">
             г.Краснодар, <br>
             ул.Атарбекова, д. 5/1<br>
@@ -31,89 +30,51 @@
             +7 (928) 433-71-81<br>
             <a class="main-header-logo-link" href="https://www.instagram.com/anna_nails_ani/" title="{{_('Профиль в Интсаграм')}}">Instagram: anna_nails_ani</a>
         </p>
-
     </div>
-
 </div>
-
 
 <nav class="navbar navbar-expand-md main-navigation navbar-light bg-light">
     <div class="main-navigator-wrapper">
         <div class="container">
-            <button id="navbar-button" class="navbar-toggler " type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+            <div class="container">
+                <button id="navbar-button" class="navbar-toggler " type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav mr-auto site-navigation">
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('news.index') }}"> {{ _('Статьи') }}</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('news.index') }}"> {{ _('Мода') }}</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('my_work.index') }}"> {{ _('Портфолио') }}</a></li>
-                    <li class="right-align-li user-navigation">
-                        <button id="navbar-button2" class="button login-link" type="button" data-toggle="collapse" data-target="#navbarSupportedContent2" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                            <span class="login-link-hide">
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mr-auto site-navigation">
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('news.index') }}"> {{ _('Статьи') }}</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('news.index') }}"> {{ _('Мода') }}</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('my_work.index') }}"> {{ _('Портфолио') }}</a></li>
+                        <li class="nav-item dropdown user-navigation">
+                            <a id="navbar-button2" href="#" class="button login-link login-link-button " style="margin-top: -10px;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+
                                 {% if not current_user.is_anonymous %}
                                 {{ current_user.username }}
                                 {%else%}
                                 {{ _('Вход') }}
                                 {%endif%}
-                            </span>
-                        </button>
-                        <div class="collapse navbar-my" id="navbarSupportedContent2">
-                            <ul class="navbar-nav mr-auto user-navigation">
-                                {% if current_user.is_anonymous %}
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            {% if current_user.is_anonymous %}
+                                <a class="dropdown-item login-link-item" href="{{ url_for('user.login') }}"> {{ _('Войти') }} </a>
+                                <a class="dropdown-item" href="{{ url_for('user.registration_main') }}"> {{ _('Регистрация') }} </a>
+                            {% else %}
+                            {%if current_user.is_admin %}
+                                <a class="dropdown-item" href="{{ url_for('admin_my.admin_index')}}"> {{ _('Администратор') }}</a>
+                            {%endif%}
+                                <a class="dropdown-item" href="{{ url_for('main.explore')}}"> {{ _('Песочница') }}</a>
+                                <a class="dropdown-item" href="{{ url_for('main.index') }}">{{ _('Мой блог') }}</a>
+                                <a class="dropdown-item" href="{{ url_for('main.user', username=current_user.username) }}">{{ _('Профиль') }}</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{{ url_for('user.logout') }}">{{ _('Выйти') }}</a>
+                            {%endif%}
+                            </div>
+                        </li>
+                    </ul>
+                </div>
 
-                                <li class="nav-item">
-                                    <a class="dropdown-item login-link-item" href="{{ url_for('user.login') }}"> {{ _('Войти') }} </a>
-
-                                </li>
-                                <!--        <li class="nav-item">
-                                    <a class="dropdown-item" href="{{ url_for('user.registration_main') }}"> {{ _('Регистрация') }} </a>
-                                </li>-->
-                                {% else %}
-                                {% if g.search_form %}
-                                <li class="nav-item">
-                                    <form class="form-inline" method="get" action="{{ url_for('main.search') }}">
-                                        <div class="form-group mr-sm-5">
-                                            {{
-                            g.search_form.q(size=30, class='form-control', color='red',
-                            placeholder=g.search_form.q.label.text)
-                                            }}
-                                        </div>
-                                    </form>
-                                </li>
-                                {% endif %}
-                                {%if current_user.is_admin %}
-
-                                <li class="nav-item">
-                                    <a class="dropdown-item" href="{{ url_for('admin_my.admin_index')}}"> {{ _('Администратор') }}</a>
-
-                                </li>{%endif%}
-                                <li class="nav-item">
-                                    <a class="dropdown-item" href="{{ url_for('main.explore')}}"> {{ _('Песочница') }}</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="dropdown-item" href="{{ url_for('main.index') }}">{{ _('Мой блог') }}</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="dropdown-item" href="{{ url_for('main.user', username=current_user.username) }}">{{ _('Профиль') }}</a>
-
-                                </li>
-                                <li class="nav-item">
-                                    <div class="dropdown-divider"></div>
-
-                                </li>
-                                <li class="nav-item">
-                                    <a class="dropdown-item" href="{{ url_for('user.logout') }}">{{ _('Выйти') }}</a>
-                                </li>
-                                {% endif %}
-                            </ul>
-                        </div>
-                    </li>
-                </ul>
             </div>
-
-
 
 
         </div>
