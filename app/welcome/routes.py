@@ -13,6 +13,7 @@ from app.user.utils import delete_non_comfirmed_phone, step_one_for_enter_phone,
                             step_two_for_enter_phone, cancel_user_phone, create_new_user_by_phone_registration, \
                             save_password_by_phone_registration, set_default_password
 from app.my_work.models import MyWork
+from app.news.models import MasterNews
 
 #нужен для преобразования строки в словарь и обратно
 import json
@@ -23,6 +24,7 @@ import json
 @bp.route('/', methods=['GET', 'POST'])
 def index():
     form_login = LoginForm()
+    #блок добавления фотографий галереи
     list_gallary = MyWork.query.filter_by(show=1).order_by(MyWork.published).all()
     list_with_z_index = []
     z=100;
@@ -32,8 +34,16 @@ def index():
         if z-100 == len(list_gallary):
             display='block'
         list_with_z_index.append({'work': work, 'z' : z, 'display' : display})
+    ################################################################################
+    
+    #блок добавления новостей сайта
+    list_news = MasterNews.query.order_by(MasterNews.published.desc())[0:3]
+    count_list_news = len(list_news)
+    #################################################################################
 
-    return render_template("welcome/index.html", form_login=form_login, list_gallary = list_gallary, list_with_z_index = list_with_z_index)
+
+
+    return render_template("welcome/index.html", form_login=form_login, list_gallary = list_gallary, list_with_z_index = list_with_z_index, list_news=list_news, count_list_news=count_list_news)
 
 @bp.route('/map')
 def welcome_map():

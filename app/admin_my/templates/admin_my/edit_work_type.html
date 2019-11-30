@@ -1,0 +1,54 @@
+﻿{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+<section class="site-map">
+    <p> <a href="{{ url_for('welcome.index') }}">{{_('Главная страница')}}</a>
+        <span> &#9830;</span>
+        <a href="{{ url_for('admin_my.admin_index') }}">{{_('Администрация')}}</a>
+        <span> &#9830;</span>
+        <a href="{{ url_for('admin_my.list_work_types') }}">{{_('Лента видов работ')}}</a>
+        <span> &#9830;</span>
+        <a>{{_('Редактор вида работы')}}</a>
+    </p>
+</section>
+
+<div class="edit-user-container">
+    {% if  work_type_form %}
+    {% for error in work_type_form.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+    <form action="" method="post">
+        {{work_type_form.hidden_tag()}}
+        <ul>
+            <li>
+                {{work_type_form.id_field.label}}
+                <span class="visually-hidden">{{work_type_form.id_field}}</span>
+                {{work_type_form.id_field.data}}
+            </li>
+            <li>
+                {% for error in work_type_form.id_field.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </li>
+            <li>
+                {{work_type_form.name_field.label}}
+                {{work_type_form.name_field}}
+            </li>
+            <li>
+                {% for error in work_type_form.name_field.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </li>
+            <li>
+                {{work_type_form.to_save_submit}}
+                {{work_type_form.to_delete_submit}}
+                <a class="button" href="{{url_for('admin_my.list_work_types')}}">{{_('Отмена')}}</a>
+            </li>
+        </ul>
+    </form>
+    <hr />
+    {% endif %}
+</div>
+{% endblock %}
+

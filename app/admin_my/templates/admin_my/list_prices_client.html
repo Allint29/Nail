@@ -1,0 +1,35 @@
+﻿{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+<section class="site-map">
+    <p>
+        <a href="{{ url_for('welcome.index') }}">{{_('Главная страница')}}</a>
+        <span> &#9830;</span>
+        <a>{{_('Наши цены')}}</a>
+    </p>
+</section>
+<div class="price-container">
+    <h2 class="visually-hidden">Наши цены</h2>
+    {%if list_prices%}
+    {%set i=0%}
+    <ul>
+        {% for item in list_prices %}
+        <li>
+            <ul>
+                <li>{{item.title}}</li>
+                <li>{{item.text}}</li>
+                <li>{{item.price}} {{_('руб.')}}</li>
+            </ul>
+            <hr />
+        </li>
+        {%endfor%}
+    </ul>
+
+    {%endif%}
+
+</div>
+
+{% endblock %}
+
+

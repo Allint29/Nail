@@ -186,9 +186,12 @@ def register_request():
         type_connection = 1 if len(type_connection) < 1 else type_connection[0]
         user = User(username=form_mail.username.data, email=form_mail.email.data, email_confirmed=0, role='user', connection_type_id = type_connection, user_from_master = 0)
         #user.set_password(form.password.data)
-        db.session.add(user)
-        db.session.commit()
-        flash(flash_check)
+        try:
+            db.session.add(user)
+            db.session.commit()
+            flash(flash_check)
+        except:
+            flash(_('Ошибка при сохранении в базу при регистрации по электронной почте.'))
         send_new_registration_email(user)
         return redirect(url_for('user.login'))
     return render_template('user/registration_by_email/register_request.html', title=titleVar, form_mail=form_mail)
@@ -210,8 +213,12 @@ def register_user(token):
         user.set_password(form.password.data)        
         user.set_confirm_email_true()
         user.expire_date_request_confirm_password = main_utils.min_date_for_calculation()
-        db.session.commit()
-        flash(flash_user_register)
+        try:
+            db.session.add(user)
+            db.session.commit()
+            flash(flash_user_register)
+        except:
+            flash(_('Ошибка при записи в базу на этапе окончания регистрации по почте.'))
         return redirect(url_for('user.login'))
     return render_template('user/registration_by_email/register_user.html', title=titleVar, form=form)
 
@@ -304,8 +311,12 @@ def reset_password(token):
         user.set_password(form.password.data)
         #if email not confirm with first registration it make it confirm
         user.set_confirm_email_true()
-        db.session.commit()
-        flash(flash_change_pass)
+        try:
+            db.session.add(user)
+            db.session.commit()
+            flash(flash_change_pass)
+        except:
+            flash(_('Ошибка при записи в базу на этапе восстановления пароля по почте.'))
         return redirect(url_for('user.login'))
     return render_template('user/reset_password/reset_password_by_email.html', title=titleVar, form=form)
 

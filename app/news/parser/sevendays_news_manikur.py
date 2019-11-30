@@ -113,8 +113,11 @@ def get_news_content():
    #         #если текст получен, то мы берем его и сохраняем
             if news_text:
                 news.text = news_text;
-                db.session.add(news);                
-                db.session.commit();
+                try:
+                    db.session.add(news);                
+                    db.session.commit();
+                except:
+                    pass
 
        #R9 Если поля текста без текста но строковый класс
     for news in news_with_space_text:        
@@ -129,7 +132,10 @@ def get_news_content():
    #        # #если текст получен, то мы берем его и сохраняем
             if news_text:
                 news.text = news_text;
-                db.session.add(news);                
-                db.session.commit();
+                try:
+                    db.session.add(news);                
+                    db.session.commit();
+                except:
+                    pass
 
 

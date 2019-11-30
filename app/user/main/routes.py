@@ -41,8 +41,11 @@ def follow(username):
         flash(_('Вы отписаны от пользователя %(username)s.', username=username))
         return redirect(url_for('main.user', username=username))
     current_user.follow(user)
-    db.session.commit()
-    flash('Вы подписаны {}!'.format(username))
+    try:
+        db.session.commit()
+        flash('Вы подписаны {}!'.format(username))
+    except:
+        pass
     return redirect(url_for('main.user', username=username))
 
 @bp.route('/unfollow_<username>')
@@ -56,8 +59,11 @@ def unfollow(username):
         flash(_('Вы не можете отписаться от самого себя!'))
         return redirect(url_for('main.user', username=username))
     current_user.unfollow(user)
-    db.session.commit()
-    flash(_('Вы отписаны от пользователя %(username)s.', username=username))
+    try:
+        db.session.commit()
+        flash(_('Вы отписаны от пользователя %(username)s.', username=username))
+    except:
+        pass
     return redirect(url_for('main.user', username=username))
 
 
@@ -146,9 +152,12 @@ def index():
         if language == 'UNKNOWN' or len(language) > 5:
             language = ''
         post = Post(body=form.post.data, author=current_user, language=language)
-        db.session.add(post)        
-        db.session.commit()
-        flash(_('Ваш пост опубликован!'))
+        try:
+            db.session.add(post)        
+            db.session.commit()
+            flash(_('Ваш пост опубликован!'))
+        except:
+            pass
         return redirect(url_for('main.index'))
     page = request.args.get('page', 1, type=int)
     posts = current_user.followed_posts().paginate(
@@ -215,8 +224,11 @@ def edit_profile():
         if form.submit.data:            
             current_user.username = form.username.data
             current_user.about_me = form.about_me.data
-            db.session.commit()
-            flash(_('Ваши изменения в профиле были сохранены.'))
+            try:
+                db.session.commit()
+                flash(_('Ваши изменения в профиле были сохранены.'))
+            except:
+                pass
             return redirect(url_for('main.edit_profile'))
         if form.phone_button.data:           
             flash(_('Вы направлены на страничку редактирования телефонов.'))
@@ -295,12 +307,18 @@ def edit_profile_add_email(mail):
                      return redirect(url_for('main.edit_profile', mail=mail))
                 current_user.bufer_email = form.email.data
                 current_user.expire_date_request_bufer_mail = datetime.utcnow() + timedelta(seconds = current_app.config['SECONDS_TO_CONFIRM_EMAIL'])
-                db.session.commit()
-                #print (form.email.data)
-                #print (current_user)
-                send_mail_reset_email(current_user, form.email.data)
+                try:
+                    db.session.commit()
+                except:
+                    pass
+                    #print (form.email.data)
+                    #print (current_user)
+                try:
+                    send_mail_reset_email(current_user, form.email.data)
+                    flash(_('Вам на почту выслано письмо со ссылкой для подтверждения регистрации.'))
+                except:
+                    pass
 
-                flash(_('Вам на почту выслано письмо со ссылкой для подтверждения регистрации.'))
                 return redirect(url_for('main.edit_profile'))
             else:
                 flash(_('Вы отменили операцию добавления адреса электронной почты.'))
@@ -341,9 +359,13 @@ def confirm_adding_email(token):
         user.bufer_email = None
         user.expire_date_request_bufer_mail = main_utils.min_date_for_calculation()
         user.set_confirm_email_true()      
-        db.session.commit()
-        flash(flash_user_register)
-        #print('Зарегили')
+        try:
+            db.session.add(user)
+            db.session.commit()
+            flash(flash_user_register)
+            #print('Зарегили')
+        except:
+            pass
         return redirect(url_for('main.edit_profile'))
 
     return render_template('user/edit_profile/edit_profile_new_email_congratulation.html', title=titleVar, form=form)
@@ -361,8 +383,11 @@ def edit_profile_change_password(user):
             return redirect(url_for('main.edit_profile'))
 
         current_user.set_password(form.password.data)
-        db.session.commit()
-        flash(flash_change_pass)
+        try:
+            db.session.commit()
+            flash(flash_change_pass)
+        except:
+            pass
         return redirect(url_for('main.edit_profile'))
 
     

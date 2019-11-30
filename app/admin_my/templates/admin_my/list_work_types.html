@@ -1,0 +1,38 @@
+﻿{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+<section class="site-map">
+    <p>
+        <a href="{{ url_for('welcome.index') }}">{{_('Главная страница')}}</a>
+        <span> &#9830;</span>
+        <a href="{{ url_for('admin_my.admin_index') }}">{{_('Администрация')}}</a>
+        <span> &#9830;</span>
+        <a>{{_('Лента видов работ')}}</a>
+    </p>
+</section>
+<div class="find-user-container">
+    <li><a class="button" href="{{url_for('admin_my.edit_work_type', dic_work_types = {'work_type_id' : '-1'})}}">{{_('Добавить вид работы')}}</a></li>
+    {%if list_types %}
+    <ul>
+        {% for item in list_types %}
+        <li>
+            <ul>
+                <li>{{_('Id: ')}}</li>
+                <li>{{item.id}}</li>
+                <li>{{_('Название: ')}}</li>
+                <li>{{item.name}}</li>
+                <li><a class="button" href="{{url_for('admin_my.edit_work_type', dic_work_types = {'work_type_id' : item.id})}}">{{_('Редактировать')}}</a></li>
+            </ul>
+            <hr />
+        </li>
+        {%endfor%}
+    </ul>
+
+    {%endif%}
+
+</div>
+
+{% endblock %}
+
+

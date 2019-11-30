@@ -314,3 +314,39 @@ def parser_dic_master_news(dic_master_news):
     print('news_id: ',news_id)
 
     return {'news_id' : news_id}
+
+def parser_dic_price(dic_prices):
+    '''
+    Функция парсит словарь со строки запроса в питоновский словарь 
+    dic_prices = {'price_id' : '-1'}
+    '''
+    try:
+        dic_prices = json.loads(dic_prices.replace("'", '"').replace("Undefined".lower(), '-1'))   
+    except:
+        print('Ошибка: при парсинге словаря dic_master_news из строки запроса методом json.loads в блоке parser_dic_master_news ')
+        return {'price_id' : -1}    
+    
+    try:
+        news_id = int(dic_prices['price_id'])
+    except:
+        news_id = -1   
+
+    return {'price_id' : news_id}
+
+def parser_dic_work_types(dic_work_types):
+    '''
+    Функция парсит словарь со строки запроса в питоновский словарь 
+    dic_work_types = {'work_type_id' : '-1'}
+    '''
+    try:
+        dic_work_types = json.loads(dic_work_types.replace("'", '"').replace("Undefined".lower(), '-1'))   
+    except:
+        print('Ошибка: при парсинге словаря dic_master_news из строки запроса методом json.loads в блоке parser_dic_work_types ')
+        return {'work_type_id' : -1}    
+    
+    try:
+        work_type_id = int(dic_work_types['work_type_id'])
+    except:
+        work_type_id = -1   
+
+    return {'work_type_id' : work_type_id}

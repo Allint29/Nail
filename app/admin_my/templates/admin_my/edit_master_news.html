@@ -56,9 +56,9 @@
                     {{news_form.published_field}}
                 </li>
                 <li>
-                {% for error in news_form.text_field.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-                {% endfor %}
+                    {% for error in news_form.published_field.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                    {% endfor %}
                 </li>
                 <li>
                     {{news_form.to_save_submit}} 

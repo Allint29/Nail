@@ -73,4 +73,4 @@ class MasterNews(db.Model):
     published = db.Column(db.DateTime, nullable=False)
 
     def __repr__(self):
-        return f'<MasterNews {self.title} {self.url}>'
+        return f'<MasterNews {self.title} {self.text} {self.published}>'

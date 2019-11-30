@@ -6,12 +6,15 @@ from app import db
 from app.decorators.decorators import admin_required
 from flask_babel import _
 from app.admin_my.forms import *
+from app.admin_my.models import PriceList, WorkType
 from app.user.models import User, UserPhones, ConnectionType, UserInternetAccount
 from app.my_work.models import *
 from app.news.models import *
 from app.main_func import utils as main_utils
-from app.admin_my.utils import set_default_password_admin, user_delete_admin, show_preliminary_desk, parser_dic_master_news
+from app.admin_my.utils import set_default_password_admin, user_delete_admin, show_preliminary_desk, \
+                                parser_dic_master_news, parser_dic_price, parser_dic_work_types
 from app.master_schedule.models import *
+
 
 @bp.route('/', methods=['GET', 'POST'])
 @admin_required
@@ -469,7 +472,8 @@ def list_my_work():
             #print('Проверку прошли')
             start_date = time_form.date_field_start.data
             end_date =time_form.date_field_end.data
-            list_my_works = [w for w in MyWork.query.all() if w.published.date() >= start_date and w.published.date() <= end_date]
+            my_works_all = MyWork.query.all()
+            list_my_works = [w for w in my_works_ if w.published.date() >= start_date and w.published.date() <= end_date]
             for w in list_my_works:
                 my_work_form = EditMyWorksForm(id_my_work_field = w.id,
                                                id_site_field = w.id_site,
@@ -483,7 +487,8 @@ def list_my_work():
                                                source_field = w.source,
                                                content_field = w.content
                                                )
-                list_comment = [c for c in CommentsToMyWorks.query.all() if c.media == w.code or c.my_work_id == w.id]
+                comment_all = CommentsToMyWorks.query.all()
+                list_comment = [c for c in comment_all if c.media == w.code or c.my_work_id == w.id]
                 list_comment_forms = []
                 for c in list_comment:
                     coment_form = EditMyWorksCommentsForm(
@@ -502,7 +507,8 @@ def list_my_work():
     elif request.method == "GET":
         time_form.date_field_start.data=start_date
         time_form.date_field_end.data=end_date
-        list_my_works = [w for w in MyWork.query.all() if w.published.date() >= start_date and w.published.date() <= end_date]        
+        my_works_all = MyWork.query.all()
+        list_my_works = [w for w in my_works_all if w.published.date() >= start_date and w.published.date() <= end_date]        
         for w in list_my_works:
             my_work_form = EditMyWorksForm(id_my_work_field = w.id,
                                            id_site_field = w.id_site,
@@ -516,7 +522,8 @@ def list_my_work():
                                            source_field = w.source,
                                            content_field = w.content
                                            )
-            list_comment = [c for c in CommentsToMyWorks.query.all() if c.media == w.code or c.my_work_id == w.id]
+            comment_all = CommentsToMyWorks.query.all()
+            list_comment = [c for c in comment_all if c.media == w.code or c.my_work_id == w.id]
             list_comment_forms = []
             for c in list_comment:
                 coment_form = EditMyWorksCommentsForm(
@@ -601,7 +608,7 @@ def list_news():
     titleVar='Редактирование отображения новостей'
     
     time_form = MyWorkTimeToShowForm()    
-    start_date =(datetime.utcnow() -timedelta(days=60)).date()
+    start_date =(datetime.utcnow() - timedelta(days=60)).date()
     end_date = datetime.utcnow().date()
     list_news_and_comments_forms = []
 
@@ -611,7 +618,8 @@ def list_news():
             start_date = time_form.date_field_start.data
             end_date =time_form.date_field_end.data
 
-            list_news = [n for n in News.query.order_by(News.published.desc()) if n.published.date() >= start_date and n.published.date() <= end_date]        
+            news_all = News.query.order_by(News.published.desc())
+            list_news = [n for n in news_all if n.published.date() >= start_date and n.published.date() <= end_date]        
             for n in list_news:
                 news_form = EditNewsForm(id_news_field = n.id,
                                                title_field = n.title,
@@ -621,7 +629,8 @@ def list_news():
                                                source_field = n.source,
                                                show_list_field = '0' if n.show == 0 else '1'
                                                )
-                list_comment = [c for c in CommentsToNews.query.order_by(CommentsToNews.created.desc()) if c.news_id == n.id]
+                comment_all = CommentsToNews.query.order_by(CommentsToNews.created.desc())
+                list_comment = [c for c in comment_all if c.news_id == n.id]
                 list_comment_forms = []
                 for c in list_comment:
                     coment_form = EditNewsCommentsForm(
@@ -638,7 +647,8 @@ def list_news():
     elif request.method == "GET":
         time_form.date_field_start.data=start_date
         time_form.date_field_end.data=end_date
-        list_news = [n for n in News.query.order_by(News.published.desc()) if n.published.date() >= start_date and n.published.date() <= end_date]        
+        news_all = News.query.order_by(News.published.desc())
+        list_news = [n for n in news_all if n.published.date() >= start_date and n.published.date() <= end_date]        
         for n in list_news:
             news_form = EditNewsForm(id_news_field = n.id,
                                            title_field = n.title,
@@ -648,7 +658,8 @@ def list_news():
                                            source_field = n.source,
                                            show_list_field = '0' if n.show == 0 else '1'
                                            )
-            list_comment = [c for c in CommentsToNews.query.order_by(CommentsToNews.created.desc()) if c.news_id == n.id]
+            comment_all = CommentsToNews.query.order_by(CommentsToNews.created.desc())
+            list_comment = [c for c in comment_all if c.news_id == n.id]
             list_comment_forms = []
             for c in list_comment:
                 coment_form = EditNewsCommentsForm(
@@ -851,12 +862,14 @@ def show_master_news():
         if time_form.validate_on_submit():
             start_date = time_form.date_field_start.data
             end_date = time_form.date_field_end.data
-            list_news = [n for n in MasterNews.query.order_by(MasterNews.published.desc()) if n.published.date() >= start_date and n.published.date() <= end_date]
+            news_all =  MasterNews.query.order_by(MasterNews.published.desc())
+            list_news = [n for n in news_all if n.published.date() >= start_date and n.published.date() <= end_date]
             pass
     elif request.method == "GET":
         time_form.date_field_start.data = start_date
         time_form.date_field_end.data = end_date
-        list_news = [n for n in MasterNews.query.order_by(MasterNews.published.desc()) if n.published.date() >= start_date and n.published.date() <= end_date]
+        news_all = MasterNews.query.order_by(MasterNews.published.desc())
+        list_news = [n for n in news_all if n.published.date() >= start_date and n.published.date() <= end_date]
 
     return render_template('admin_my/list_master_news.html', time_form = time_form, list_news=list_news)
 
@@ -900,12 +913,15 @@ def edit_master_news(dic_master_news):
                     print(f'Ошибка при редактировании новости сайта при сохранении в базе. Обратитесь к администратору.: {e}')
                     flash(_(f'Ошибка при редактировании новости сайта при сохранении в базе. Обратитесь к администратору.'))
             elif news_form.to_delete_submit.data:
-                try:
-                    db.session.delete(master_news)
-                    db.session.commit()
-                    flash(_(f'Изменения успешно внесены в базу.'))
-                except:
-                    flash(_('Ошибка при удалении новости сайта при сохранении в базе. Обратитесь к администратору.'))
+                if master_news != None:
+                    try:
+                        db.session.delete(master_news)
+                        db.session.commit()
+                        flash(_(f'Изменения успешно внесены в базу.'))
+                    except:
+                        flash(_('Ошибка при удалении новости сайта при сохранении в базе. Обратитесь к администратору.'))
+                else:
+                    flash(_('Ошибка при удалении новости сайта новость для удаления отсутствует.'))
 
             return redirect(url_for('admin_my.show_master_news'))
         
@@ -924,3 +940,164 @@ def edit_master_news(dic_master_news):
 
     return render_template('admin_my/edit_master_news.html', news_form=news_form)
     
+@bp.route('/show_price_list_master', methods=['GET', 'POST'])
+@admin_required
+def show_price_list_master():
+    '''
+    Вывод страницы cо  всеми новостями от мастера для показа на главной странице
+    '''
+    titleVar='Лента цен на работы мастера'
+    list_prices = PriceList.query.order_by(PriceList.price)
+        
+    return render_template('admin_my/list_prices_master.html', list_prices=list_prices)
+
+@bp.route('/edit_price_<dic_prices>', methods=['GET', 'POST'])
+@admin_required
+def edit_price(dic_prices):
+    '''
+    Вывод страницы для редактирования цен на работы мастера
+    dic_prices = {'price_id' : '-1'}
+    '''
+    dic_prices = parser_dic_price(dic_prices)
+    price_id = dic_prices['price_id']
+
+    price_ = PriceList.query.filter(PriceList.id == price_id).first()
+    price_form = PriceForm()
+
+    #заполняю выпадающий список данными при этом выбираю тип из базы данных
+    #work_type = WorkType.query.filter(WorkType.id == price_.work_type_id).first() if price_ else None
+    work_types_list = WorkType.query.all()
+    groups_list=[(t.id, t.name) for t in work_types_list]
+    price_form.work_types_field.choices  = groups_list
+
+    if request.method == 'POST':
+        if price_form.validate_on_submit():
+            if price_form.to_save_submit.data:
+                if price_==None:
+                    price_ = PriceList(title=price_form.title_field.data, 
+                                            text = price_form.text_field.data,
+                                            price = price_form.price_field.data,
+                                            discount = price_form.discount_field.data,
+                                            work_type_id = price_form.work_types_field.data)                    
+                else:
+                    price_.title = price_form.title_field.data
+                    price_.text = price_form.text_field.data
+                    price_.price = price_form.price_field.data
+                    price_.discount = price_form.discount_field.data
+                    price_.work_type_id = price_form.work_types_field.data
+
+                try:
+                    db.session.add(price_)
+                    db.session.commit()
+                    flash(_(f'Изменения успешно внесены в базу.'))
+                except Exception as e:
+                    print(f'Ошибка при редактировании пункта меню прайс-листа при сохранении в базе. Обратитесь к администратору.{e}')
+                    flash(_(f'Ошибка при редактировании пункта меню прайс-листа при сохранении в базе. Обратитесь к администратору.'))
+            elif price_form.to_delete_submit.data:
+                if price_ != None:
+                    try:
+                        db.session.delete(price_)
+                        db.session.commit()
+                        flash(_(f'Изменения успешно внесены в базу.'))
+                    except:
+                        flash(_('Ошибка при удалении пункта меню прайс-листа при сохранении в базе. Обратитесь к администратору.'))
+                else:
+                     flash(_('Ошибка при удалении пункта меню прайс-листа. Пункта для удаления не существует. Обратитесь к администратору.'))
+
+            return redirect(url_for('admin_my.show_price_list_master'))
+        
+    elif request.method == 'GET':
+        if price_ == None:
+            price_form.id_field.data = '-1'
+            price_form.title_field.data = ''
+            price_form.text_field.data = ''
+            price_form.price_field.data = '0'
+            price_form.discount_field.data = '0'
+            price_form.work_types_field.data = None
+        else:
+            price_form.id_field.data = price_.id
+            price_form.title_field.data = price_.title
+            price_form.text_field.data = price_.text
+            price_form.price_field.data = price_.price
+            price_form.discount_field.data = price_.discount
+            price_form.work_types_field.data = price_.work_type_id
+
+    return render_template('admin_my/edit_price.html', price_form=price_form)
+
+@bp.route('/show_price', methods=['GET', 'POST'])
+@admin_required
+def show_price():
+    '''
+    Вывод цены на работы мастера из БД
+    '''
+    titleVar='Наши цены'
+    list_prices = PriceList.query.all()
+    return render_template('admin_my/list_prices_client.html',list_prices=list_prices)
+
+@bp.route('/list_work_types', methods=['GET', 'POST'])
+@admin_required
+def list_work_types():
+    '''
+    Вывод страницы cо  всеми типами работ от мастера для показа на главной странице
+    '''
+    titleVar='Лента видов работ'
+    list_types = WorkType.query.all()
+
+    return render_template('admin_my/list_work_types.html', list_types=list_types)
+
+@bp.route('/edit_work_type_<dic_work_types>', methods=['GET', 'POST'])
+@admin_required
+def edit_work_type(dic_work_types):
+    '''
+    Маршрут к редактиованию вида работ
+    dic_work_types = {'work_type_id' : '-1'}
+    '''
+
+    dic_work_types = parser_dic_work_types(dic_work_types)
+    work_type_id = dic_work_types['work_type_id']
+
+    work_type = WorkType.query.filter(WorkType.id == work_type_id).first()
+
+    work_type_form = WorkTypeForm()
+
+    if request.method == 'POST':
+        if work_type_form.validate_on_submit():
+            if work_type_form.to_save_submit.data:
+                if work_type == None:
+                    work_type = WorkType(name=work_type_form.name_field.data)                    
+                else:
+                    work_type.name = name=work_type_form.name_field.data    
+                    
+                try:
+                    db.session.add(work_type)
+                    db.session.commit()
+                    flash(_(f'Изменения успешно внесены в базу.'))
+                except Exception as e:
+                    print(f'Ошибка при редактировании вида работы при сохранении в базе. Обратитесь к администратору.{e}')
+                    flash(_(f'Ошибка при редактировании вида работы при сохранении в базе. Обратитесь к администратору.'))
+
+            elif work_type_form.to_delete_submit.data:
+                if work_type != None:
+                    try:
+                        db.session.delete(work_type)
+                        db.session.commit()
+                        flash(_(f'Изменения успешно внесены в базу.'))
+                    except:
+                        flash(_('Ошибка при удалении вида работы при сохранении в баз. Обратитесь к администратору.'))
+                else:
+                     flash(_('Ошибка при удалении вида работы при сохранении в баз. Вид работы для удаления не существует. Обратитесь к администратору.'))
+            
+            return redirect(url_for('admin_my.list_work_types'))
+
+    elif request.method == 'GET':
+        if work_type == None:
+            work_type_form.id_field.data = '-1'
+            work_type_form.name_field.data = ''      
+        else:
+            work_type_form.id_field.data = work_type.id
+            work_type_form.name_field.data = work_type.name
+
+    return render_template('admin_my/edit_work_type.html', work_type_form=work_type_form)
+    
+
+

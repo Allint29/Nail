@@ -46,6 +46,8 @@
                         <li class="nav-item"><a class="nav-link" href="{{ url_for('news.index') }}"> {{ _('Статьи') }}</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ url_for('news.index') }}"> {{ _('Мода') }}</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ url_for('my_work.index') }}"> {{ _('Портфолио') }}</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('master_schedule.show_schedule') }}"> {{ _('Расписание') }}</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_my.show_price') }}"> {{ _('Цены') }}</a></li>
                         <li class="nav-item dropdown user-navigation">
                             <a id="navbar-button2" href="#" class="button login-link login-link-button " style="margin-top: -10px;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 
@@ -56,19 +58,19 @@
                                 {%endif%}
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            {% if current_user.is_anonymous %}
+                                {% if current_user.is_anonymous %}
                                 <a class="dropdown-item login-link-item" href="{{ url_for('user.login') }}"> {{ _('Войти') }} </a>
                                 <a class="dropdown-item" href="{{ url_for('user.registration_main') }}"> {{ _('Регистрация') }} </a>
-                            {% else %}
-                            {%if current_user.is_admin %}
+                                {% else %}
+                                {%if current_user.is_admin %}
                                 <a class="dropdown-item" href="{{ url_for('admin_my.admin_index')}}"> {{ _('Администратор') }}</a>
-                            {%endif%}
+                                {%endif%}
                                 <a class="dropdown-item" href="{{ url_for('main.explore')}}"> {{ _('Песочница') }}</a>
                                 <a class="dropdown-item" href="{{ url_for('main.index') }}">{{ _('Мой блог') }}</a>
                                 <a class="dropdown-item" href="{{ url_for('main.user', username=current_user.username) }}">{{ _('Профиль') }}</a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="{{ url_for('user.logout') }}">{{ _('Выйти') }}</a>
-                            {%endif%}
+                                {%endif%}
                             </div>
                         </li>
                     </ul>

@@ -86,22 +86,41 @@
     <section class="news">
         <h2>Новости Nail-Master-Krd</h2>
         <ul class="news-list">
+            {%if list_news%}
+            {%for news in list_news%}
+            <li class="news-item">
+                <!--<p>{{news.title}}</p>-->
+                <p>{{news.text}}</p>
+                {%if news.published %}
+                <p>{{news.published.strftime('%d-%m-%Y')}}</p>
+                {%endif%}
+            </li>
+            <li><hr /></li>
+            {%endfor%}
+            {%endif%}
+            {%if count_list_news == 2  %}
             <li class="news-item">
                 <p>Появились новые оттенки осеннего сезона 2019, а так же много нового из дизайнерских штучек!</p>
                 <time datetime="2019-10-10">10 ноября</time>
             </li>
             <li><hr /></li>
+            {%endif%}
+
+            {%if count_list_news == 1  %}
             <li class="news-item">
                 <p>Появились новые оттенки осеннего сезона 2019, а так же много нового из дизайнерских штучек!</p>
                 <time datetime="2019-10-10">10 ноября</time>
             </li>
             <li><hr /></li>
+            {%endif%}
+            {%if count_list_news == 0 %}
             <li class="news-item">
                 <p>Спешите сделать комплекс "маникюр + педикюр" со скидкой!</p>
                 <time datetime="2019-08-10">10 августа</time>
             </li>
+            {%endif%}
         </ul>
-        <a class="button" href="#">Другие новости Nail-Master-Krd</a>
+        <a class="button" href="#">Другие новости и акции</a>
     </section>
 
 </div>
@@ -128,9 +147,19 @@
     <section class="appointment">
         <h2>Расписание и запись</h2>
         <p class="appointment-info">
-            Прежде чем записаться Вы можете посмотреть свободные места в расписании. Так же Вы можете оставить свой телефон и мы перезвоним!
+            По ссылке ниже Вы можете:
         </p>
-        <a class="button shedule-button" href="{{url_for( 'master_schedule.show_schedule')}}">Расписание</a>
+        <ul>
+            <li>Узнать о ценах</li>
+            <li>Ознакомиться с расписанием мастера</li>
+            <li>Узнать когда есть свободное окошко</li>
+            <li>Отправить заявку на время, которое Вам удобно</li>
+        </ul>
+        <div class="galary-container-button">
+            <a class="button shedule-button" href="{{url_for( 'master_schedule.show_schedule')}}">Расписание</a>
+            <a class="button shedule-button" href="{{url_for( 'admin_my.show_price')}}">Цены</a>
+        </div>
+        
         <!--Здесь будет форма-->
     </section>
 </div>

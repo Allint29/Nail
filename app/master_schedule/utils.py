@@ -17,10 +17,13 @@ def delete_all_days_in_schedule():
     Функция быстрого удаления записей в таблице расписания
     '''
     data_to_delete = DateTable.query.all()
-    for data in data_to_delete:
-        db.session.delete(data)
+    try:
+        for data in data_to_delete:
+            db.session.delete(data)
 
-    db.session.commit()
+        db.session.commit()
+    except Exception as e:
+        print(f'Ошибка при удалении всех дней. {e}')
 
 def create_calendar_for_two_month():
     '''
@@ -38,55 +41,59 @@ def create_calendar_for_two_month():
     it_date=it_date_main
     last_date = None
     date_to_add = []
-     
-    if len(list_of_date) > 0:
-        i=0        
-        while i < len(list_of_date):
-           # print(list_of_date[i].day_date > it_date,' ', list_of_date[i].day_date,' > ', it_date)
-            if list_of_date[i].day_date > it_date:
-                #если дата в списке болше текущей - значит отсутствует и ее надо добавить в список на добавление
-                delta = list_of_date[i].day_date - it_date
+    try:
+        if len(list_of_date) > 0:
+            i=0        
+            while i < len(list_of_date):
+               # print(list_of_date[i].day_date > it_date,' ', list_of_date[i].day_date,' > ', it_date)
+                if list_of_date[i].day_date > it_date:
+                    #если дата в списке болше текущей - значит отсутствует и ее надо добавить в список на добавление
+                    delta = list_of_date[i].day_date - it_date
+                    for d in range(delta.days):
+                      #  print("Add it_date")
+                        date_to_add.append(it_date)
+                        it_date=it_date + timedelta(days=1)
+
+                it_date=it_date + timedelta(days=1)
+
+                if i == len(list_of_date)-1:
+                   # print("last date!")
+                    lastdate=list_of_date[i].day_date
+                
+                i=i+1
+
+            if lastdate < end_of_bufer_date:
+                #если еще остались не заполненные дни по окончанию списка то их тоже нужно занести в список добавляемых
+                delta = end_of_bufer_date - lastdate
                 for d in range(delta.days):
-                  #  print("Add it_date")
-                    date_to_add.append(it_date)
-                    it_date=it_date + timedelta(days=1)
+                    lastdate=lastdate+timedelta(days=1)
+                    date_to_add.append(lastdate)
 
-            it_date=it_date + timedelta(days=1)
-
-            if i == len(list_of_date)-1:
-               # print("last date!")
-                lastdate=list_of_date[i].day_date
-            
-            i=i+1
-
-        if lastdate < end_of_bufer_date:
-            #если еще остались не заполненные дни по окончанию списка то их тоже нужно занести в список добавляемых
-            delta = end_of_bufer_date - lastdate
-            for d in range(delta.days):
-                lastdate=lastdate+timedelta(days=1)
-                date_to_add.append(lastdate)
-
-        for d in date_to_add:
-            date_of_schedule = DateTable(day_date = d, day_name = main_utils.make_name_of_day_from_date(d, 'ru')['day'])
-            db.session.add(date_of_schedule)
+            for d in date_to_add:
+                date_of_schedule = DateTable(day_date = d, day_name = main_utils.make_name_of_day_from_date(d, 'ru')['day'])
+                db.session.add(date_of_schedule)
   
-    else:
-        for day in range(days_to_fill):
-            date_of_schedule = DateTable(day_date = it_date, day_name = main_utils.make_name_of_day_from_date(it_date, 'ru')['day'])
-            it_date = it_date + timedelta(days=1)
-            db.session.add(date_of_schedule)
+        else:
+            for day in range(days_to_fill):
+                date_of_schedule = DateTable(day_date = it_date, day_name = main_utils.make_name_of_day_from_date(it_date, 'ru')['day'])
+                it_date = it_date + timedelta(days=1)
+                db.session.add(date_of_schedule)
 
-    db.session.commit()
+        db.session.commit()
+    except Exception as e:
+        print('Ошибка в блоке create_calendar_for_two_month при сохранении. {e}')
 
 def delete_all_times_in_schedule():
     '''
     Функция быстрого удаления записей в таблице расписания
     '''
     data_to_delete = ScheduleOfDay.query.all()
-    for data in data_to_delete:
-        db.session.delete(data)
-
-    db.session.commit()
+    try:
+        for data in data_to_delete:
+            db.session.delete(data)
+        db.session.commit()
+    except Exception as e:
+        print(f'Ошибка при быстром удалении сеток расписания из базы.{e}')
 
 def create_query_time_one_day():
     '''
@@ -150,19 +157,23 @@ def create_query_time_one_day():
                 times_to_add.append({'time': d + timedelta(hours=i), 'date_id' : day.id})
                 i=i+1
 
-   # print(len(times_to_add))
-        #добавляемм все таймы в базу
-    for t in times_to_add:
-        time_to_add = ScheduleOfDay(
-                    begin_time_of_day = t['time'], 
-                    end_time_of_day = t['time'] + timedelta(minutes=59),
-                    date_table_id = t['date_id']
-                    )
-        if t['time'].hour < 8 or t['time'].hour > 21:
-            time_to_add.is_empty=0
 
-        db.session.add(time_to_add)
-    db.session.commit()  
+    #добавляемм все таймы в базу
+    try:
+        for t in times_to_add:
+            time_to_add = ScheduleOfDay(
+                        begin_time_of_day = t['time'], 
+                        end_time_of_day = t['time'] + timedelta(minutes=59),
+                        date_table_id = t['date_id']
+                        )
+            if t['time'].hour < 8 or t['time'].hour > 21:
+                time_to_add.is_empty=0
+
+            db.session.add(time_to_add)
+
+        db.session.commit()  
+    except Exception as e:
+        print(f'Ошибка в блоке создания сетки create_query_time_one_day времени на один день. {e}')
 
 def take_empty_time_in_shedule(begin_date=None, end_date=None, to_back=None):
     '''
@@ -277,8 +288,11 @@ def clear_time_shedue(id_shedule_time):
     time_to_reserve.remind_message_for_client = 0
     time_to_reserve.is_empty = 1
     time_to_reserve.user_id = -1        
-    db.session.add(time_to_reserve)
-    db.session.commit()  
+    try:
+        db.session.add(time_to_reserve)
+        db.session.commit()  
+    except Exception as e:
+        print(f'Ошибка при отчистке времени одного дня. {e}')
 
 def reserve_time_for_client(dict_of_form):
     '''

@@ -8,32 +8,35 @@
         <span> &#9830;</span>
         <a href="{{ url_for('admin_my.admin_index') }}">{{_('Администрация')}}</a>
         <span> &#9830;</span>
-        <a>{{_('Список новостей мастера')}}</a>
+        <a>{{_('Лента цен на работы мастера')}}</a>
     </p>
 </section>
 <div class="find-user-container">
-    {% include "timeform.html"%}
-    <li><a class="button" href="{{url_for('admin_my.edit_master_news', dic_master_news = {'news_id' : '-1'})}}">{{_('Добавить')}}</a></li>
-    {%if list_news %}
+    <li><a class="button" href="{{url_for('admin_my.edit_price', dic_prices = {'price_id' : '-1'})}}">{{_('Добавить пункт')}}</a></li>
+    {%if list_prices %}
     <ul>
-        {% for item in list_news %}
+        {% for item in list_prices %}
         <li>
             <ul>
-                <li>{{_('Ид новости')}}</li>
+                <li>{{_('Id: ')}}</li>
                 <li>{{item.id}}</li>
+                <li>{{_('Вид работы: ')}}</li>
+                <li>{{item.work_type.name}}</li>
                 <li>{{_('Заглавие: ')}}</li>
                 <li>{{item.title}}</li>
                 <li>{{_('Текст: ')}}</li>
                 <li>{{item.text}}</li>
-                <li>{{_('Дата публикации: ')}}</li>
-                <li>{{item.published.strftime('%d-%m-%Y %H:%M')}}</li>
-                <li><a class="button" href="{{url_for('admin_my.edit_master_news', dic_master_news = {'news_id' : item.id})}}">{{_('Редактировать')}}</a></li>
+                <li>{{_('Цена: ')}}</li>
+                <li>{{item.price}}</li>
+                <li>{{_('Скидка: ')}}</li>
+                <li>{{item.discount}}</li>
+                <li><a class="button" href="{{url_for('admin_my.edit_price', dic_prices = {'price_id' : item.id})}}">{{_('Редактировать')}}</a></li>
             </ul>
-            
+            <hr />
         </li>
-        <li><hr></li>
         {%endfor%}
     </ul>
+    
     {%endif%}
 
 </div>

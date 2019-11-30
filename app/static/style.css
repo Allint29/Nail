@@ -240,7 +240,7 @@ input[type="radio"].visually-hidden {
         margin: 3px;
     }
 
-@media (max-width:576px) {
+@media (max-width:768px) {
     .upper-line-hide {
         display: none;
     }
@@ -808,22 +808,21 @@ button.bg-light:hover {
     border: 1px solid rgba(255,110,210, 1);
     background-image: url('images/back_color_galary15.png');
     background-color: transparent;
-    
     margin-bottom: 30px;
     color: rgba(108,0,0, 1);
 
 }
 
-    .index-columns h2 {
-        margin: 5px 0 30px 0 !important;
-        color: rgba(201,5,5, 1) !important;
-        font-size: 22px;
-        line-height: 28px;
-        text-align: center;
-        font-family: 'Gabriela', 'Arial', Sans-serif, cursive;
-        font-weight: 400;
-        text-transform: uppercase;
-    }
+.index-columns h2 {
+    margin: 5px 0 30px 0 !important;
+    color: rgba(201,5,5, 1) !important;
+    font-size: 22px;
+    line-height: 28px;
+    text-align: center;
+    font-family: 'Gabriela', 'Arial', Sans-serif, cursive;
+    font-weight: 400;
+    text-transform: uppercase;
+}
 /*--------------------------------------------*/
 .gallery,
 .news {
@@ -839,29 +838,18 @@ button.bg-light:hover {
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
 }
 
-    /* {
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
-    height: auto;
-    width: 48%;
-    min-width: 350px;
-    border-radius: 10px;
-    border: 1px solid burlywood;
-    justify-content: space-between;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
-}*/
-
 .news > a {
     margin-top: auto !important;
     
 }
 .news li {
-    margin-bottom: 0px;
+    margin: 0px;
+    padding: 0px;
 }
 
 .news-list {
     list-style: none;
+    padding: 20px;
 }
 
 .news-item time {
@@ -877,7 +865,6 @@ button.bg-light:hover {
     padding: 0px !important;
     margin: 0px !important;
     background-color: transparent;
-    /* border: 1px solid rgba(255,50,20, 0.5);*/
     min-height: 430px;
     min-width: 300px;
     overflow: hidden;
@@ -890,11 +877,8 @@ button.bg-light:hover {
 }
 
 .gallary-content a {
-    /* margin: 0 !important;*/
-    /*padding: 0 !important;*/
     height: 100%;
     width: 100%;
-    
 }
 
 .gallary-content-a img {
@@ -906,7 +890,6 @@ button.bg-light:hover {
     /*box-shadow: rgba(255,255,240,.2) 0 0 200px 100px, rgba(255,255,240,.3) 0 0 40px, inset rgba(0,0,0,.8) 0 0 20px;
         */
     padding	: 1px;
-    
     background-color	: burlywood;
 }
 
@@ -1012,37 +995,31 @@ button.bg-light:hover {
     90% { opacity: 0.6; }
     100% { opacity: 1;}
 }
-
-
-
 }
 /*--------------------------------------------*/
+.appointment,
 .contacts {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     margin-right: 0;
+    padding: 20px;
     width: 48%;
     min-width: 350px;
     border-radius: 10px;
     border: 1px solid burlywood;
-    padding-left: 5%;
-    padding-right: 5%;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
-    margin-bottom: 20px !important;
-}
-
-.appointment {
-    margin-right: 0;
-    width: 48%;
-    min-width: 350px;
-    border-radius: 10px;
-    border: 1px solid burlywood;
-    padding-left: 5%;
-    padding-right: 5%;
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
     margin-bottom: 20px;
 }
 
 .appointment a {
     margin-top: auto !important;
+}
+
+.appointment p,
+.contacts p{
+    padding-left: 20px;
+    padding-right: 20px;
 }
 
 .appointment-item input {
@@ -1093,8 +1070,8 @@ button.bg-light:hover {
     margin-top: 65px;
     padding-bottom: 35px;
     color: rgba(0,0,0, 1);
-    font-size: 18px;
-    line-height: 22px;
+    font-size: 14px;
+    line-height: 18px;
     font-family: 'Gabriela', 'Arial', Sans-serif, cursive;
     font-weight: 400;
     text-transform: none;
@@ -1108,20 +1085,30 @@ button.bg-light:hover {
     box-shadow: -10px -3px 50px rgba(0, 0, 0, 0.7);
 }
 
-    .main-footer .container {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        padding-top: 50px;
+
+
+.main-footer .container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding-top: 50px;
+}
+
+    .main-footer .text-context-container {
+        padding-top: 0;
     }
 /*--------------------------------------*/
 .footer-contacts {
     margin: 0;
     margin-right: 80px;
     width: 50%;
-    
 }
 
+.main-footer h2,
+.main-footer .text-context{
+    font-size: 14px;
+    text-align: justify;
+}
     .footer-contacts a {
         margin: 0 !important;
         padding: 0 !important;
@@ -1134,6 +1121,7 @@ button.bg-light:hover {
             color: #585a5e;
             text-decoration: none;
         }
+
 /*--------------------------------------*/
 .footer-social {
     margin: 0;

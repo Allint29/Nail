@@ -262,3 +262,31 @@ class MasterNewsForm(FlaskForm):
     to_save_submit = SubmitField(_('Сохранить', render_kw={"class": "button", "type": "submit"}))
     to_delete_submit = SubmitField(_('Удалить', render_kw={"class": "button", "type": "submit"}))
 
+class PriceForm(FlaskForm):
+    '''
+    Форма внесения и редактирования цен на работы мастера
+    '''
+    id_field = StringField(_('Id_цены'), validators=[InputRequired()], default=-1, render_kw={"class" : ""})    
+    work_types_field=SelectField(_('Вид работы'), coerce=int, validators=[DataRequired()], render_kw={"class" : "fl-text-field-user-edit"}) #choices=[('whatsapp', _('WhatsApp')), ('vk', _('ВКонтакте')), ('instagram', _('Instagram')), ('_number_phone', _('Телефон'))]
+    title_field = TextAreaField(_('Название работы'),  validators=[InputRequired()], render_kw={"class" : ""})
+    text_field = TextAreaField(_('Описание'),validators=[],render_kw={"class" : ""} )
+    price_field = IntegerField(_('Цена без скидки'), render_kw={"class" : ""})
+    discount_field = IntegerField(_('Скидка'), render_kw={"class" : ""})
+
+    to_save_submit = SubmitField(_('Сохранить', render_kw={"class": "button", "type": "submit"}))
+    to_delete_submit = SubmitField(_('Удалить', render_kw={"class": "button", "type": "submit"}))
+
+
+
+class WorkTypeForm(FlaskForm):
+    '''
+    Форма внесения и редактирования цен на работы мастера
+    '''
+    id_field = StringField(_('Id_цены'), validators=[InputRequired()], default=-1, render_kw={"class" : ""})
+    name_field = TextAreaField(_('Название вида работы'),  validators=[InputRequired()], render_kw={"class" : ""})
+
+    to_save_submit = SubmitField(_('Сохранить', render_kw={"class": "button", "type": "submit"}))
+    to_delete_submit = SubmitField(_('Удалить', render_kw={"class": "button", "type": "submit"}))
+
+
+

@@ -1,0 +1,91 @@
+﻿{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+<section class="site-map">
+    <p> <a href="{{ url_for('welcome.index') }}">{{_('Главная страница')}}</a>
+        <span> &#9830;</span>
+        <a href="{{ url_for('admin_my.admin_index') }}">{{_('Администрация')}}</a>
+        <span> &#9830;</span>
+        <a href="{{ url_for('admin_my.show_price_list_master') }}">{{_('Лента цен на работы мастера')}}</a>
+        <span> &#9830;</span>
+        <a>{{_('Редактор цены')}}</a>
+    </p>
+</section>
+
+<div class="edit-user-container">
+    {% if  price_form %}
+    {% for error in price_form.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+    <form action="" method="post">
+        {{price_form.hidden_tag()}}
+        <ul>
+            <li>
+                {{price_form.id_field.label}}
+                <span class="visually-hidden">{{price_form.id_field}}</span>
+                {{price_form.id_field.data}}
+            </li>
+            <li>
+                {% for error in price_form.id_field.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </li>
+            <li>
+                {{price_form.work_types_field.label}}
+                {{price_form.work_types_field}}
+            </li>
+            <li>
+                {% for error in price_form.work_types_field.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </li>
+            <li>
+                {{price_form.title_field.label}}
+                {{price_form.title_field}}
+            </li>
+            <li>
+                {% for error in price_form.title_field.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </li>
+
+            <li>
+                {{price_form.text_field.label}}
+                {{price_form.text_field}}
+            </li>
+            <li>
+                {% for error in price_form.text_field.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </li>
+            <li>
+                {{price_form.price_field.label}}
+                {{price_form.price_field}}
+            </li>
+            <li>
+                {% for error in price_form.price_field.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </li>
+            <li>
+                {{price_form.discount_field.label}}
+                {{price_form.discount_field}}
+            </li>
+            <li>
+                {% for error in price_form.discount_field.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </li>
+            <li>
+                {{price_form.to_save_submit}}
+                {{price_form.to_delete_submit}}
+                <a class="button" href="{{url_for('admin_my.show_price_list_master')}}">{{_('Отмена')}}</a>
+            </li>
+        </ul>
+    </form>
+    <hr />
+    {% endif %}
+</div>
+{% endblock %}
+

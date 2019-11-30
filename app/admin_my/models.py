@@ -1,5 +1,6 @@
 ﻿# -*- coding: utf-8 -*-
 from app import db
+from sqlalchemy.orm import relationship
 
 class ActionLine(db.Model):
     '''
@@ -13,3 +14,30 @@ class ActionLine(db.Model):
     #поле отвесает за время когда задача должна выполняться
     time_for_start = db.Column(db.DateTime)
     time_lag = db.Column(db.Integer)
+
+
+class WorkType(db.Model):
+    '''
+    Тип работы мастера: Маникюр, Педикюр, Ремонт, Другое.
+    '''
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, unique=True)
+
+    price_lists = db.relationship('PriceList', backref = 'work_type', cascade="all, delete-orphan",  lazy='dynamic')
+
+
+class PriceList(db.Model):
+    '''
+    Сущность хранит информацию о ценах и скидках на работы мастера
+    '''
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String, nullable=False)
+    text = db.Column(db.Text)
+    price = db.Column(db.Integer, default=0)
+    discount = db.Column(db.Integer, default=0)
+
+    work_type_id = db.Column(db.Integer, db.ForeignKey('work_type.id'))
+
+    def __repr__(self):
+        return f'<MasterNews {self.title} {self.text} {self.published}>'
+

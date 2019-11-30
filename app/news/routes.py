@@ -51,9 +51,12 @@ def add_comment():
     form = CommentForm();
     if form.validate_on_submit():
             comment = CommentsToNews(text=form.comment_text.data, news_id=form.news_id.data, user_id=current_user.id, show = 1)
-            db.session.add(comment)
-            db.session.commit();
-            flash(_('Спасибо за комментарий!'));
+            try:
+                db.session.add(comment)
+                db.session.commit();
+                flash(_('Спасибо за комментарий!'));
+            except:
+                pass
     else:            
              for field, errors in form.errors.items():
                  for error in errors:                   

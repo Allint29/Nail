@@ -60,9 +60,13 @@ def add_comment():
             owner = owner.username
             comment = CommentsToMyWorks(id_site="0", media = "", owner = owner, show=1, text=form.comment_text.data, my_work_id=form.work_id.data, source="this")
                         
-            db.session.add(comment)
-            db.session.commit();
-            flash(_('Спасибо за комментарий!'));
+
+            try:
+                db.session.add(comment)
+                db.session.commit()
+                flash(_('Спасибо за комментарий!'))
+            except Exception as e:
+                flash(_(f'Ошибка при записи комментария в базу. {e}'))
 
     else:            
              #R11 даем исключения конечному пользователю какая именно ошибка при добавлении коментария
@@ -88,16 +92,22 @@ def delete_comment(comment_id):
 
     if current_user.is_admin:
             this_comment.hide_comment()
-            db.session.commit()
-            flash('Комментарий удален!')
+            try:
+                db.session.commit()
+                flash('Комментарий удален!')
+            except:
+                pass
             return redirect(utils.get_redirect_target())
     else:                
         if this_comment.source == "this":
             user = User.query.filter_by(username=this_comment.owner).first()
             if current_user.username == this_comment.owner:
                 this_comment.hide_comment()
-                db.session.commit()
-                flash('Комментарий удален!')
+                try:
+                    db.session.commit()
+                    flash('Комментарий удален!')
+                except:
+                    pass
                 return redirect(utils.get_redirect_target())
             return redirect(utils.get_redirect_target())
         
@@ -116,15 +126,22 @@ def change_comment(comment_id):
         if form.validate_on_submit():    
              if current_user.is_admin:                 
                      this_comment.text = form.comment_text.data
-                     db.session.commit()
-                     flash(_('Комментарий изменен!'))          
+                     try:
+                        db.session.commit()
+                        flash(_('Комментарий изменен!'))    
+                     except:
+                         pass
                      return redirect(url_for('my_work.index'))                 
              else:        
                  if this_comment.source == "this":                         
                          if current_user.username == this_comment.owner:
-                             this_comment.text = form.comment_text.data                         
-                             db.session.commit()
-                             flash(_('Комментарий изменен!'))
+                             this_comment.text = form.comment_text.data   
+                             try:
+                                db.session.commit()
+                                flash(_('Комментарий изменен!'))
+                             except:
+                                 pass
+
                              return redirect(url_for('my_work.index'))
                          return redirect(url_for('my_work.index'))       
     elif request.method == 'GET':        
