@@ -5,7 +5,7 @@ from flask import current_app, flash, request, redirect, url_for;
 from flask_login import config, current_user;
 from flask_babel import _
 
-newsIndex = "news.index";
+newsIndex = "welcome.index";
 
 def admin_required(func):
     @wraps(func)

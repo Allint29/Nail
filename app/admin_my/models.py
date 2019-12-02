@@ -46,3 +46,4 @@ class PriceList(db.Model):
     def __repr__(self):
         return f'<PriceListItem {self.title} {self.text} {self.price}>'
 
+

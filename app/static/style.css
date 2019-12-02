@@ -297,12 +297,14 @@ input[type="radio"].visually-hidden {
 .main-header-logo-link {
     padding: 0px !important;
     margin: 0px !important;
+    
 }
 
 .main-logitip-line p {
     margin: 10px;
     width: 15%;
-    min-width: 135px;
+    min-width: 145px;
+    font-size: 15px;
 }
 
 .main-header-logo,
@@ -323,11 +325,16 @@ input[type="radio"].visually-hidden {
 }
 .hide-min-size {
     display: block;
+    
+    
 }
 .hide-large-size {
     display: none;
 }
 
+.adress {
+   
+}
 
 
 @media (max-width:992px) {

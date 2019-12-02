@@ -12,23 +12,24 @@
         <div class="main-logitip-text-container">
             <img src="../static/images/Logo-text2-RED.png" />
         </div>
-        <p class="hide-min-size">
+        <p class="hide-min-size adress">
             Адрес:<br>
             г.Краснодар, <br>
             ул.Атарбекова, д. 5/1
         </p>
-        <p class="main-header-logo-link hide-min-size">
+        <p class="main-header-logo-link hide-min-size adress">
             Телефон (WhatsApp):<br>
             +7 (928) 433-71-81<br>
             Instagram:<br>
             <a class="main-header-logo-link" href="https://www.instagram.com/anna_nails_ani/" title="{{_('Профиль в Интсаграм')}}">anna_nails_ani </a>
         </p>
-        <p class="hide-large-size">
+        <p class="hide-large-size adress">
             г.Краснодар, <br>
             ул.Атарбекова, д. 5/1<br>
             Телефон (WhatsApp):<br>
             +7 (928) 433-71-81<br>
-            <a class="main-header-logo-link" href="https://www.instagram.com/anna_nails_ani/" title="{{_('Профиль в Интсаграм')}}">Instagram: anna_nails_ani</a>
+            Instagram:<br>
+            <a class="main-header-logo-link" href="https://www.instagram.com/anna_nails_ani/" title="{{_('Профиль в Интсаграм')}}">anna_nails_ani</a>
         </p>
     </div>
 </div>
@@ -66,7 +67,6 @@
                                 {%if current_user.is_admin %}
                                 <a class="dropdown-item" href="{{ url_for('admin_my.admin_index')}}"> {{ _('Администратор') }}</a>
                                 {%endif%}
-                                <a class="dropdown-item" href="{{ url_for('main.index') }}">{{ _('Чат с мастером') }}</a>
                                 <a class="dropdown-item" href="{{ url_for('main.user', username=current_user.username) }}">{{ _('Профиль') }}</a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="{{ url_for('user.logout') }}">{{ _('Выйти') }}</a>
@@ -82,3 +82,4 @@
         </div>
     </div>
 </nav>
+

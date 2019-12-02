@@ -1,0 +1,95 @@
+﻿{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+<section class="site-map">
+    <p> <a href="{{ url_for('welcome.index') }}">{{_('Главная страница')}}</a>
+        <span> &#9830;</span>
+        <a href="{{ url_for('admin_my.admin_index') }}">{{_('Администрация')}}</a>
+        <span> &#9830;</span>
+        <a href="{{ url_for('admin_my.find_users', dic_val = {'time_date_id' : dic_val['time_date_id'] , 'client_id' : -1}) }}">{{_('Список пользователей')}}</a>
+        <span> &#9830;</span>
+        <a href="{{ url_for('admin_my.find_users', dic_val = dic_val)}}">{{_('Редактор пользователя')}}</a>
+        <span> &#9830;</span>
+        <a>{{_('Редактор профиля мастера')}}</a>
+    </p>
+</section>
+
+<div class="edit-user-container">
+    {% if edit_master_form %}
+    {% for error in edit_master_form.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+    <form action="" method="post">
+        {{edit_master_form.hidden_tag()}}
+        <ul>
+            <li>
+                {{edit_master_form.id_user_field.label}}
+                <span class="visually-hidden">{{edit_master_form.id_user_field}}</span>
+                {{edit_master_form.id_user_field.data}}
+                {% for error in edit_master_form.id_user_field.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </li>
+            <li>
+                {{edit_master_form.id_master_field.label}}
+                <span class="visually-hidden">{{edit_master_form.id_master_field}}</span>
+                {{edit_master_form.id_master_field.data}}
+                {% for error in edit_master_form.id_master_field.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </li>
+            <li>
+                {{edit_master_form.name_field.label}}
+                {{edit_master_form.name_field}}
+                {% for error in edit_master_form.name_field.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </li>
+            <li>
+                {{edit_master_form.work_phone_field.label}}
+                {{edit_master_form.work_phone_field}}
+                {% for error in edit_master_form.work_phone_field.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </li>
+            <li>
+                {{edit_master_form.work_instagram_field.label}}
+                {{edit_master_form.work_instagram_field}}
+                {% for error in edit_master_form.work_instagram_field.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </li>
+            <li>
+                {{edit_master_form.work_vk_field.label}}
+                {{edit_master_form.work_vk_field}}
+                {% for error in edit_master_form.work_vk_field.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </li>
+            <li>
+                {{edit_master_form.work_telegram_field.label}}
+                {{edit_master_form.work_telegram_field}}
+                {% for error in edit_master_form.work_telegram_field.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </li>
+            <li>
+                {{edit_master_form.work_mail_field.label}}
+                {{edit_master_form.work_mail_field}}
+                {% for error in edit_master_form.work_mail_field.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </li>
+            <li>{{edit_master_form.to_save_button}}</li>
+            <li><br/></li>
+            <li>{{edit_master_form.to_cancel_button}}</li>
+            <li> <br /></li>
+            <li><a href="{{ url_for('admin_my.delete_master_profile', dic_val=dic_val, profile_id = edit_master_form.id_master_field.data)}}">{{edit_master_form.to_delete_button}}</a></li>
+        </ul>
+    </form>
+    <hr />
+    {% endif %}
+</div>
+{% endblock %}
+

@@ -107,11 +107,14 @@ def fill_select_connection_type(mass_type = ['WhatsApp', 'Instagram', 'Теле�
 
     types_to_put = [t for t in mass_type if t not in types]
 
-    for t in types_to_put:
-        type = ConnectionType()
-        type.name_of_type = t
-        db.session.add(type)
-    db.session.commit()
+    try:
+        for t in types_to_put:
+            type = ConnectionType()
+            type.name_of_type = t
+            db.session.add(type)
+        db.session.commit()
+    except Exception as e:
+        print('Ошибка в блоке сохранения в базу при заполнении перфичными данными')
     
 def set_default_password_admin():
     '''

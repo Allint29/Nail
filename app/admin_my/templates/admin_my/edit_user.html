@@ -120,18 +120,15 @@
                         {%else%}
                         Нет
                         {%endif%}
-
-                        
-
                     </div>
-
                 </li>
                 <hr />
                 <li>
                     {%if edit_users_form.id_user.data %}
                     <a href="{{url_for('admin_my.edit_phone', dic_val=dic_val, id_phone = -1)}}">{{edit_users_form.to_edit_phone_button}}</a>
                     <a href="{{url_for('admin_my.edit_socials', dic_val=dic_val, id_socials = -1)}}">{{edit_users_form.to_edit_internet_account_button}}</a>
-                  
+                    <a href="{{url_for('admin_my.edit_master_profile', dic_val=dic_val)}}">{{edit_users_form.to_create_master_button}}</a>
+                    
                     <hr />
                     {%endif%}
                     <a>{{edit_users_form.to_save_button}}</a>
@@ -140,7 +137,6 @@
                     <a href="{{url_for('master_schedule.show_schedule_master', dic_val = {'time_date_id' : -1 , 'client_id' : edit_users_form.id_user.data})}}">{{edit_users_form.to_schedule_button}}</a>
                     {%endif%}
                 </li>
-
             </ul>
         </form>
         <hr />

@@ -186,6 +186,116 @@ def edit_user_form(dic_val):
         
     return render_template('admin_my/edit_user.html', edit_users_form = edit_users_form, phone_forms=phone_forms, social_forms=social_forms, dic_val = dic_val)
 
+@bp.route('/edit_master_profile_<dic_val>', methods=['GET', 'POST'])
+@admin_required
+def edit_master_profile(dic_val):
+    '''
+    Маршрут создания или редактирования профиля мастера    
+    '''   
+    try:
+        dic_val = main_utils.parser_time_client_from_str(dic_val)
+    except:
+        dic_val = {'time_date_id' : -1, 'client_id' : -1, 'number_phone' : ''}
+
+    time_date_id = dic_val['time_date_id']
+    client_id = dic_val['client_id']
+    number_ = dic_val['number_phone']
+
+    user = User.query.filter(User.id == client_id).first()
+
+    if not user:
+        return redirect(main_utils.get_redirect_target())
+
+    phone = None
+    if len(user.phones.all()) > 0:
+        phone = user.phones.all()[0].number
+    
+    print(user.master_profile)
+    edit_master_form = EditMasterProfileForm()
+    master_profil = None
+    if user.master_profile:
+        print('Is profile')
+        master_profil = user.master_profile
+        
+    else:
+        print('No profile')
+
+    if request.method == "POST":
+        if edit_master_form.validate_on_submit():
+            if edit_master_form.to_save_button.data:
+                if master_profil == None:
+                    master_profil = NailMaster(name=edit_master_form.name_field.data,
+                                                     work_phone = edit_master_form.work_phone_field.data,
+                                                     work_instagram = edit_master_form.work_instagram_field.data,
+                                                     work_vk = edit_master_form.work_vk_field.data,
+                                                     work_telegram = edit_master_form.work_telegram_field.data,
+                                                     work_mail = edit_master_form.work_mail_field.data,
+                                                     user_id = edit_master_form.id_user_field.data)
+                else:
+                    master_profil.name=edit_master_form.name_field.data
+                    master_profil.work_phone = edit_master_form.work_phone_field.data
+                    master_profil.work_instagram = edit_master_form.work_instagram_field.data
+                    master_profil.work_vk = edit_master_form.work_vk_field.data
+                    master_profil.work_telegram = edit_master_form.work_telegram_field.data
+                    master_profil.work_mail = edit_master_form.work_mail_field.data
+                    master_profil.user_id = edit_master_form.id_user_field.data
+
+                try:
+                    db.session.add(master_profil)
+                    db.session.commit()
+                    flash(_('Изменения в профиле пользователя успешно сохранены.'))
+                except Exception as e:
+                    flash(_(f'Ошибка при записи в базу: Изменения в профиле мастера НЕ сохранены. {e}'))
+
+                return redirect(url_for('admin_my.edit_user_form', dic_val=dic_val))
+
+    elif request.method == "GET":
+        #если нет профиля
+        if master_profil == None:
+            edit_master_form.name_field.data = user.username
+            edit_master_form.id_master_field.data = '-1'
+            edit_master_form.id_user_field.data = user.id
+            edit_master_form.work_phone_field.data = phone if phone != None else 0
+            edit_master_form.work_mail_field.data = user.email
+
+        else:
+            edit_master_form.name_field.data = master_profil.name
+            edit_master_form.id_master_field.data = master_profil.id
+            edit_master_form.id_user_field.data = master_profil.user_id
+            edit_master_form.work_phone_field.data = master_profil.work_phone
+            edit_master_form.work_instagram_field.data = master_profil.work_instagram
+            edit_master_form.work_vk_field.data = master_profil.work_vk
+            edit_master_form.work_telegram_field.data = master_profil.work_telegram
+            edit_master_form.work_mail_field.data = master_profil.work_mail           
+
+    return render_template('admin_my/edit_master_profile.html', edit_master_form=edit_master_form, dic_val=dic_val)
+
+@bp.route('/delete_master_profile_<dic_val>_<profile_id>', methods=['GET', 'POST'])
+@admin_required
+def delete_master_profile(dic_val, profile_id):
+    '''
+    Маршрут удаления профиля мастера    
+    '''   
+    try:
+        profile_id=int(profile_id)
+    except:
+        profile_id = -1
+
+    master_profil = NailMaster.query.filter(NailMaster.id == profile_id).first()
+
+    if master_profil==None:
+        flash(_(f'Вы пытаетесь удалить несуществующий профиль!'))
+        return redirect(url_for('admin_my.edit_master_profile', dic_val=dic_val))
+
+    try:
+        db.session.delete(master_profil)
+        db.session.commit()
+        flash(_('Изменения в профиле пользователя успешно сохранены. Профиль мастера удален.'))
+    except Exception as e:
+        flash(_(f'Ошибка при записи в базу: Удаление профиля НЕ сохранено. {e}'))    
+   
+    return redirect(url_for('admin_my.edit_user_form', dic_val=dic_val))
+
 @bp.route('/delete_users_form_<dic_val>', methods=['GET', 'POST'])
 @admin_required
 def delete_user_form(dic_val):
@@ -1025,7 +1135,7 @@ def edit_price(dic_prices):
     return render_template('admin_my/edit_price.html', price_form=price_form)
 
 @bp.route('/show_price', methods=['GET', 'POST'])
-@admin_required
+#@admin_required
 def show_price():
     '''
     Вывод цены на работы мастера из БД

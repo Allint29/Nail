@@ -38,6 +38,7 @@ class EditUsersForm(FlaskForm):
     to_confirm_delete_button = SubmitField(_('Удалить'), render_kw={"class": "button fl-button-field-user-edit", "type": "submit"})
     to_edit_phone_button = SubmitField(_('Добавить телефон'), render_kw={"class": "button fl-button-field-user-edit", "type": "button"})
     to_edit_internet_account_button = SubmitField(_('Добавить соц.сеть'), render_kw={"class": "button fl-button-field-user-edit", "type": "button"})
+    to_create_master_button = SubmitField(_('Создать мастера'), render_kw={"class": "button fl-button-field-user-edit", "type": "button"})
     to_delete_button = SubmitField(_('Удалить'), render_kw={"class": "button fl-button-field-user-edit", "type": "button"})
     to_schedule_button = SubmitField(_('Записать'), render_kw={"class": "button fl-button-field-user-edit", "type": "button"})
 
@@ -59,7 +60,8 @@ class EditUsersForm(FlaskForm):
     def validate_email_field(self, email_field):
         if self.email_field.data != None: 
             if self.email_field.data != "":
-                exists_email = [u for u in User.query.all() if str(u.email).lower() == str(self.email_field.data).lower()]
+                email_list = User.query.all()
+                exists_email = [u for u in email_list if str(u.email).lower() == str(self.email_field.data).lower()]
                 
                 if len(exists_email) > 0:                    
                     if str(exists_email[0].id) != str(self.id_user.data):            
@@ -70,6 +72,80 @@ class EditUsersForm(FlaskForm):
                 is_valid = True if pattern_en.match(self.email_field.data) else True if pattern_ru.match(self.email_field.data) else False                
                 if is_valid == False:                    
                     raise ValidationError(_l('Введен неправильный адрес электронной почты'))      
+
+class EditMasterProfileForm(FlaskForm):
+    '''
+    Форма редактирования профиля мастера
+    '''
+    id_master_field = StringField(_('ID мастера'),  render_kw={"class" : "fl-text-field-user-edit", "type": "text"})
+    id_user_field = StringField(_('ID клиента'),  render_kw={"class" : "fl-text-field-user-edit", "type": "text"})
+   
+    name_field = StringField(_('Ник мастера'),  render_kw={"class" : "fl-text-field-user-edit", "type": "text"})
+    work_phone_field = StringField(_l('Рабочий телефон'), validators=[], render_kw={"class" : "fl-text-field-user-edit", "type": "text"})
+    work_instagram_field = StringField(_l('Рабочий инстаграмм'), validators=[], render_kw={"class" : "fl-text-field-user-edit", "type": "text"})
+    work_vk_field = StringField(_l('Рабочий ВКонтакте'), validators=[], render_kw={"class" : "fl-text-field-user-edit", "type": "text"})
+    work_telegram_field = StringField(_l('Рабочий Telegram'), validators=[], render_kw={"class" : "fl-text-field-user-edit", "type": "text"})
+    work_mail_field = StringField(_l('Рабочая почта'), validators=[], render_kw={"class" : "fl-text-field-user-edit", "type": "text"})
+
+    to_save_button = SubmitField(_('Сохранить'), render_kw={"class": "button fl-button-field-user-edit", "type": "submit"})
+    to_delete_button = SubmitField(_('Удалить'), render_kw={"class": "button fl-button-field-user-edit", "type": "button"})
+    to_cancel_button = SubmitField(_('Отменить'), render_kw={"class": "button fl-button-field-user-edit", "type": "button"})
+    
+    def validate_name_field(self, name_field):
+        master = NailMaster.query.filter_by(name=str(self.name_field.data)).first()
+        if master is not None:
+            if str(master.id) != str(self.id_user_field.data):  
+                raise ValidationError(_l('Пожалуйста, используйте другое имя. Это имя уже зарегистрировано.'))
+
+    def validate_work_phone_field(self, work_phone_field):
+        if self.work_phone_field.data != None and self.work_phone_field.data != "" and self.work_phone_field.data != "0":
+            exists_phone = NailMaster.query.filter(NailMaster.work_phone == self.work_phone_field.data).count()
+            this_phone = NailMaster.query.filter(NailMaster.work_phone == self.work_phone_field.data).first()
+            #str_number_phone = str(number_phone)
+                    
+            # if self.work_phone_field.data is None or self.work_phone_field.data == "":
+            #     raise ValidationError(_l('Нужно ввести номер телефона.'))
+
+            if exists_phone > 0 and str(this_phone.id) != str(self.id_master_field.data): 
+                raise ValidationError(_l('Этот номер уже зарегистрирован.'))
+
+            if len(self.work_phone_field.data) < 10:
+             #   print('enter min')
+                raise ValidationError(_l('Короткий номер! Введите телефон в формате 10 цифр, например 9271102535 или поставьте "0"'))
+            
+            if len(self.work_phone_field.data) > 10:
+                raise ValidationError(_l('Длинный номер! Введите телефон в формате 10 цифр, например 9271102535'))
+            
+            #только цифры в номере
+            if not self.work_phone_field.data.isdigit():
+                raise ValidationError(_l('Нельзя использовать буквы в номере телефона! Введите телефон в формате 10 цифр, например 9271102535'))
+    
+            #здесь создаем массив из валидных операторов для отсылки смс
+            valide_mobil_code_zone = []
+            first_code = 900
+    
+            while first_code < 1000:
+                valide_mobil_code_zone.append(first_code)
+                first_code = first_code + 1
+    
+            if not int((self.work_phone_field.data)[:3]) in valide_mobil_code_zone:
+                raise ValidationError(_l('Данный телефон не принадлежит российским операторам сотовой связи! Введите телефон в формате 10 цифр, например 9271102535'))
+        
+    def validate_work_mail_field(self, work_mail_field):
+        if self.work_mail_field.data != None: 
+            if self.work_mail_field.data != "":
+                email_list = NailMaster.query.all()
+                exists_email = [u for u in email_list if str(u.work_mail).lower() == str(self.work_mail_field.data).lower()]
+                
+                if len(exists_email) > 0:                    
+                    if str(exists_email[0].id) != str(self.work_mail_field.data):            
+                        raise ValidationError(_l('Эта почта зарегистрирована у другого пользователя.'))
+    
+                pattern_en = compile('(^|\s)[A-Z-a-z0-9_.]+@([A-Z-a-z0-9]+\.)+[a-z]{2,6}(\s|$)')
+                pattern_ru = compile('(^|\s)[А-Я-а-я0-9_.]+@([А-Я-а-я0-9]+\.)+[рф]{2}(\s|$)')                
+                is_valid = True if pattern_en.match(self.work_mail_field.data) else True if pattern_ru.match(self.work_mail_field.data) else False                
+                if is_valid == False:                    
+                    raise ValidationError(_l('Введен неправильный адрес электронной почты'))     
 
 class RouterUserForm(FlaskForm):
     '''
@@ -275,8 +351,6 @@ class PriceForm(FlaskForm):
 
     to_save_submit = SubmitField(_('Сохранить', render_kw={"class": "button", "type": "submit"}))
     to_delete_submit = SubmitField(_('Удалить', render_kw={"class": "button", "type": "submit"}))
-
-
 
 class WorkTypeForm(FlaskForm):
     '''

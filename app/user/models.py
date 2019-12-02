@@ -25,7 +25,6 @@ followers = db.Table('followers',
     db.Column('followed_id', db.Integer, db.ForeignKey('user.id'))
 )
 
-
 class ConnectionType(db.Model):
     '''
     Таблица хранит данные о возможных типах связи с пользователем
@@ -37,8 +36,6 @@ class ConnectionType(db.Model):
 
     def __repr__(self):
         return '<Connection_type={}, id ={}>'.format(self.name_of_type, self.id, )
-
-
 
 class UserPhones(db.Model):
     '''
@@ -85,7 +82,6 @@ class UserPhones(db.Model):
     def __repr__(self):
         return '<Phone={}, id ={}, checked={}>'.format(self.number, self.id, self.phone_checked)
 
-
 class UserInternetAccount(db.Model):
     '''
     Класс описывает электронный аккаунт и связь с пользователем
@@ -97,7 +93,6 @@ class UserInternetAccount(db.Model):
 
     def __repr__(self):
         return '<UserInternetAccount={}>'.format(self.adress_accaunt)
-
 
 class User(UserMixin, db.Model):
     '''
@@ -159,14 +154,14 @@ class User(UserMixin, db.Model):
     
     posts = db.relationship('Post', backref='author', lazy='dynamic')
 
+    master_profile = db.relationship('NailMaster', backref='user', uselist=False)
+
     followed = db.relationship(
         'User', secondary=followers,
         primaryjoin=(followers.c.follower_id == id),
         secondaryjoin=(followers.c.followed_id == id),
         backref=db.backref('followers', lazy='dynamic'), lazy='dynamic')
     
-
-
     def __repr__(self):
         return '<User {}>'.format(self.username)
 
@@ -238,7 +233,6 @@ class User(UserMixin, db.Model):
         own = Post.query.filter_by(user_id=self.id)
      
         return followed.union(own).order_by(Post.timestamp.desc())
-
     
     def get_new_registration_token(self, expires_in=600):
         '''
@@ -247,7 +241,6 @@ class User(UserMixin, db.Model):
         return jwt.encode(
             {'register_user': self.id, 'exp': time() + expires_in},
             current_app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8')
-
 
     @staticmethod
     def verify_new_registration_token(token):
@@ -276,7 +269,6 @@ class User(UserMixin, db.Model):
         '''
         return self.role == 'admin'
 
-
     @staticmethod
     def verify_reset_password_token(token):
         '''
@@ -287,8 +279,23 @@ class User(UserMixin, db.Model):
                             algorithms=['HS256'])['reset_password']
         except:
             return
-        return User.query.get(id)
-          
+        return User.query.get(id)          
+
+class NailMaster(db.Model):
+    '''
+    Сущность хранит информацию о мастере, эта информация связана с реально существующим пользователем
+    Чат можно связать только с мастером из этой таблицы
+    '''
+    id = db.Column(db.Integer, primary_key=True)
+    name =  db.Column(db.String, nullable=False)
+    work_phone = db.Column(db.Integer, default=0)
+    work_instagram = db.Column(db.String, default='')
+    work_vk = db.Column(db.String, default='')
+    work_telegram = db.Column(db.String, default='')
+    work_mail = db.Column(db.String, default='')
+
+    #связь один к одному профиль пользователя профиль мастера
+    user_id =  db.Column(db.Integer(), db.ForeignKey('user.id'))  # Foreign key
 
 @loginF.user_loader
 def load_user(id):
