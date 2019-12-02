@@ -54,19 +54,19 @@
                                 {% if not current_user.is_anonymous %}
                                 {{ current_user.username }}
                                 {%else%}
-                                {{ _('Вход') }}
+                                {{_('Войти')}}
+                                <!--<a class="dropdown-item login-link-item" href="{{ url_for('user.login') }}"> {{ _('Войти') }} </a>-->
                                 {%endif%}
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                 {% if current_user.is_anonymous %}
                                 <a class="dropdown-item login-link-item" href="{{ url_for('user.login') }}"> {{ _('Войти') }} </a>
-                                <a class="dropdown-item" href="{{ url_for('user.registration_main') }}"> {{ _('Регистрация') }} </a>
+                                <!--<a class="dropdown-item" href="{{ url_for('user.registration_main') }}"> {{ _('Регистрация') }} </a>-->
                                 {% else %}
                                 {%if current_user.is_admin %}
                                 <a class="dropdown-item" href="{{ url_for('admin_my.admin_index')}}"> {{ _('Администратор') }}</a>
                                 {%endif%}
-                                <a class="dropdown-item" href="{{ url_for('main.explore')}}"> {{ _('Песочница') }}</a>
-                                <a class="dropdown-item" href="{{ url_for('main.index') }}">{{ _('Мой блог') }}</a>
+                                <a class="dropdown-item" href="{{ url_for('main.index') }}">{{ _('Чат с мастером') }}</a>
                                 <a class="dropdown-item" href="{{ url_for('main.user', username=current_user.username) }}">{{ _('Профиль') }}</a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="{{ url_for('user.logout') }}">{{ _('Выйти') }}</a>

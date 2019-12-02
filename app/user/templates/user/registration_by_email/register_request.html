@@ -2,10 +2,39 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content  %}
-<h4>{{ _('Регистрация. Шаг 1') }}</h4>
-<div class="row">
-    <div class="col-md-4">
-        {{ wtf.quick_form(form_mail) }}
-    </div>
+<section class="site-map">
+    <p> <a href="{{ url_for('welcome.index') }}">{{_('Главная страница')}}</a>
+        <span> &#9830;</span><a href="{{ url_for('user.registration_main') }}">{{_('Выбор способа регистрации')}}</a>
+        <span> &#9830;</span><a>{{_('Выбор логина')}}</a>
+    </p>
+</section>
+<div class="container-registration">
+    <h2 class="visually-hidden">{{_('Регистрация. Выбор логина и ввод электронной почты.')}}</h2>
+    <p>{{ _('Регистрация. Шаг 1') }}</p>
+    <form action="" method="post">
+        {{ form_mail.hidden_tag() }}
+        {% for error in form_mail.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+        <ul>
+            <li>{{ form_mail.username.label }}</li>
+            <li>{{ form_mail.username }}</li>
+            <li>
+                {% for error in form_mail.username.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </li>
+            <li><hr /></li>
+            <li>{{ form_mail.email.label }}</li>
+            <li>{{ form_mail.email }}</li>
+            <li>
+                {% for error in form_mail.email.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </li>
+            <li><hr /></li>
+            <li>{{ form_mail.submit }}</li>
+        </ul>
+    </form>
 </div>
-{% endblock %}
+    {% endblock %}

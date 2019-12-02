@@ -36,7 +36,7 @@ def follow(username):
     user = User.query.filter_by(username=username).first()
     if user is None:
         flash(_('Пользователь %(username)s не найден.', username=username))
-        return redirect(url_for('main.index'))
+        return redirect(url_for('welcome.index'))
     if user == current_user:
         flash(_('Вы отписаны от пользователя %(username)s.', username=username))
         return redirect(url_for('main.user', username=username))
@@ -54,7 +54,7 @@ def unfollow(username):
     user = User.query.filter_by(username=username).first()
     if user is None:
         flash(_('Пользователь %(username)s не найден.', username=username))
-        return redirect(url_for('main.index'))
+        return redirect(url_for('welcome.index'))
     if user == current_user:
         flash(_('Вы не можете отписаться от самого себя!'))
         return redirect(url_for('main.user', username=username))
@@ -142,49 +142,51 @@ def search():
 @login_required
 def index():
     '''
-    маршрут к станице пользователя, в которой он может писать посты
+    маршрут к станице пользователя, в которой он может писать сообщения мастеру
     '''
-    titleVar=_('Домашняя страница')
-    helo=_('Вы на главной странице своего профиля.')
+    titleVar=_('Чат с мастером')
+    helo=_('Вы на странице чата с мастером.')
     form = PostForm()    
     if form.validate_on_submit():
         language = guess_language(form.post.data)
         if language == 'UNKNOWN' or len(language) > 5:
-            language = ''
+            language = ''        
         post = Post(body=form.post.data, author=current_user, language=language)
         try:
             db.session.add(post)        
             db.session.commit()
-            flash(_('Ваш пост опубликован!'))
+            flash(_('Ваше сообщение отправлено, мастер обязательно отмветит вам!'))
         except:
+            flash(_('Ошибка при записи в базу в блоке чата с мастером. Сообщение мастеру не отправлено.'))
             pass
         return redirect(url_for('main.index'))
     page = request.args.get('page', 1, type=int)
+    #делаем выборку сообщений между мастером имеет статус admin и текущим пользователем
     posts = current_user.followed_posts().paginate(
         page, current_app.config['POSTS_PER_PAGE'], False)
     next_url = url_for('main.index', page=posts.next_num) \
         if posts.has_next else None
     prev_url = url_for('main.index', page=posts.prev_num) \
-        if posts.has_prev else None
+        if posts.has_prev else None   
     
     return render_template('user/index.html', title=titleVar, form=form, pages=posts, next_url=next_url, helllo=helo,
                            prev_url=prev_url)
 
 
-@bp.route('/explore')
-@login_required
-def explore():
-    '''
-    маршрут к страничке общего вывода всех постов
-    '''
-    titleVar=_('Обзор')
-    helo=_('Вы в общем чате сайта.')
-    page = request.args.get('page', 1, type=int)
-    posts = Post.query.order_by(Post.timestamp.desc()).paginate(
-        page, current_app.config['POSTS_PER_PAGE'], False)
-    next_url = url_for('main.explore', page=posts.next_num) if posts.has_next else None
-    prev_url = url_for('main.explore', page=posts.prev_num) if posts.has_prev else None
-    return render_template('user/index.html', title=titleVar, pages=posts, next_url=next_url, prev_url=prev_url, helllo=helo)
+#@bp.route('/explore')
+#@login_required
+#def explore():
+#    '''
+#    маршрут к страничке общего вывода всех постов
+#    '''
+#    titleVar=_('Обзор')
+#    helo=_('Вы в общем чате сайта.')
+#    page = request.args.get('page', 1, type=int)
+#    posts = Post.query.order_by(Post.timestamp.desc()).paginate(
+#        page, current_app.config['POSTS_PER_PAGE'], False)
+#    next_url = url_for('main.explore', page=posts.next_num) if posts.has_next else None
+#    prev_url = url_for('main.explore', page=posts.prev_num) if posts.has_prev else None
+#    return render_template('user/index.html', title=titleVar, pages=posts, next_url=next_url, prev_url=prev_url, helllo=helo)
 
 
 @bp.route('/<username>')
@@ -192,17 +194,20 @@ def explore():
 def user(username):
     '''
     маршрут к странице пользователя и его постам
-    '''
+    '''    
     user = User.query.filter_by(username=username).first_or_404()
+    title = f'Профиль пользователя {user.username}'
     page = request.args.get('page', 1, type=int)
+
     posts = user.posts.order_by(Post.timestamp.desc()).paginate(
         page, current_app.config['POSTS_PER_PAGE'], False)
+
     next_url = url_for('main.user', username=user.username, page=posts.next_num) \
         if posts.has_next else None
     prev_url = url_for('main.user', username=user.username, page=posts.prev_num) \
         if posts.has_prev else None
-    return render_template('user/user.html', user=user, pages=posts.items,
-                           next_url=next_url, prev_url=prev_url)
+    return render_template('user/user.html', user=user, pages=posts,
+                           next_url=next_url, prev_url=prev_url, title=title)
 
 ################################################################################################################################
 
@@ -240,8 +245,7 @@ def edit_profile():
         if form.change_password_button.data:            
             flash(_('Вы направлены на страничку смены пароля.'))
             return redirect(url_for('main.edit_profile_change_password', user=current_user.username)) 
-
-
+        
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.about_me.data = current_user.about_me

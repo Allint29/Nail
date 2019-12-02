@@ -2,46 +2,125 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content  %}
+<section class="site-map">
+    <p>
+        <a href="{{ url_for('welcome.index') }}">{{_('Главная страница')}}</a>
+        <span> &#9830;</span><a href="{{ url_for('main.user', username=current_user.username)}}">{{_('Профиль пользователя')}}</a>
+        <span> &#9830;</span><a href="{{ url_for('main.edit_profile')}}">{{_('Профиль пользователя редактор')}}</a>
+        <span> &#9830;</span><a>{{_('Редактор телефонов пользователя')}}</a>
+    </p>
+</section>
+<div class=" container-registration">
+    <h2 class="visually-hidden"> {{ _('Редактор телефонов пользователя') }} {{current_user.username}}</h2>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
 
-<div class="row">
-    <div class="col-md-6">
-        <form action="" method="post">
-            {{ form.hidden_tag() }}
+        <ul>
             <!--Если есть номер для подтверждения то нужно ввести номер нового телефона-->
             {% if number_for_check %}
-            <h3>Телефон</h3>
-            <h3>{{ number_for_check.number }} </h3>
-            <div class="form-group my-hidden">
-                {{ form.number_phone }}
-            </div>
-            <div class="form-group">
-                {{ form.code_of_confirm.label }}
-                {{ form.code_of_confirm }}
-                {% for error in form.code_of_confirm.errors %}
-                <span style="color: orange;">{{ error }}</span>
-                {% endfor %}
-            </div>
-            {{ form.commit_confirm }}
-            {{ form.phone_button_cancel}}
-
+            <li>{{_('Телефон')}} {{number_for_check.number}}</li>
+            <li class="visually-hidden">
+                <div class="form-group">
+                    {{ form.number_phone }}
+                    {% for error in form.number_phone.errors %}
+                    <span style="color: tomato">{{ error }}</span>
+                    {% endfor %}
+                </div>
+            </li>
+            <li>
+                <div class="form-group">
+                    {{ form.code_of_confirm.label }}
+                    {{ form.code_of_confirm }}
+                    {% for error in form.code_of_confirm.errors %}
+                    <span style="color: tomato;">{{ error }}</span>
+                    {% endfor %}
+                </div>
+            </li>
+            <li>{{ form.commit_confirm }}</li>
+            <li>{{ form.phone_button_cancel}}</li>
             <!--Если телефон для подтверждения есть то выводим формы для ввода кода-->
-            {% else %}
+            {%else%}
+            <li>
+                <div class="form-group">
+                    {{ form.number_phone.label }}
+                    {{ form.number_phone }}
+                    {% for error in form.number_phone.errors %}
+                    <span style="color: tomato;">{{ error }}</span>
+                    {% endfor %}
+                </div>
+            </li>
+            <li>
+                {{ form.submit }}
+            </li>
+            <li>
+                {{ form.phone_button_delete}}
+            </li>
+            <li>
+                {{number_for_check.id}}
+            </li>
+            {%endif%}
+            {%if list_phones_user%}
+            <li>
+                
+                <ul>
+                    <li>{{_('Телефоны пользователя:')}}</li>
+                    {% for item in list_phones_user%}
+                    <li>
+                        {{item.number}}
+                    </li>
+                    {%endfor%}
+                </ul>
 
-            <div class="form-group">
-                {{ form.number_phone.label }}
-                {{ form.number_phone }}
-                {% for error in form.number_phone.errors %}
-                <span style="color: orange;">{{ error }}</span>
-                {% endfor %}
-            </div>
-            {{ form.submit }}
-            {{ form.phone_button_delete}}
-            {{number_for_check.id}}
-            {% endif%}
+            </li>
+            {%endif%}
+        </ul>
+    </form>
+</div>
 
-        </form>
+    {% endblock %}
+<!--
 
-    </div>
+
+<div class="row">
+<div class="col-md-6">
+<form action="" method="post">
+{{ form.hidden_tag() }}
+<!--Если есть номер для подтверждения то нужно ввести номер нового телефона
+{% if number_for_check %}
+<h3>Телефон</h3>
+<h3>{{ number_for_check.number }} </h3>
+<div class="form-group my-hidden">
+    {{ form.number_phone }}
+</div>
+<div class="form-group">
+    {{ form.code_of_confirm.label }}
+    {{ form.code_of_confirm }}
+    {% for error in form.code_of_confirm.errors %}
+    <span style="color: orange;">{{ error }}</span>
+    {% endfor %}
+</div>
+{{ form.commit_confirm }}
+{{ form.phone_button_cancel}}
+
+<!--Если телефон для подтверждения есть то выводим формы для ввода кода
+{% else %}
+
+<div class="form-group">
+    {{ form.number_phone.label }}
+    {{ form.number_phone }}
+    {% for error in form.number_phone.errors %}
+    <span style="color: orange;">{{ error }}</span>
+    {% endfor %}
+</div>
+{{ form.submit }}
+{{ form.phone_button_delete}}
+{{number_for_check.id}}
+{% endif%}
+
+</form>
 
 </div>
-{% endblock %}
+
+</div>    
+
+-->

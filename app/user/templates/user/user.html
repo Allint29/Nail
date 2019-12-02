@@ -2,36 +2,57 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content  %}
+<section class="site-map">
+    <p>
+        <a href="{{ url_for('welcome.index') }}">{{_('Главная страница')}}</a>
+        <span> &#9830;</span><a>{{_('Профиль пользователя')}}</a>
+    </p>
+</section>
+<div class="container-user-profile-main">
+    <h2 class="visually-hidden"> {{ _('Личный профиль пользователя ') }}: {{ user.username }}</h2>
+    <div class="container-user-profile-info">
+        <div class="container-user-profile-img">
+            <img src="{{user.avatar(128)}}">
+        </div>
+        <div class="container-user-profile-text">
+            <ul>
+                <li> {{ _(' Пользователь') }}: {{ user.username }}</li>
+                <li>{% if user.about_me %}{{ user.about_me }}{% endif %}</li>
+                <li> {% if user.last_seen %}{{ _('Последний визит') }}: {{ moment(user.last_seen).format('LLL') }}{% endif %}</li>
+                <!--<li>{{ _('%(count)d подписки', count=user.followers.count()) }}, {{ _('%(count)d подписан', count=user.followed.count()) }}</li>-->
+                <li>
+                    {% if user == current_user %}
+                    <a class="button" href="{{ url_for('main.edit_profile') }}"> {{ _('Редактировать свой профиль') }}</a>
+                    {% elif not current_user.is_following(user) %}
+                    <!--<a href="{{ url_for('main.follow', username=user.username) }}"> {{ _('Подписаться') }}</a>
+                    {% else %}
+                    <a href="{{ url_for('main.unfollow', username=user.username) }}"> {{ _('Отписаться') }}</a>-->
+                    {% endif %}
+                </li>
 
-<table class="table table-hover">
-    <tr>
-        <td><img src="{{ user.avatar(128) }}"></td>
-        <td>
-            <h2> {{ _(' Пользователь') }}: {{ user.username }}</h2>
-            {% if user.about_me %}<p>{{ user.about_me }}</p>{% endif %}
-            {% if user.last_seen %}<p> {{ _('Последний визит') }}: {{ moment(user.last_seen).format('LLL') }}</p>{% endif %}
-            <p>{{ _('%(count)d подписки', count=user.followers.count()) }}, {{ _('%(count)d подписан', count=user.followed.count()) }}</p>
-
-            {% if user == current_user %}
-            <p><a href="{{ url_for('main.edit_profile') }}"> {{ _('Редактировать свой профиль') }}</a></p>
-            {% elif not current_user.is_following(user) %}
-            <p><a href="{{ url_for('main.follow', username=user.username) }}"> {{ _('Подписаться') }}</a></p>
-            {% else %}
-            <p><a href="{{ url_for('main.unfollow', username=user.username) }}"> {{ _('Отписаться') }}</a></p>
-            {% endif %}
-        </td>
-    </tr>
-</table>
-<hr>
-<div class="modal-body row" align="center">
-    <div class="col-md-10 news-content" align="center">
-        {% for post in pages.items %}
-        {% include '_post.html' %}
-        {% endfor %}
-
-
+            </ul>
+        </div>
     </div>
+    <div class="container-user-profile-posts">
+        {%if pages.items%}
+        <ul>
+            {% for post in pages.items %}
+            <li>
+                {% include '_post.html' %}
+            </li>
+            {% endfor %}
+            <li>
+                {%include 'pagination.html'%}
+            </li>
+        </ul>
 
+        {%endif%}
+    </div>
 </div>
+    {% endblock %}
+    
 
-{% endblock %}
+
+
+
+

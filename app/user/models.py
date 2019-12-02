@@ -295,6 +295,30 @@ def load_user(id):
    # print('Tere', id, '   ', type(id))
     return User.query.get(int(id))
 
+class Post(db.Model):#(SearchableMixin, db.Model):
+    '''
+    class of users posts
+    id - 
+    body - 
+    timestamp -
+    user_id - 
+    '''
+ #   __searchable__ = ['body']
+
+    id = db.Column(db.Integer, primary_key=True)
+    body = db.Column(db.String(140))
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    language = db.Column(db.String(5))
+
+    def __repr__(self):
+        return '<Post {}>'.format(self.body)
+
+    #добавил вхождение данного модуля сюда так как образуется зацикливание при импортах блоков
+    from app.master_schedule.models import ScheduleOfDay
+
+
+    
 
 #class SearchableMixin(object):
 #    '''
@@ -395,25 +419,3 @@ def load_user(id):
 #
 #db.event.listen(db.session, 'before_commit', SearchableMixin.before_commit)
 #db.event.listen(db.session, 'after_commit', SearchableMixin.after_commit)
-
-class Post(db.Model):#(SearchableMixin, db.Model):
-    '''
-    class of users posts
-    id - 
-    body - 
-    timestamp -
-    user_id - 
-    '''
- #   __searchable__ = ['body']
-
-    id = db.Column(db.Integer, primary_key=True)
-    body = db.Column(db.String(140))
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    language = db.Column(db.String(5))
-
-    def __repr__(self):
-        return '<Post {}>'.format(self.body)
-
-    #добавил вхождение данного модуля сюда так как образуется зацикливание при импортах блоков
-    from app.master_schedule.models import ScheduleOfDay

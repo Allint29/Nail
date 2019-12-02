@@ -41,6 +41,15 @@
                 {% endfor %}
             </li>
             <li>
+                {{work_type_form.priority_to_show_field.label}}
+                {{work_type_form.priority_to_show_field}}
+            </li>
+            <li>
+                {% for error in work_type_form.priority_to_show_field.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </li>
+            <li>
                 {{work_type_form.to_save_submit}}
                 {{work_type_form.to_delete_submit}}
                 <a class="button" href="{{url_for('admin_my.list_work_types')}}">{{_('Отмена')}}</a>

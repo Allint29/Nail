@@ -11,16 +11,25 @@
 </section>
 <div class="price-container">
     <h2 class="visually-hidden">Наши цены</h2>
-    {%if list_prices%}
+    {%if list_work_types%}
     {%set i=0%}
     <ul>
-        {% for item in list_prices %}
+        {% for item in list_work_types %}
+        <li class="price-container-items-name">
+            {{item.name}}
+        </li>
+        <li><hr /></li>
         <li>
-            <ul>
-                <li>{{item.title}}</li>
-                <li>{{item.text}}</li>
-                <li>{{item.price}} {{_('руб.')}}</li>
+            {%if item.price_lists%}
+            {%for i in item.price_lists%}
+            <ul class="price-container-items">
+                <li>{{i.title}}</li>
+                <li>{{i.text}}</li>
+                <li class="price-container-items-last">{{i.price}} {{_('р.')}}</li>
             </ul>
+            
+            {%endfor%}
+            {%endif%}
             <hr />
         </li>
         {%endfor%}

@@ -2,58 +2,69 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content  %}
-<h3> {{ _('Редактор профиля') }}</h3>
-<div class="row">
-    <div class="container">
+    <section class="site-map">
+        <p>
+            <a href="{{ url_for('welcome.index') }}">{{_('Главная страница')}}</a>
+            <span> &#9830;</span><a href="{{ url_for('main.user', username=current_user.username)}}">{{_('Профиль пользователя')}}</a>
+            <span> &#9830;</span><a>{{_('Профиль пользователя редактор')}}</a>
+        </p>
+        </section>
+    <div class="container-user-profile">
+        <h2 class="visually-hidden"> {{ _('Редактор профиля') }}</h2>
+        <p>{{_('Редактор профиля')}}</p>
         <form action="" method="post">
-                <div class="form-group">
-                    {{ form.username.label }}
-                    {{ form.username }}
-                    {% for error in form.username.errors %}
-                    <span style="color: tomato">{{ error }}</span>
-                    {% endfor %}
-                    <br/>
-                    {{ form.change_password_button }}
-                </div>
-            
             {{ form.hidden_tag() }}
-
-            <hr/>
-
-            <div class="form-group">
-                {{ form.about_me.label }}
-                {{ form.about_me }}
-                {% for error in form.about_me.errors %}
-                <span style="color: tomato">{{ error }}</span>
-                {% endfor %}
-            </div>
-            <hr />
-            <h6>{{ _('Зарегистрированные номера телефонов') }}</h6>
-            {%for phone in list_phones_user %}
-            <p>
-                {{ phone.number }} | {% if phone.phone_checked %} {{_('Подтвержден')}} {% else %} {{_('Не подтвержден и будет удален в')}} {{phone.expire_date_hash.strftime("%H:%M %d/%m/%Y")}} {% endif %}
-            </p>
-            {% endfor %}
-            <br />
-            {{ form.phone_button }}
-             <hr />
-            <h6>{{ _('Зарегистрированная электронная почта') }}</h6>
-            {% if e_mail %}
-            <p>
-                {{ e_mail }}
-                {{ form.email_change_button }}
-            </p>
-            {% else %}
-            {{_('Нет электронной почты')}}
-            {{ form.email_button }}
-            {% endif %}
-            <hr/>
-            {{ form.submit }}
+            <ul>
+                <li>
+                    <div class="form-group">
+                        {{ form.username.label }}
+                        {{ form.username }}
+                        {% for error in form.username.errors %}
+                        <span style="color: tomato">{{ error }}</span>
+                        {% endfor %}
+                        <br />
+                        {{ form.change_password_button }}
+                    </div>
+                </li>
+                <li>
+                    <div class="form-group">
+                        {{ form.about_me.label }}
+                        {{ form.about_me }}
+                        {% for error in form.about_me.errors %}
+                        <span style="color: tomato">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                </li>
+                <li>
+                    <p>{{ _('Зарегистрированные номера телефонов') }}</p>
+                </li>
+                <li>
+                    {%if list_phones_user%}
+                    <ul>
+                        {%for phone in list_phones_user %}
+                        <li>
+                            {{ phone.number }} | {% if phone.phone_checked %} {{_('Подтвержден')}} {% else %} {{_('Не подтвержден и будет удален в')}} {{phone.expire_date_hash.strftime("%H:%M %d/%m/%Y")}} {% endif %}
+                        </li>
+                        {% endfor %}
+                        <li>{{ form.phone_button }}</li>
+                    </ul>
+                    {%endif%}
+                </li>
+                <li>{{ _('Зарегистрированная электронная почта') }}</li>
+                <li>
+                    {% if e_mail %}
+                    <p>
+                        {{ e_mail }}
+                        {{ form.email_change_button }}
+                    </p>
+                    {% else %}
+                    {{_('Нет электронной почты')}}
+                    {{ form.email_button }}
+                    {% endif %}
+                </li>
+                
+                <li>{{ form.submit }}</li>
+            </ul>
         </form>
-
     </div>
-
-
-</div>
-
 {% endblock %}

@@ -16,7 +16,6 @@ from app.user.utils import delete_non_comfirmed_phone, step_one_for_enter_phone,
 #нужен для преобразования строки в словарь и обратно
 import json
 
-
 #################################### Авторизация #######################################
 
 
@@ -43,7 +42,7 @@ def login():
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
             #print("Нет некста")
-            next_page = url_for('main.index')
+            next_page = url_for('welcome.index')
         return redirect(next_page)
         #print("Загрузил страницу")
     return render_template('user/login.html', title=titleVar, form_login=form)
@@ -54,7 +53,7 @@ def logout():
     function of logout of user. Make redirect to main.index page
     '''
     logout_user()
-    return redirect(url_for('news.index'))
+    return redirect(url_for('welcome.index'))
 
 ##########################################################################################################
 
@@ -157,7 +156,7 @@ def registration_by_phone_new_password(data):
        else:
            msg = set_default_password(user, number)
            flash(msg[0])
-           return redirect(url_for('user.login'))
+           #return redirect(url_for('user.login'))
            
 
     return render_template('user/registration_by_phone/register_by_phone_new_password.html', form=form, title=title, number=number, user=user)

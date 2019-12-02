@@ -15,15 +15,15 @@ class CreateNewEmail(FlaskForm):
     '''
     Форма для создания нового пароля
     '''
-    username = HiddenField(_l('Логин'), validators=[DataRequired()], render_kw={"class" : "form-control"})
-    email = StringField(_l('Введите электронную почту'), validators=[DataRequired(), Email()], render_kw={"class" : "form-control"})
+    username = HiddenField(_l('Логин'), validators=[DataRequired()], render_kw={"class" : "form-control my-input-field"})
+    email = StringField(_l('Введите электронную почту'), validators=[DataRequired(), Email()], render_kw={"class" : "form-control my-input-field"})
     
-    confirm_registration = SubmitField(_l('Выслать ссылку на подтверждение пароля'), render_kw={"class" : "btn btn-primary"})
-    cancel_registration = SubmitField(_l('Отменить'), render_kw={"class" : "btn btn-primary"})
+    confirm_registration = SubmitField(_l('Выслать ссылку'), render_kw={"class" : "button"})
+    cancel_registration = SubmitField(_l('Отменить'), render_kw={"class" : "button"})
 
 
     def validate_email(self, email):
-        user = User.query.filter_by(email=email.data).first()
+        user = User.query.filter_by(email=self.email.data).first()
         if user is not None: 
             if user.username != self.username.data:                
                 raise ValidationError(_l('Пожалуйста, используйте другую почту.'))            
@@ -32,19 +32,19 @@ class CreateNewEmailCongratulation(FlaskForm):
     '''
     Форма поздравления пользователя с подтверждением адреса электронной почты
     '''
-    submit = SubmitField(_l('Перейти на страничку Вашего профиля'), render_kw={"class" : "btn btn-primary"})
+    submit = SubmitField(_l('Сохранить новый email'), render_kw={"class" : "button"})
     
 class CreateNewPassword(FlaskForm):
     '''
     Форма для создания нового пароля
     '''
-    old_password = PasswordField(_l('Старый пароль'), validators=[DataRequired()], render_kw={"class" : "form-control"})
+    old_password = PasswordField(_l('Старый пароль'), validators=[DataRequired()], render_kw={"class" : "form-control my-input-field"})
 
-    password = PasswordField(_l('Пароль'), validators=[DataRequired()], render_kw={"class" : "form-control"})
+    password = PasswordField(_l('Пароль'), validators=[DataRequired()], render_kw={"class" : "form-control my-input-field"})
     password2 = PasswordField(_l(
-        'Повторите пароль'), validators=[DataRequired(), EqualTo('password')], render_kw={"class" : "form-control"})
+        'Повторите пароль'), validators=[DataRequired(), EqualTo('password')], render_kw={"class" : "form-control my-input-field"})
     
-    confirm_registration = SubmitField(_l('Завершить регистрацию'), render_kw={"class" : "btn btn-primary"})
+    confirm_registration = SubmitField(_l('Сохранить'), render_kw={"class" : "button"})
 
     def validate_password(self, password):
         if len(password.data) < 5:
@@ -54,14 +54,14 @@ class EditProfileForm(FlaskForm):
     '''
     class for visualisation form for insert some changes in profile of user.
     '''
-    username = StringField(_l('Логин'), validators=[DataRequired()], render_kw={"class": "form-control"})
-    about_me = TextAreaField(_l('Обо мне'), validators=[Length(min=0, max=140)], render_kw={"class": "form-control"})    
+    username = StringField(_l('Логин'), validators=[DataRequired()], render_kw={"class": "form-control my-input-field"})
+    about_me = TextAreaField(_l('Обо мне'), validators=[Length(min=0, max=140)], render_kw={"class": "form-control my-input-field"})    
 
-    submit = SubmitField(_l('Подтвердить изменения'), render_kw={"class": "btn btn-default"})
-    phone_button = SubmitField(_('Добавить/удалить телефон'), render_kw={"class": "btn btn-default"})
-    email_button = SubmitField(_('Добавить почту'), render_kw={"class": "btn btn-default"})
-    email_change_button = SubmitField(_('Изменить почту'), render_kw={"class": "btn btn-default"})
-    change_password_button = SubmitField(_('Изменить пароль'), render_kw={"class": "btn btn-default"})
+    submit = SubmitField(_l('Сохранить'), render_kw={"class": "button"})
+    phone_button = SubmitField(_('Ред. телефон'), render_kw={"class": "button"})
+    email_button = SubmitField(_('Добавить почту'), render_kw={"class": "button"})
+    email_change_button = SubmitField(_('Изменить почту'), render_kw={"class": "button"})
+    change_password_button = SubmitField(_('Изменить пароль'), render_kw={"class": "button"})
 
 
     def __init__(self, original_username, *args, **kwargs):
@@ -81,13 +81,13 @@ class EditProfilAddPhoneForm(FlaskForm):
     '''
     class for visualisation form to add phone of user.
     '''
-    number_phone = StringField(_l('Введите номер телефона'), render_kw={"class": "form-control"})
-    code_of_confirm = StringField(_l('Введите код подтверждения из смс'), render_kw={"class": "form-control" })
+    number_phone = StringField(_l('Введите номер телефона'), render_kw={"class": "form-control my-input-field"})
+    code_of_confirm = StringField(_l('Введите код подтверждения из смс'), render_kw={"class": "form-control my-input-field" })
 
-    submit = SubmitField(_l('Выслать код подтверждения на телефон'), render_kw={"class": "btn btn-default"}) #сохраняем номер и хэш в бд
-    commit_confirm = SubmitField(_l('Подтвердить номер'), render_kw={"class": "btn btn-default"}) #сверяем с хешем 
-    phone_button_delete = SubmitField(_('Удалить'), render_kw={"class": "btn btn-default"})
-    phone_button_cancel = SubmitField(_('Отмена'), render_kw={"class": "btn btn-default"})
+    submit = SubmitField(_l('Выслать код'), render_kw={"class": "button"}) #сохраняем номер и хэш в бд
+    commit_confirm = SubmitField(_l('Подтвердить номер'), render_kw={"class": "button"}) #сверяем с хешем 
+    phone_button_delete = SubmitField(_('Удалить'), render_kw={"class": "button"})
+    phone_button_cancel = SubmitField(_('Отмена'), render_kw={"class": "button"})
 
 
     def __init__(self, original_number_phone, *args, **kwargs):
@@ -132,8 +132,8 @@ class EditProfilAddPhoneForm(FlaskForm):
                
 class PostForm(FlaskForm):
     post = TextAreaField(_l('Cкажите что-нибудь'), validators=[
-        DataRequired(), Length(min=1, max=140)])
-    submit = SubmitField(_l('Опубликовать'))
+        DataRequired(), Length(min=1, max=140)], render_kw={"class": "form-control my-input-field"})
+    submit = SubmitField(_l('Опубликовать'), render_kw={"class": "button"})
     
 #здесь вставить коментарий к коментарию
 

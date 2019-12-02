@@ -22,6 +22,8 @@
                 <li>{{item.id}}</li>
                 <li>{{_('Название: ')}}</li>
                 <li>{{item.name}}</li>
+                <li>{{_('Приоритет при показе: ')}}</li>
+                <li>{{item.priority_to_show}}</li>
                 <li><a class="button" href="{{url_for('admin_my.edit_work_type', dic_work_types = {'work_type_id' : item.id})}}">{{_('Редактировать')}}</a></li>
             </ul>
             <hr />

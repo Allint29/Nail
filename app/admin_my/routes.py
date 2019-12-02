@@ -1031,8 +1031,8 @@ def show_price():
     Вывод цены на работы мастера из БД
     '''
     titleVar='Наши цены'
-    list_prices = PriceList.query.all()
-    return render_template('admin_my/list_prices_client.html',list_prices=list_prices)
+    list_work_types = WorkType.query.all()
+    return render_template('admin_my/list_prices_client.html',list_work_types=list_work_types)
 
 @bp.route('/list_work_types', methods=['GET', 'POST'])
 @admin_required
@@ -1064,9 +1064,10 @@ def edit_work_type(dic_work_types):
         if work_type_form.validate_on_submit():
             if work_type_form.to_save_submit.data:
                 if work_type == None:
-                    work_type = WorkType(name=work_type_form.name_field.data)                    
+                    work_type = WorkType(name=work_type_form.name_field.data, priority_to_show = work_type_form.priority_to_show_field.data)                    
                 else:
-                    work_type.name = name=work_type_form.name_field.data    
+                    work_type.name = name=work_type_form.name_field.data   
+                    work_type.priority_to_show = work_type_form.priority_to_show_field.data
                     
                 try:
                     db.session.add(work_type)
@@ -1093,9 +1094,11 @@ def edit_work_type(dic_work_types):
         if work_type == None:
             work_type_form.id_field.data = '-1'
             work_type_form.name_field.data = ''      
+            work_type_form.priority_to_show_field.data = 100
         else:
             work_type_form.id_field.data = work_type.id
             work_type_form.name_field.data = work_type.name
+            work_type_form.priority_to_show_field.data = work_type.priority_to_show
 
     return render_template('admin_my/edit_work_type.html', work_type_form=work_type_form)
     

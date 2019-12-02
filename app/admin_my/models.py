@@ -22,8 +22,13 @@ class WorkType(db.Model):
     '''
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, unique=True)
+    # приоритет вывода в прайс листе
+    priority_to_show = db.Column(db.Integer, default = 100)
 
     price_lists = db.relationship('PriceList', backref = 'work_type', cascade="all, delete-orphan",  lazy='dynamic')
+
+    def __repr__(self):
+        return f'<WorkType {self.name}>'
 
 
 class PriceList(db.Model):
@@ -39,5 +44,5 @@ class PriceList(db.Model):
     work_type_id = db.Column(db.Integer, db.ForeignKey('work_type.id'))
 
     def __repr__(self):
-        return f'<MasterNews {self.title} {self.text} {self.published}>'
+        return f'<PriceListItem {self.title} {self.text} {self.price}>'
 

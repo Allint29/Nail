@@ -28,13 +28,11 @@ class ButtonWidget(object):
             params=self.html_params(name=field.name, **kwargs),
             label=field.label.text)
         )
-
-
+    
 class ButtonField(StringField):
     widget = ButtonWidget()
 
 ################################################# Вход в личный кабинет ##############################################
-
 
 class LoginForm(FlaskForm):
     '''
@@ -45,33 +43,32 @@ class LoginForm(FlaskForm):
     remember_me = BooleanField(_l('Запомнить меня'), render_kw={"class" : "from-check-input visually-hidden"})
     
     submit = SubmitField(_l('Войти'), render_kw={"class" : "button"})
-
-
+    
 #########################################################################################################################
                
+
 ################################################# Регистрация - общая форма ##############################################
 
 class RegistrationMainForm(FlaskForm):
     '''
     Form to shoose method of registration. It redirect to form for different kind of registration
     '''    
-    submit_register_by_email = SubmitField (_('Регистрация по электронной почте'), render_kw={"class" : "btn btn-primary"} )
-    submit_register_by_phone = SubmitField (_('    Регистрация по телефону     '), render_kw={"class" : "btn btn-primary"})
+    submit_register_by_email = SubmitField (_('По электронной почте'), render_kw={"class" : "button"} )
+    submit_register_by_phone = SubmitField (_('По телефону'), render_kw={"class" : "button"})
 #########################################################################################################################
  
 
 ################################################# Регистрация по телефону ##############################################
 
-
 class RegistrationByPhoneForm(FlaskForm):
     '''
     Form to enter login and phone to get registration
     '''
-    username_for_phone = StringField(_l('Придумайте логин'), validators=[DataRequired()], render_kw={"class" : "form-control"})
-    number_phone = StringField(_l('Телефон'), render_kw={"class" : "form-control"})    
+    username_for_phone = StringField(_l('Придумайте логин'), validators=[DataRequired()], render_kw={"class" : "form-control my-input-field"})
+    number_phone = StringField(_l('Телефон'), render_kw={"class" : "form-control my-input-field"})    
 
 
-    send_code = SubmitField(_l('Выслать смс с кодом подтверждения'), render_kw={"class" : "btn btn-primary"})   
+    send_code = SubmitField(_l('Выслать смс с кодом'), render_kw={"class" : "button"})   
     
     def validate_username_for_phone(self, username_for_phone):
         user = User.query.filter_by(username=username_for_phone.data).first()
@@ -112,22 +109,26 @@ class RegistrationByPhoneConfirmForm(FlaskForm):
     '''
     Форма для подтверждения регистрации по телефону - проверяет код подтверждение с хешем в БД
     '''
-    code_of_confirm = StringField(_l('Введите код подтверждения из смс'), render_kw={"class": "form-control" })
+    code_of_confirm = StringField(_l('Код из смс'), render_kw={"class": "form-control my-input-field" })
     
-    confirm_registration = SubmitField(_l('Подтвердить номер телефона'), render_kw={"class" : "btn btn-primary"})   
-    phone_button_cancel = SubmitField(_('Отмена'), render_kw={"class": "btn btn-default"})    
+    confirm_registration = SubmitField(_l('Подтвердить'), render_kw={"class" : "button"})   
+    phone_button_cancel = SubmitField(_('Отмена'), render_kw={"class": "button"})    
 
 class RegistrationByPhoneNewPasswordForm(FlaskForm):    
     '''
     Форма для создания нового пароля при регистрации по телефону
     '''
-    password = PasswordField(_l('Пароль'), render_kw={"class" : "form-control"})
-    password2 = PasswordField(_l('Повторите пароль'),  render_kw={"class" : "form-control"})
+    password = PasswordField(_l('Пароль'), validators=[DataRequired()], render_kw={"class" : "form-control my-input-field"})
+    password2 = PasswordField(_l('Повторите пароль'), validators=[DataRequired(), EqualTo('password')],  render_kw={"class" : "form-control my-input-field"})
     
-    confirm_registration = SubmitField(_l('Завершить регистрацию'), render_kw={"class" : "btn btn-primary"})
-    phone_button_cancel = SubmitField(_l('Отмена'), render_kw={"class" : "btn btn-primary"}) 
+    confirm_registration = SubmitField(_l('Сохранить'), render_kw={"class" : "button"})
+    phone_button_cancel = SubmitField(_l('Отмена'), render_kw={"class" : "button"}) 
 
-
+    def validate_password(self, password):
+       # print(password.data)
+        #print(password.name)
+        if len(self.password.data) < 5:
+            raise ValidationError(_l('Пароль длолжен содержать более 4 символов.'))
     
 #########################################################################################################################
                
@@ -137,10 +138,10 @@ class RegistrationRequestForm(FlaskForm):
     '''
     form to enter login and e-mail of user for registration, form check login and e-mail for doublement
     '''
-    username = StringField(_l('Имя пользователя'), validators=[DataRequired()], render_kw={"class" : "form-control"})
-    email = StringField(_l('Почта'), validators=[DataRequired(), Email()], render_kw={"class" : "form-control"})
+    username = StringField(_l('Имя пользователя'), validators=[DataRequired()], render_kw={"class" : "form-control my-input-field"})
+    email = StringField(_l('Почта'), validators=[DataRequired(), Email()], render_kw={"class" : "form-control my-input-field"})
     
-    submit = SubmitField(_l('Зарегистрироваться'), render_kw={"class" : "btn btn-primary"})
+    submit = SubmitField(_l('Зарегистрироваться'), render_kw={"class" : "button"})
 
     def validate_username(self, username):
         user = User.query.filter_by(username=username.data).first()
@@ -157,11 +158,11 @@ class RegistrationForm(FlaskForm):
     class of form to first password to new user after check email
     '''
 
-    password = PasswordField(_l('Пароль'), validators=[DataRequired()], render_kw={"class" : "form-control"})
+    password = PasswordField(_l('Пароль'), validators=[DataRequired()], render_kw={"class" : "form-control my-input-field"})
     password2 = PasswordField(_l(
-        'Повторите пароль'), validators=[DataRequired(), EqualTo('password')], render_kw={"class" : "form-control"})
+        'Повторите пароль'), validators=[DataRequired(), EqualTo('password')], render_kw={"class" : "form-control my-input-field"})
 
-    submit = SubmitField(_l('Завершить регистрацию'), render_kw={"class" : "btn btn-primary"})
+    submit = SubmitField(_l('Завершить регистрацию'), render_kw={"class" : "button"})
 
     def validate_password(self, password):
        # print(password.data)
@@ -177,8 +178,8 @@ class ResetPasswordMainForm(FlaskForm):
     '''
     Форма выбора способа восстановления пароля
     '''    
-    submit_reset_by_email = SubmitField (_('Восстановление по электронной почте'), render_kw={"class" : "btn btn-primary"} )
-    submit_reset_by_phone = SubmitField (_('    Восстановление по телефону     '), render_kw={"class" : "btn btn-primary"})
+    submit_reset_by_email = SubmitField (_('По электронной почте'), render_kw={"class" : "button"} )
+    submit_reset_by_phone = SubmitField (_('По телефону'), render_kw={"class" : "button"})
 #########################################################################################################################
  
 ################################################# Восстановление пароля по электронной почте ##############################################
@@ -187,17 +188,17 @@ class ResetPasswordRequestForm(FlaskForm):
     '''
     class form of enter email to reset password
     '''
-    email = StringField(_l('Почта'), validators=[DataRequired(), Email()], render_kw={"class" : "form-control"})
-    submit = SubmitField(_l('Отправить ссылку на почту'), render_kw={"class" : "btn btn-primary"})
+    email = StringField(_l('Почта'), validators=[DataRequired(), Email()], render_kw={"class" : "form-control my-input-field"})
+    submit = SubmitField(_l('Отправить ссылку'), render_kw={"class" : "button"})
     
 class ResetPasswordForm(FlaskForm):
     '''
     form to enter new password after walked to link from email for reset password
     '''
-    password = PasswordField(_l('Пароль'), validators=[DataRequired()], render_kw={"class" : "form-control"})
+    password = PasswordField(_l('Пароль'), validators=[DataRequired()], render_kw={"class" : "form-control my-input-field"})
     password2 = PasswordField(_l(
-        'Повторите пароль'), validators=[DataRequired(), EqualTo('password')], render_kw={"class" : "form-control"})
-    submit = SubmitField(_l('Установить новый пароль'), render_kw={"class" : "btn btn-primary"})
+        'Повторите пароль'), validators=[DataRequired(), EqualTo('password')], render_kw={"class" : "form-control my-input-field"})
+    submit = SubmitField(_l('Сохранить'), render_kw={"class" : "button"})
     
     def validate_password(self, password):
         if len(password.data) < 5:
@@ -211,8 +212,8 @@ class ResetPasswordByPhoneRequestForm(FlaskForm):
     '''
     class form of enter email to reset password
     '''
-    number_phone = StringField(_l('Введите зарегистрированный номер телефона'), validators=[DataRequired()], render_kw={"class" : "form-control"})
-    submit = SubmitField(_l('Восстановить пароль'), render_kw={"class" : "btn btn-primary"})
+    number_phone = StringField(_l('Введите номер телефона'), validators=[DataRequired()], render_kw={"class" : "form-control my-input-field"})
+    submit = SubmitField(_l('Восстановить пароль'), render_kw={"class" : "button"})
     
     def validate_number_phone(self, number_phone):    
         

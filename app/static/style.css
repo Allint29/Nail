@@ -652,7 +652,7 @@ button.bg-light:hover {
 /*/////////////////Блок Main//////////////////////////*/
 .features .carousel-inner {
     max-width: 100%;
-    background: transparent;
+    background-color: transparent;
     align-items: center;
     justify-content: center;
 }
@@ -913,6 +913,7 @@ button.bg-light:hover {
 
 .galary-container-button {
     display: flex;
+    flex-wrap: wrap;
     margin: 0;
     padding: 0;
     justify-content: space-between;
@@ -1024,7 +1025,7 @@ button.bg-light:hover {
 
 .appointment-item input {
     font: inherit;
-    background: transparent;
+    background-color: transparent;
     border: 1px solid burlywood;
     margin-top: auto !important;
 }
@@ -1344,6 +1345,7 @@ button.bg-light:hover {
 
 .container-posts {
     display: flex;
+    font-size: 14px;
 
 }
 
@@ -1811,7 +1813,7 @@ button.bg-light:hover {
     padding: 0 !important;
     display: block;
     width: 300px;
-    background: transparent;
+    background-color: transparent;
 }
 
     .comment-edition-form h1 {
@@ -2107,7 +2109,7 @@ button.bg-light:hover {
 
 .find-user-container {
     display: block;
-    background: rgba(255,110,210, 0.3);
+    background-color: rgba(255,110,210, 0.3);
     font-size: 14px;
 }
 
@@ -2240,3 +2242,150 @@ button.bg-light:hover {
 .admin-router-container .button {
     font-size: 14px;
 }
+
+/*стилизация блока показа цен для клиентов*/
+
+.price-container {
+    display: block;
+    margin: 0;
+    padding: 0;
+}
+.price-container ul{
+    list-style: none;
+    padding: 0px;
+}
+
+.price-container li{
+    display: block;
+    margin: 0px;
+    padding: 0px;
+
+}
+.price-container-items-name {
+    color: rgba(201,5,5, 1) !important;
+    font-size: 20px;
+}
+
+.price-container-items {
+    display: flex;
+    flex-wrap: wrap;
+    padding-left: 10px !important;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(255,110,210, 0.3);
+    font-size: 16px;
+}
+
+.price-container-items li {
+    margin: 0 20px 0 20px !important;
+}
+
+.price-container-items .price-container-items-last {
+    margin-left: auto !important;
+}
+
+/*стилизация регистрации пользователей*/
+
+.my-input-field {
+    background-color: rgba(250,110,210, 0.2);
+    
+}
+
+.container-registration {
+    display: block;
+    font-size: 18px;
+    margin: 0 auto 0 auto;
+    max-width: 350px;
+    padding: 0;
+}
+
+.container-registration ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    
+}
+
+.container-registration li {
+    display: flex;
+    max-width: 300px;
+    padding: 0;
+    margin: 0 0 10px 0 !important;
+}
+
+.container-registration .button {
+    width: 100%;
+    margin: 0 !important;
+}
+
+/*стилизация страницы настроек пользователя*/
+.container-user-profile-main {
+    display: block;
+
+}
+
+.container-user-profile {
+    display: block;
+    font-size: 18px;
+    margin: 0 auto 0 auto;
+    max-width: 100%;
+    padding: 0;
+}
+
+.container-user-profile ul {
+    list-style: none;
+    padding: 0px;
+}
+
+    .container-user-profile li {
+        padding: 0px;
+        margin-bottom: 10px;
+        border-bottom: 1px solid rgba(255,110,210, 0.3);
+    }
+
+
+.container-user-profile .button {
+    
+    margin: 0px !important;
+}
+.container-user-profile-info {
+    display: flex;
+    justify-content: space-between;
+
+}
+.container-user-profile-img {
+    width: 20%;
+}
+
+.container-user-profile-text {
+    width: 70%;
+    padding: 0 20px 0 20px;
+    
+}
+
+.container-user-profile-text ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.container-user-profile-text li {
+    margin: 5px 0 5px 0;
+    
+}
+.container-user-profile-text .button {
+    margin: 20px 0 0 0 !important;
+}
+
+.container-user-profile-img img {
+    max-width: 100%
+}
+
+.container-user-profile-posts {
+    width: 100%;
+
+}
+
+    .container-user-profile-posts ul {
+        list-style: none;
+        padding: 0 !important;
+    }

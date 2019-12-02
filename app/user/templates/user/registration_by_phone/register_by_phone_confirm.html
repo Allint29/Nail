@@ -2,11 +2,36 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content  %}
-<h5>{{ _('Регистрация. Шаг 2') }}</h5>
-<h5>{{ _('Подтвердите номер телефона') }} {% if number %} {{ number }} {% endif %}</h5>
-    <div class="row">
-        <div class="col-md-4">
-            {{ wtf.quick_form(form) }}
-        </div>
-    </div>
+
+<section class="site-map">
+    <p>
+        <a href="{{ url_for('welcome.index') }}">{{_('Главная страница')}}</a>
+        <span> &#9830;</span><a href="{{ url_for('user.registration_main') }}">{{_('Выбор способа регистрации')}}</a>
+        <span> &#9830;</span><a>{{_('Ввод кода подтверждения телефона')}}</a>
+    </p>
+
+</section>
+<div class="container-registration">
+    <h2 class="visually-hidden">{{_('Регистрация. Ввод кода подтверждения телефона.')}}</h2>
+    <p>{{ _('Регистрация. Шаг 2') }}</p>
+    <p>{{ _('Подтвердите номер телефона') }} {% if number %} {{ number }} {% endif %}</p>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        {% for error in form.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+        <ul>
+            <li>{{ form.code_of_confirm.label }}</li>
+            <li>{{ form.code_of_confirm }}</li>
+            <li>
+                {% for error in form.code_of_confirm.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </li>
+            <li><hr /></li>
+            <li>{{ form.confirm_registration }}</li>
+            <li>{{ form.phone_button_cancel }}</li>
+        </ul>
+    </form>
+</div>
 {% endblock %}

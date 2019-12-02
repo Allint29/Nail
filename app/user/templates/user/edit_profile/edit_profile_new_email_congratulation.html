@@ -2,12 +2,25 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content  %}
-<h5>{{ _('Почта подтверждена!') }}</h5>
-<div class="row">
-    <div class="col-md-4">
-        {{ wtf.quick_form(form) }}
-    </div>
+<section class="site-map">
+    <p>
+        <a href="{{ url_for('welcome.index') }}">{{_('Главная страница')}}</a>
+        <span> &#9830;</span><a href="{{ url_for('main.user', username=current_user.username)}}">{{_('Профиль пользователя')}}</a>
+        <span> &#9830;</span><a href="{{ url_for('main.edit_profile')}}">{{_('Профиль пользователя редактор')}}</a>
+        <span> &#9830;</span><a>{{_('Сохраниение email пользователя')}}</a>
+    </p>
+</section>
+<div class=" container-registration">
+    <h2 class="visually-hidden"> {{ _('Сохраниение нового email пользователя') }}</h2>
+    <p>{{_('Подтвердите сохраниение email')}}</p>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <ul>
+            <li>{{form.submit}}</li>
+        </ul>
+    </form>
 </div>
-{% endblock %}
+
+    {% endblock %}
 
 

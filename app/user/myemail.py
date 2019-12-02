@@ -50,6 +50,23 @@ def send_code_sms(list_message=[]):
     #отсылаю список получателей и самих смс в модуль отправки
     send_sms(list_to_send)
 
+def send_default_password_sms(list_message=[], user = ''):
+    '''
+    отправить сообщение смс клиенту, принимает dic_message={'number': '79271101986', 'msg': 'text message for client'}
+    '''    
+    #f'Код {code} для подтверждения телефона на сайте Nail-Master-Krd.'
+    # list_message=[{'number': '7'+str(client_phone.number), 'code': 'code'}]
+    if len(list_message) <= 0:
+        return
+    list_to_send=[]
+    for m in list_message:
+        number_=m['number']
+        msg = f'Ваш логин: {user}, ваш пароль: {m["code"]}.'
+        list_to_send.append({'number': str(number_), 'msg': msg})
+    #отсылаю список получателей и самих смс в модуль отправки
+    send_sms(list_to_send)
+
+
 #from flask_mail import Message
 #from app import mail
 #

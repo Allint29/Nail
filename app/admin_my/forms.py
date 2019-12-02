@@ -284,6 +284,7 @@ class WorkTypeForm(FlaskForm):
     '''
     id_field = StringField(_('Id_цены'), validators=[InputRequired()], default=-1, render_kw={"class" : ""})
     name_field = TextAreaField(_('Название вида работы'),  validators=[InputRequired()], render_kw={"class" : ""})
+    priority_to_show_field = IntegerField(_('Приоритет при показе'), validators=[InputRequired()], render_kw={"class" : ""})
 
     to_save_submit = SubmitField(_('Сохранить', render_kw={"class": "button", "type": "submit"}))
     to_delete_submit = SubmitField(_('Удалить', render_kw={"class": "button", "type": "submit"}))

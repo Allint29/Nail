@@ -2,10 +2,40 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content  %}
-<h4>{{ _('Регистрация. Шаг 1') }}</h4>
-<div class="row">
-    <div class="col-md-4">
-        {{ wtf.quick_form(form) }}
-    </div>
+<section class="site-map">
+    <p>
+        <a href="{{ url_for('welcome.index') }}">{{_('Главная страница')}}</a>
+        <span> &#9830;</span><a href="{{ url_for('user.registration_main') }}">{{_('Выбор способа регистрации')}}</a>
+        <span> &#9830;</span><a>{{_('Выбор логина')}}</a>
+    </p>
+
+</section>
+<div class="container-registration">
+    <h2 class="visually-hidden">{{_('Регистрация. Выбор логина и ввод телефона.')}}</h2>
+    <p>{{ _('Регистрация. Шаг 1') }}</p>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        {% for error in form.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+        <ul>
+            <li>{{ form.username_for_phone.label }}</li>
+            <li>{{ form.username_for_phone }}</li>
+            <li>
+                {% for error in form.username_for_phone.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </li>
+            <li><hr /></li>
+            <li>{{ form.number_phone.label }}</li>
+            <li>{{ form.number_phone }}</li>
+            <li>
+                {% for error in form.number_phone.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </li>
+            <li>{{ form.send_code }}</li>
+        </ul>
+    </form>
 </div>
 {% endblock %}

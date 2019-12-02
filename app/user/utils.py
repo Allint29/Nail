@@ -8,7 +8,7 @@ from flask import current_app, flash
 from flask_babel import _, get_locale
 from flask_login import current_user
 from app.main_func import utils as main_utils
-from app.user.myemail import send_code_sms
+from app.user.myemail import send_code_sms, send_default_password_sms
 import random
 
 def create_default_user():
@@ -61,10 +61,11 @@ def set_default_password(user=None, number=None):
         if default_password is None or default_password=="":
             return _('Пароль не был назначен. Ошибка в генерации паролей'), False
         try:
-            sms = SMSC()  
-            sms.send_sms('7'+str(number), f'Логин: {user.username}. Пароль: {default_password}. Используйте для входа на сайт Nail-Master-Krd.')
-        except:            
-            flash(_('Ошибка при отправке смс с дефолтным паролем. Пароль не отослан'))
+            #sms = SMSC()  
+            #sms.send_sms('7'+str(number), f'Логин: {user.username}. Пароль: {default_password}. Используйте для входа на сайт Nail-Master-Krd.')
+            send_default_password_sms([{'number': '7'+str(number), 'code': f'{default_password}'}], user.username)
+        except Exception as e:            
+            flash(_(f'Ошибка при отправке смс с дефолтным паролем. Пароль не отослан: {e}'))
 
         user.set_password(default_password)
         user.trying_to_enter_new_phone =user.trying_to_enter_new_phone - 1

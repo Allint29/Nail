@@ -5,26 +5,22 @@
 {{ title }}
 {% endblock%}
 {% block app_content  %}
-<h4>{{ _('Как вы хотите зарегистрироваться? ') }}</h4>
-<br />
-<form action="" method="post">
-    {{ form.hidden_tag() }}
-    <div class="container">
-        <div class="row justify-content-md-center">
-            
-            <div class="col col-lg-2">
-                {{ form.submit_register_by_email }}
-            </div>
-            <div class="col-md-auto">
-                <p/>
-            </div>
-            <div class="col col-lg-2">
-                {{ form.submit_register_by_phone }}
-            </div>
-        </div>
-    </div>
+<section class="site-map">
+    <p> <a href="{{ url_for('welcome.index') }}">{{_('Главная страница')}}</a><span> &#9830;</span><a>{{_('Выбор способа регистрации')}}</a></p>
+</section>
+<div class="container-registration">
+    <h2 class="visually-hidden">{{_('Выбор способа регистрации')}}</h2>
+    <p>{{ _('Как вы хотите зарегистрироваться? ') }}</p>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <ul>
+            <li>{{ form.submit_register_by_email }}</li>
+            <li>{{ form.submit_register_by_phone }}</li>
+        </ul>
+    </form>
+</div>
 
-</form>
+
 
 
 {% endblock %}

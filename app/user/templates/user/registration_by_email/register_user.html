@@ -2,12 +2,42 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content  %}
-<h4>{{ _('Регистрация. Шаг 2') }}</h4>
-<p>{{ _('Ваш телефон подтвержден. Осталось придумать пароль!') }}</p>
-<div class="row">
-    <div class="col-md-4">
-        {{ wtf.quick_form(form) }}
-    </div>
+<section class="site-map">
+    <p>
+        <a href="{{ url_for('welcome.index') }}">{{_('Главная страница')}}</a>
+        <span> &#9830;</span><a>{{_('Ввод пароля')}}</a>
+    </p>
+
+</section>
+<div class="container-registration">
+    <h2 class="visually-hidden">{{_('Регистрация пароля для нового пользователя.')}}</h2>
+    <p>{{ _('Регистрация. Шаг 2') }}</p>
+    <p>{{ _('Ваша почта подтверждена. Осталось придумать пароль!') }}</p>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        {% for error in form.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+        <ul>
+            <li>{{ form.password.label }}</li>
+            <li>{{ form.password }}</li>
+            <li>
+                {% for error in form.password.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </li>
+            <li><hr /></li>
+            <li>{{ form.password2.label }}</li>
+            <li>{{ form.password2 }}</li>
+            <li>
+                {% for error in form.password2.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </li>
+            <li><hr /></li>
+            <li>{{ form.submit }}</li>
+        </ul>
+    </form>
 </div>
 {% endblock %}
 
