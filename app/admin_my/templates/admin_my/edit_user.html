@@ -60,7 +60,8 @@
                 </li>
                 <li>
                     {{edit_users_form.role_field.label}}
-                    {{edit_users_form.role_field}}
+                    <div class="visually-hidden">{{edit_users_form.role_field}}</div>
+                    {{edit_users_form.role_field.data}}
                 </li>
                 <li>
                     {{edit_users_form.last_seen_field.label}}
