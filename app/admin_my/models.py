@@ -36,7 +36,7 @@ class PriceList(db.Model):
     Сущность хранит информацию о ценах и скидках на работы мастера
     '''
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String, nullable=False)
+    title = db.Column(db.String(200), nullable=False)
     text = db.Column(db.Text)
     price = db.Column(db.Integer, default=0)
     discount = db.Column(db.Integer, default=0)

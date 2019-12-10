@@ -15,7 +15,7 @@ class DateTable(db.Model):
     '''
     id = db.Column(db.Integer, primary_key=True)
     day_date = db.Column(db.DateTime, default=main_utils.make_date_from_date_time(main_utils.min_date_for_calculation()))
-    day_name = db.Column(db.String, default=main_utils.make_name_of_day_from_date(main_utils.min_date_for_calculation()))
+    day_name = db.Column(db.String(15), default=main_utils.make_name_of_day_from_date(main_utils.min_date_for_calculation()))
     
     time = db.relationship('ScheduleOfDay', backref='date_table', lazy='dynamic')
 
