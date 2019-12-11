@@ -1,8 +1,8 @@
-"""first migr
+"""first migration
 
-Revision ID: a89bef42aacb
+Revision ID: 8a455ff22188
 Revises: 
-Create Date: 2019-11-18 09:13:23.647675
+Create Date: 2019-12-11 14:03:45.412248
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'a89bef42aacb'
+revision = '8a455ff22188'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -33,7 +33,14 @@ def upgrade():
     op.create_table('date_table',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('day_date', sa.DateTime(), nullable=True),
-    sa.Column('day_name', sa.String(length=250), nullable=True),
+    sa.Column('day_name', sa.String(length=50), nullable=True),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('master_news',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('title', sa.String(length=250), nullable=False),
+    sa.Column('text', sa.Text(), nullable=False),
+    sa.Column('published', sa.DateTime(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('my_work',
@@ -59,8 +66,18 @@ def upgrade():
     sa.Column('published', sa.DateTime(), nullable=False),
     sa.Column('source', sa.String(length=250), nullable=False),
     sa.Column('text', sa.Text(), nullable=True),
+    sa.Column('show', sa.Integer(), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('url')
+    )
+    op.create_table('preliminary_record',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name_of_client', sa.String(length=250), nullable=True),
+    sa.Column('phone_of_client', sa.Integer(), nullable=True),
+    sa.Column('message_of_client', sa.String(length=250), nullable=True),
+    sa.Column('message_worked', sa.Integer(), nullable=True),
+    sa.Column('time_to_record', sa.DateTime(), nullable=True),
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('russian_mobil_operator',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -69,6 +86,13 @@ def upgrade():
     sa.Column('Count_parse', sa.Integer(), nullable=True),
     sa.Column('Note', sa.Text(), nullable=True),
     sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('work_type',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.String(length=200), nullable=True),
+    sa.Column('priority_to_show', sa.Integer(), nullable=True),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('name')
     )
     op.create_table('code_zone',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -94,13 +118,23 @@ def upgrade():
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_comments_to_my_works_my_work_id'), 'comments_to_my_works', ['my_work_id'], unique=False)
+    op.create_table('price_list',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('title', sa.String(length=200), nullable=False),
+    sa.Column('text', sa.Text(), nullable=True),
+    sa.Column('price', sa.Integer(), nullable=True),
+    sa.Column('discount', sa.Integer(), nullable=True),
+    sa.Column('work_type_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['work_type_id'], ['work_type.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
     op.create_table('schedule_of_day',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('begin_time_of_day', sa.DateTime(), nullable=True),
     sa.Column('end_time_of_day', sa.DateTime(), nullable=True),
-    sa.Column('work_type', sa.String(length=250), nullable=True),
+    sa.Column('work_type', sa.String(length=100), nullable=True),
     sa.Column('cost', sa.Integer(), nullable=True),
-    sa.Column('name_of_client', sa.String(length=250), nullable=True),
+    sa.Column('name_of_client', sa.String(length=255), nullable=True),
     sa.Column('mail_of_client', sa.String(length=250), nullable=True),
     sa.Column('phone_of_client', sa.String(length=250), nullable=True),
     sa.Column('adress_of_client', sa.String(length=250), nullable=True),
@@ -110,6 +144,8 @@ def upgrade():
     sa.Column('client_come_in', sa.Integer(), nullable=True),
     sa.Column('is_empty', sa.Integer(), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=True),
+    sa.Column('info_message_for_client', sa.Integer(), nullable=True),
+    sa.Column('remind_message_for_client', sa.Integer(), nullable=True),
     sa.Column('date_table_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['date_table_id'], ['date_table.id'], ),
     sa.PrimaryKeyConstraint('id')
@@ -139,6 +175,7 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('text', sa.Text(), nullable=True),
     sa.Column('created', sa.DateTime(), nullable=False),
+    sa.Column('show', sa.Integer(), nullable=True),
     sa.Column('news_id', sa.Integer(), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['news_id'], ['news.id'], ondelete='CASCADE'),
@@ -152,6 +189,18 @@ def upgrade():
     sa.Column('followed_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['followed_id'], ['user.id'], ),
     sa.ForeignKeyConstraint(['follower_id'], ['user.id'], )
+    )
+    op.create_table('nail_master',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.String(length=250), nullable=False),
+    sa.Column('work_phone', sa.Integer(), nullable=True),
+    sa.Column('work_instagram', sa.String(length=250), nullable=True),
+    sa.Column('work_vk', sa.String(length=250), nullable=True),
+    sa.Column('work_telegram', sa.String(length=250), nullable=True),
+    sa.Column('work_mail', sa.String(length=250), nullable=True),
+    sa.Column('user_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('post',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -192,6 +241,7 @@ def downgrade():
     op.drop_table('user_phones')
     op.drop_table('user_internet_account')
     op.drop_table('post')
+    op.drop_table('nail_master')
     op.drop_table('followers')
     op.drop_index(op.f('ix_comments_to_news_user_id'), table_name='comments_to_news')
     op.drop_index(op.f('ix_comments_to_news_news_id'), table_name='comments_to_news')
@@ -199,12 +249,16 @@ def downgrade():
     op.drop_index(op.f('ix_user_role'), table_name='user')
     op.drop_table('user')
     op.drop_table('schedule_of_day')
+    op.drop_table('price_list')
     op.drop_index(op.f('ix_comments_to_my_works_my_work_id'), table_name='comments_to_my_works')
     op.drop_table('comments_to_my_works')
     op.drop_table('code_zone')
+    op.drop_table('work_type')
     op.drop_table('russian_mobil_operator')
+    op.drop_table('preliminary_record')
     op.drop_table('news')
     op.drop_table('my_work')
+    op.drop_table('master_news')
     op.drop_table('date_table')
     op.drop_table('connection_type')
     op.drop_table('action_line')
