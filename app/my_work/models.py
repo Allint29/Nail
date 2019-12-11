@@ -17,13 +17,13 @@ class MyWork(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     id_site = db.Column(db.Integer, nullable=True)
     published = db.Column(db.DateTime, nullable=False, default=datetime.now())
-    title = db.Column(db.String, nullable=True)
-    code = db.Column(db.String, nullable=True)
-    url = db.Column(db.String, unique=True, nullable=True)
-    owner = db.Column(db.String, nullable=True)
+    title = db.Column(db.String(250), nullable=True)
+    code = db.Column(db.String(250), nullable=True)
+    url = db.Column(db.String(250), unique=True, nullable=True)
+    owner = db.Column(db.String(250), nullable=True)
     likes = db.Column(db.Integer)
     show = db.Column(db.Boolean, unique=False, nullable=False, default=True)
-    source = db.Column(db.String, nullable=False)
+    source = db.Column(db.String(250), nullable=False)
     content = db.Column(db.Text, nullable=True)
     #comments_id = ""
 
@@ -48,14 +48,14 @@ class CommentsToMyWorks(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     id_site = db.Column(db.Integer, nullable=True)
     #media- шифр контента к которому относится данный коммент в инстаграмме
-    media = db.Column(db.String, nullable=True)
+    media = db.Column(db.String(250), nullable=True)
     #owner - создатель комментария
-    owner = db.Column(db.String, nullable=True)
+    owner = db.Column(db.String(250), nullable=True)
     published = db.Column(db.DateTime, nullable=False, default=datetime.now())
-    text = db.Column(db.String, nullable=True)
+    text = db.Column(db.String(250), nullable=True)
     #show - инструмент для регулирования комментария к показу
     show = db.Column(db.Boolean, unique=False, nullable=False, default=True)
-    source = db.Column(db.String, nullable=True)
+    source = db.Column(db.String(250), nullable=True)
 
     my_work_id = db.Column(
         db.Integer,

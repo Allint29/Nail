@@ -21,7 +21,7 @@ class WorkType(db.Model):
     Тип работы мастера: Маникюр, Педикюр, Ремонт, Другое.
     '''
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, unique=True)
+    name = db.Column(db.String(200), unique=True)
     # приоритет вывода в прайс листе
     priority_to_show = db.Column(db.Integer, default = 100)
 

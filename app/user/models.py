@@ -287,12 +287,12 @@ class NailMaster(db.Model):
     Чат можно связать только с мастером из этой таблицы
     '''
     id = db.Column(db.Integer, primary_key=True)
-    name =  db.Column(db.String, nullable=False)
+    name =  db.Column(db.String(250), nullable=False)
     work_phone = db.Column(db.Integer, default=0)
-    work_instagram = db.Column(db.String, default='')
-    work_vk = db.Column(db.String, default='')
-    work_telegram = db.Column(db.String, default='')
-    work_mail = db.Column(db.String, default='')
+    work_instagram = db.Column(db.String(250), default='')
+    work_vk = db.Column(db.String(250), default='')
+    work_telegram = db.Column(db.String(250), default='')
+    work_mail = db.Column(db.String(250), default='')
 
     #связь один к одному профиль пользователя профиль мастера
     user_id =  db.Column(db.Integer(), db.ForeignKey('user.id'))  # Foreign key

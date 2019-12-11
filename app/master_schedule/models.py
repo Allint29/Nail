@@ -15,7 +15,7 @@ class DateTable(db.Model):
     '''
     id = db.Column(db.Integer, primary_key=True)
     day_date = db.Column(db.DateTime, default=main_utils.make_date_from_date_time(main_utils.min_date_for_calculation()))
-    day_name = db.Column(db.String(15), default=main_utils.make_name_of_day_from_date(main_utils.min_date_for_calculation()))
+    day_name = db.Column(db.String(50), default=main_utils.make_name_of_day_from_date(main_utils.min_date_for_calculation()))
     
     time = db.relationship('ScheduleOfDay', backref='date_table', lazy='dynamic')
 
@@ -45,26 +45,26 @@ class ScheduleOfDay(db.Model):
     begin_time_of_day = db.Column(db.DateTime, default=main_utils.make_date_from_date_time(main_utils.min_date_for_calculation()))
     end_time_of_day = db.Column(db.DateTime, default=main_utils.make_date_from_date_time(main_utils.min_date_for_calculation()))
     #тип работы
-    work_type = db.Column(db.String, default='маникюр')
+    work_type = db.Column(db.String(100), default='маникюр')
     #цена работы
     cost = db.Column(db.Integer, default=0)
 
     #информация о клиенте
     #имя клиента не связано с таблицей клиента
-    name_of_client = db.Column(db.String, default='неизвестно')
+    name_of_client = db.Column(db.String(255), default='неизвестно')
     #почта не связана с таблицей клиента, может быть пустым, вставляется из данных клиента если есть
-    mail_of_client = db.Column(db.String, default='неизвестно')
+    mail_of_client = db.Column(db.String(250), default='неизвестно')
     #телефон не связан с таблицей клиента, вставляется значение из телефонов клиента если есть
-    phone_of_client = db.Column(db.String, default='неизвестно')
+    phone_of_client = db.Column(db.String(250), default='неизвестно')
     #адрес не связан с таблицей клиента - в соцсети
-    adress_of_client = db.Column(db.String, default='неизвестно')
+    adress_of_client = db.Column(db.String(250), default='неизвестно')
     # описание не связано с таблицей клиента
-    note = db.Column(db.String, default='примечание')
+    note = db.Column(db.String(250), default='примечание')
 
     #тип связи
     connection_type=db.Column(db.Integer, default=0)
     #тип связи строка
-    connection_type_str=db.Column(db.String, default='телефон')
+    connection_type_str=db.Column(db.String(250), default='телефон')
 
 
     #поле говорит о том пришел ли клиент
@@ -100,9 +100,9 @@ class PreliminaryRecord(db.Model):
     '''
     id = db.Column(db.Integer, primary_key=True)
     #имя клиента не связано с таблицей клиента
-    name_of_client = db.Column(db.String, default='')
+    name_of_client = db.Column(db.String(250), default='')
     phone_of_client = db.Column(db.Integer, default = -1)
-    message_of_client = db.Column(db.String, default='')
+    message_of_client = db.Column(db.String(250), default='')
     #метка говорит о том что сообщение обработано
     message_worked = db.Column(db.Integer, default = 0)
     time_to_record = db.Column(db.DateTime, default=main_utils.min_date_for_calculation())

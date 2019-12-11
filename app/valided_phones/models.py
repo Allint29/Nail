@@ -4,8 +4,8 @@ from sqlalchemy.orm import relationship
 
 class RussianMobilOperator(db.Model):
    id = db.Column(db.Integer, primary_key=True)
-   Operator = db.Column(db.String)
-   Count = db.Column(db.String)
+   Operator = db.Column(db.String(250))
+   Count = db.Column(db.String(250))
    Count_parse = db.Column(db.Integer)
    Note = db.Column(db.Text)
 
@@ -20,8 +20,8 @@ class RussianMobilOperator(db.Model):
 class CodeZone(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     Code = db.Column(db.Integer)
-    ZoneText = db.Column(db.String)
-    Count = db.Column(db.String)
+    ZoneText = db.Column(db.String(250))
+    Count = db.Column(db.String(250))
     Count_parse = db.Column(db.Integer)
 
     RussianMobilOperator_id = db.Column(db.Integer, db.ForeignKey('russian_mobil_operator.id'))
