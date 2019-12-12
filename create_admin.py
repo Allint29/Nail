@@ -33,7 +33,7 @@ with app.app_context():
         sys.exit(0);
         
 
-    new_user = User(username=username, role="admin", connection_type_id = -1, user_from_master = 1);
+    new_user = User(username=username, role="admin", connection_type_id = connection_type.id, user_from_master = 1);
     new_user.set_password(password);
 
     db.session.add(new_user);
