@@ -7,7 +7,7 @@ from getpass import getpass;
 import sys;
 #импортируем наш функции
 from app import db, create_app
-from app.user.models import User;
+from app.user.models import User, ConnectionType
 
 #запускаем весь процесс
 app = create_app();
@@ -25,6 +25,13 @@ with app.app_context():
 
     if not password == password2:
         sys.exit(0);
+
+    connection_type = ConnectionType.query.first()
+
+    if connection_type == None:
+        print("Сначала создайте типы связи с пользователем connection_type");
+        sys.exit(0);
+        
 
     new_user = User(username=username, role="admin", connection_type_id = -1, user_from_master = 1);
     new_user.set_password(password);
