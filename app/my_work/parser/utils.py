@@ -107,8 +107,8 @@ def save_my_work(dictionary_of_my_works):
             try:
                 db.session.add(my_work)
                 db.session.commit()
-            except:
-                print(f"Ошибка в блоке сохранения работ мастера")
+            except Exception as e:
+                print(f"Ошибка в блоке сохранения работ мастера: {e}________ _________ __________")
 
         #после проверки БД на новые работы проверяем новые комментарии
         for c in item['comments']:
@@ -135,8 +135,8 @@ def save_my_work(dictionary_of_my_works):
                     try:
                         db.session.add(comment_to_my_work)
                         db.session.commit()
-                    except:
-                        print(f"Ошибка в блоке сохранения комментариев работ мастера")
+                    except Exception as e:
+                        print(f"Ошибка в блоке сохранения комментариев работ мастера: {e}")
 
         
     

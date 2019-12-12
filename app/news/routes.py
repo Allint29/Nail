@@ -11,7 +11,7 @@ import random
 
 @bp.route('/news')
 def index():
-    news_list = News.query.filter(News.text.isnot("")).filter(News.text.isnot(None)).filter(News.show==1).order_by(News.published.desc()) #.all()
+    news_list = News.query.filter(News.text.isnot(None)).filter(News.text != "").filter(News.show==1).order_by(News.published.desc())#.all() #filter(News.text.isnot("")).all() # #.filter(News.show==1).order_by(News.published.desc()) #.all()
     # work_list = MyWork.query.order_by(MyWork.published.desc()).all()
     
     page = request.args.get('page')
