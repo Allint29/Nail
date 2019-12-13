@@ -6,7 +6,7 @@ class RussianMobilOperator(db.Model):
    id = db.Column(db.Integer, primary_key=True)
    Operator = db.Column(db.String(250))
    Count = db.Column(db.String(250))
-   Count_parse = db.Column(db.Integer)
+   Count_parse = db.Column(db.BigInteger)
    Note = db.Column(db.Text)
 
    code_zone = db.relationship('CodeZone', backref='russian_mobil_operator', lazy='dynamic')
@@ -22,7 +22,7 @@ class CodeZone(db.Model):
     Code = db.Column(db.Integer)
     ZoneText = db.Column(db.String(250))
     Count = db.Column(db.String(250))
-    Count_parse = db.Column(db.Integer)
+    Count_parse = db.Column(db.BigInteger)
 
     RussianMobilOperator_id = db.Column(db.Integer, db.ForeignKey('russian_mobil_operator.id'))
     

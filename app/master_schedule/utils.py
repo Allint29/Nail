@@ -1,6 +1,6 @@
 ﻿#R11для проверки подленности ссылки на перенаправления
 from urllib.parse import urlparse, urljoin;
-from flask import request, url_for, flash
+from flask import request, url_for, flash, current_app
 from datetime import datetime, timedelta, date
 from app.master_schedule.models import DateTable, ScheduleOfDay
 from app.user.models import User, UserPhones, UserInternetAccount
@@ -9,7 +9,7 @@ from app.main_func import utils as main_utils
 from app.master_schedule.forms import TimeForm
 from flask_babel import Babel, _, lazy_gettext as _l
 from app.master_schedule.myemail import *
-#from app.main_func.smsc_api import SMSC
+from app.main_func.smsc_api import SMSC
 
 
 def delete_all_days_in_schedule():
@@ -168,6 +168,8 @@ def create_query_time_one_day():
                         )
             if t['time'].hour < 8 or t['time'].hour > 21:
                 time_to_add.is_empty=0
+            else:
+                time_to_add.is_empty=1
 
             db.session.add(time_to_add)
 
@@ -477,6 +479,14 @@ def send_info_message(time_date_id):
     if client_phone == None:
         print(_('У клиента нет зарегистрированных телефонов. Смс не отправлено.'))        
     else:
+        get_balance_sms=SMSC()
+        get_balance_sms=get_balance_sms.get_balance()
+
+        #проверяем баланс если он меньше заданного остатка смс не высылается и регистрация не происходит
+        if main_utils.no_money_sms_balance(current_app.config['SMSC_LOW_MONEY_LEVEL'], main_utils.string_to_float(get_balance_sms)) == True:
+            flash(_('Регистрация по номеру телефона временно недоступна. Повторите попытку позже. Извените за неудобство.'))
+
+
         #отсылаем смс на телефон
         try:            
             list_message=[]
@@ -570,6 +580,14 @@ def send_remaind_messages():
         if client_phone == None:
             print(_(f'У клиента {u.username} нет зарегистрированных телефонов. Смс не отправлено.'))        
         else:
+            get_balance_sms=SMSC()
+            get_balance_sms=get_balance_sms.get_balance()
+
+            #проверяем баланс если он меньше заданного остатка смс не высылается и регистрация не происходит
+            if main_utils.no_money_sms_balance(current_app.config['SMSC_LOW_MONEY_LEVEL'], main_utils.string_to_float(get_balance_sms)) == True:
+                flash(_('Регистрация по номеру телефона временно недоступна. Повторите попытку позже. Извените за неудобство.'))
+
+
             #отсылаем смс на телефон
             try:
                 if time_of_day != None:

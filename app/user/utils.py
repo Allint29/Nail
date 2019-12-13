@@ -1,10 +1,10 @@
 ﻿# -*- coding: utf-8 -*-
 from app import db
-#from app.main_func.smsc_api import SMSC
+from app.main_func.smsc_api import SMSC
 from app.user.models import *
 from app.my_work.models import *
 from datetime import datetime, timedelta
-from flask import current_app, flash
+from flask import current_app, flash, redirect, url_for
 from flask_babel import _, get_locale
 from flask_login import current_user
 from app.main_func import utils as main_utils
@@ -227,50 +227,70 @@ def step_one_for_enter_phone(number_phone=None, current_user_id=None):
     try:
         number_phone = int(number_phone)
     except:
-        return flash(_(f'Введите номер телефона правильно - только цифры без пробелов.'))
+        flash(_(f'Введите номер телефона правильно - только цифры без пробелов.'))
+        return False
 
     if not number_phone or not current_user_id:
-        return flash(_(f'Отсутствует номер телефона или пользователь для него.'))
+        flash(_(f'Отсутствует номер телефона или пользователь для него.'))
+        return False
 
     user = User.query.filter_by(id = current_user_id).first()
+    get_balance_sms=SMSC()
+    get_balance_sms=get_balance_sms.get_balance()
+
+    if user == None:
+        flash(_('Ошибка профиль пользователя не создан. Смс отправлено не будет. Попробуйте еще раз.'))
+        return False
+       
+    #проверяем баланс если он меньше заданного остатка смс не высылается и регистрация не происходит
+    if main_utils.no_money_sms_balance(current_app.config['SMSC_LOW_MONEY_LEVEL'], main_utils.string_to_float(get_balance_sms)) == True:
+        flash(_('Регистрация по номеру телефона временно недоступна. Повторите попытку позже. Извените за неудобство.'))
+        return False #redirect(url_for('welcome.index'))
+
 
     if UserPhones.query.filter_by(number = number_phone).count() < 1:
         #если пользватель пытается регистрировать телефон уже 15 раз то отфутболиваем его
         if user.trying_to_enter_new_phone < 1:
-            return flash(_('Вы исчерпали количество регистраций новых телефонов. Обратитесь к администрации для возможности новой регистрации.'))
-        #если нажали на выслать пароль и телефона нет в базе 
-        code = '{:04d}'.format(random.randint(0, 9999))            
-        try:
-            #sms = SMSC()            
-            #sms.send_sms('7'+str(number_phone), f'Код {code} для подтверждения телефона на сайте Nail-Master-Krd.')  
+            flash(_('Вы исчерпали количество регистраций новых телефонов. Обратитесь к администрации для возможности новой регистрации.'))
+            #если нажали на выслать пароль и телефона нет в базе 
+            return False 
 
-            send_code_sms([{'number': '7'+str(number_phone), 'code': f'{code}'}])
-
-        except:
-            flash(_('Ошибка при отправке смс для подтверждения регистрации по телефону'))
-        
         new_phone = UserPhones(                   
             number=number_phone,                   
             phone_checked=0,
             phone_hash_code="",
             expire_date_hash=datetime.utcnow() + timedelta(minutes = current_app.config['MINUTES_FOR_CONFIRM_PHONE']),
             black_list = 0,
-            user_id=current_user_id,
+            user_id=user.id,
             )            
-        new_phone.set_phone_hash_code(code)      
+        new_phone.set_phone_hash_code(code)   
         
         #уменьшаем количество попыток регистрации нового телефона для пользователя
         user.trying_to_enter_new_phone = user.trying_to_enter_new_phone - 1
         try:
             db.session.add(new_phone)            
             db.session.commit()
-        except:
-            return flash(_('Ошибка при записи в базу. Попробуйте зарегистрироваться еще раз.'))
 
-        return flash(_('Вам на телефон направлен смс с кодом подтверждения телефона. Введите его в поле подтверждения'))
+        except Exception as e:
+            flash(_(f'Ошибка при записи в базу. Попробуйте зарегистрироваться еще раз. {e}'))
+            return False 
+       
+       
+        code = '{:04d}'.format(random.randint(0, 9999))        
+        try:
+            #sms = SMSC()            
+            #sms.send_sms('7'+str(number_phone), f'Код {code} для подтверждения телефона на сайте Nail-Master-Krd.')              
+            send_code_sms([{'number': '7'+str(number_phone), 'code': f'{code}'}])
+        except:
+            flash(_('Ошибка при отправке смс для подтверждения регистрации по телефону'))
+            return False #redirect(url_for('welcome.index'))
+        
+        flash(_('Вам на телефон направлен смс с кодом подтверждения телефона. Введите его в поле подтверждения'))
+        return True
     else:
         last_time = UserPhones.query.filter_by(number = number_phone).first().expire_date_hash - datetime.utcnow()
-        return flash(_(f'Проверьте телефон. Вам был направлен код подтверждения. Повторный запрос можно сделать через | {last_time} | минут '))  
+        flash(_(f'Проверьте телефон. Вам был направлен код подтверждения. Повторный запрос можно сделать через | {last_time} | минут '))
+        return True
     
 def create_new_user_by_phone_registration(number_phone, user_name):
      '''
@@ -283,7 +303,8 @@ def create_new_user_by_phone_registration(number_phone, user_name):
      if len(user_name) == 0:
          return -1     
      if number_phone >= 0:
-        type_connection = [t.id for t in ConnectionType.query.all() if str(t.name_of_type).lower() == "телефон"]
+        list_connection = ConnectionType.query.all()
+        type_connection = [t.id for t in list_connection if str(t.name_of_type).lower() == "телефон"]
         type_connection = 1 if len(type_connection) < 1 else type_connection[0]
         user = User(username=user_name, email=None, email_confirmed=0, role='user', connection_type_id = type_connection, user_from_master = 0)
         #user.set_password(form.password.data)
@@ -295,7 +316,7 @@ def create_new_user_by_phone_registration(number_phone, user_name):
             return -1
         return user.id
      return -1
- 
+  
 def delete_non_comfirmed_phone():
     '''
     функция проверяет не истек ли срок годности кода подтверждения телефона

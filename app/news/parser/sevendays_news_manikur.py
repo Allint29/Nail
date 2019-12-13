@@ -34,6 +34,10 @@ def get_sevendays_news_manikur():
     if html:
         soup = BeautifulSoup(html, 'html.parser')
         all_news = soup.find('li', class_='j-slide b-slider__item b-slider__item_state_selected')
+        if all_news == None:
+            print(f'Пришел пустой документ all_news при парсинге soup.find. Новости не спарсились')
+            return
+
         all_news = all_news.findAll('div', class_='b-story_content-type_horizontal')
         
         image_source = None
@@ -61,36 +65,6 @@ def get_sevendays_news_manikur():
                 save_news(title, image_source, url, published, source, text)
             except:
                 print("Ошибка связи Elasticsearch нет подключения. Порт: 9200")
-            #  all_news = all_news.findAll('div', class_='b-story__content')
-      #  #result_news = []
-      #
-      #  for news in all_news:                    
-      #      title = news.find('a').text
-      #      source = 'https://7days.ru'
-      #      url = source + news.find('a')['href']
-      #      published = news.find('div', class_='b-story__meta').find('span', class_='b-story__date').text.replace(' ', '').replace('в', ' ').replace('|', '').replace('.', '/')
-      #      text = ''
-      #
-      #      try:
-      #          published = parse_sevendays_news_date(published)
-      #          #published = datetime.strptime(published, '%Y-%m-%d')
-      #          #print(published)
-      #      except ValueError:
-      #          published = datetime.now()
-      #          #print('WRONG')
-      #      save_news(title, url, published, source, text)
-      #      #result_news.append({'title' : title, 'source' : source, 'paublished' : published, 'url' : url, 'text' : text})
-        #    print({'title' : title, 'source' : source, 'paublished' : published, 'url' : url, 'text' : text})
-        #return result_news
-        #
-        #    print(title)
-        #    print(source)
-        #    print(url)
-        #    print(published)
-        #    print(text)
-            #
-    #return False
-        #print (result_news)
 
 def get_news_content():
     '''

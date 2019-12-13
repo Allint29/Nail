@@ -7,11 +7,11 @@ from sqlalchemy.orm import relationship
 class News(db.Model):#(SearchableMixin, db.Model):
     #__searchable__ = ['title']
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(250), nullable=False)
-    url = db.Column(db.String(250), unique=True, nullable=False)
-    main_picture_url = db.Column(db.String(250), nullable=True)
+    title = db.Column(db.Text, nullable=False)
+    url = db.Column(db.String(255), unique=True, nullable=False)
+    main_picture_url = db.Column(db.Text, nullable=True)
     published = db.Column(db.DateTime, nullable=False)
-    source = db.Column(db.String(250), nullable=False)
+    source = db.Column(db.String(255), nullable=False)
     text = db.Column(db.Text, nullable=True)
     show = db.Column(db.Integer, default = 1)
 
@@ -68,7 +68,7 @@ class MasterNews(db.Model):
     Сущность хранит все нововведения от мастера сайта - новости сайта
     '''
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(250), nullable=False)
+    title = db.Column(db.Text, nullable=False)
     text = db.Column(db.Text, nullable=False)
     published = db.Column(db.DateTime, nullable=False)
 

@@ -85,8 +85,10 @@ def registration_by_phone_send():
     
     if form.validate_on_submit():
         user_id = create_new_user_by_phone_registration(number,user)
-        step_one_for_enter_phone(number, user_id)        
-        return redirect(url_for('user.registration_by_phone_confirm', data={'number': number, 'user':user}))
+        if step_one_for_enter_phone(number, user_id) == True:
+            return redirect(url_for('user.registration_by_phone_confirm', data={'number': number, 'user':user}))
+        else:
+            return redirect(url_for('user.registration_main'))
 
     elif request.method == 'GET':
         delete_non_comfirmed_phone()          

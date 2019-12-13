@@ -21,11 +21,11 @@ def get_anna_nails_content():
    
     #locker = BoundedSemaphore(value=1) 
     #with locker:
-        
+    photos = []
     try:
 
 
-        locker = 1
+        #locker = 1
         agent = WebAgent()
         account = Account("anna_nails_ani")
 
@@ -65,7 +65,7 @@ def get_anna_nails_content():
                           break
                       photo_date = photo_date.strftime('%Y-%m-%d %H:%M:%S') 
                      # print(f'{type(date_to_stop_search)}' + '!!!!!!!' + f'{type(photo_date)}')
-                      print(f'Считано фоток: {count_photo}')
+                      print(f'Считано фоток: {count_photo}, id_site: {m.id}')
 
                       comment=agent.get_comments(media=m, count=30)
                       comments_for_photo = []                  
@@ -87,12 +87,12 @@ def get_anna_nails_content():
     except(AttributeError):
         print("Atribute Error!")
 
-    locker=0
+    #locker=0
 
-    try:
-        save_my_work(photos)
-    except Exception as e:
-        print(f"Ошибка!!!!!!!: {e}")
+    #try:
+    save_my_work(photos)
+   # except Exception as e:
+   #     print(f"Ошибка!!!!!!!: {e}")
     
 #    print(f"Цикл закончен locker = {locker}")
 

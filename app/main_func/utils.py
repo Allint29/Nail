@@ -1,6 +1,7 @@
 ﻿#R11для проверки подленности ссылки на перенаправления
 from urllib.parse import urlparse, urljoin;
-from flask import request, url_for, redirect
+from flask import request, url_for, redirect, flash
+from flask_babel import _, get_locale
 from datetime import datetime, timedelta, date
 import math
 import json
@@ -26,7 +27,6 @@ def get_redirect_target():
            return target;
 
    return url_for("welcome.index")
-
 
 def min_date_for_calculation():
     '''
@@ -211,5 +211,32 @@ def parser_start_end_date_from_str(dic_date):
    
     return dic_date
 
+def string_to_float(str_price=None):
+    '''
+    Функция берет баланс, который присылает смсц центр в строковом представлении и переводит его в float.
+    Если не может перевести возвращает 0.0
+    '''
+    try:
+        return float(str_price)
+    except Exception as e:
+        print(_(f'Не удалось преобразовать баланс из строки в float. {e}'))
+        return 0.0
 
+def no_money_sms_balance(float_account=0.0, float_balance=0.0):
+    '''
+    Костыль который если сумма на счету смс рассылки меньше заданной цены возвращает истину
+    if float_account > float_balance return True
+    '''
+    try:
+        float_account=float(float_account)
+    except:
+        #взял просто с потолка сумму в 1 рубль
+        print(_(f'Не удалось преобразовать лимит на отсылку смс из строки в float_account. {e}'))
+        float_accaunt=1.0
+    try:
+        float_balance = float(float_balance)
+    except Exception as e:
+        print(_(f'Не удалось преобразовать баланс из строки в float_balance. {e}'))
+        float_balance = 0.0
 
+    return True if float_account > float_balance else False

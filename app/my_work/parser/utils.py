@@ -60,7 +60,7 @@ def is_reklam(text, pattern_list):
 #'comments' : comments_for_photo}
 
 #   id = db.Column(db.Integer, primary_key=True)
-#   id_site = db.Column(db.Integer, nullable=False)
+#   id_site = db.Column(db.String(250), nullable=False)
 #   published = db.Column(db.DateTime, nullable=False, default=datetime.now())
 #   title = db.Column(db.String, nullable=True)
 #   code = db.Column(db.String, nullable=False)
@@ -91,7 +91,8 @@ def save_my_work(dictionary_of_my_works):
             #2019-04-27 19:36:33            
             date_p = datetime.strptime(item['date'], '%Y-%m-%d %H:%M:%S')
             #date_p == date_p.strftime('%Y-%m-%d %H:%M:%S') 
-                 
+            #print(item['id'])
+            #print(f"lenght_title: {len(item['caption'])}")
             my_work = MyWork(
                 id_site=item['id'], 
                 published=date_p,

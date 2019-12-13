@@ -32,6 +32,10 @@ class Config(object):
     SMTP_FROM = os.environ.get('SMTP_FROM')
     SMTP_SERVER = os.environ.get('SMTP_SERVER')
 
+    #погог при котором смс не будут отправляться 
+    SMSC_LOW_MONEY_LEVEL = 20.0
+
+    #количество страниц, которое отображается в разделе новостей моды
     POSTS_PER_PAGE = 3
 
     MINUTES_FOR_CONFIRM_PHONE = 5

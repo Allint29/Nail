@@ -30,7 +30,7 @@ class ConnectionType(db.Model):
     Таблица хранит данные о возможных типах связи с пользователем
     '''
     id = db.Column(db.Integer, primary_key=True)
-    name_of_type = db.Column(db.String(50), nullable=False)
+    name_of_type = db.Column(db.String(150), nullable=False)
 
     user = db.relationship('User', backref='connection_type', lazy='dynamic')
 
@@ -49,10 +49,10 @@ class UserPhones(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
     #номер телефона пользователя
-    number = db.Column(db.Integer)
+    number = db.Column(db.BigInteger)
     #хеш для подтверждения телефона пользователя удаляется при новом подтверждении телефона
     #логика - создается код из цифр и отсылается пользователю и записывается хеш этих цифр в БД, после проверяетя как пароль
-    phone_hash_code = db.Column(db.String(128))  
+    phone_hash_code = db.Column(db.String(255))  
     #телефон подтвержден
     phone_checked = db.Column(db.Integer, nullable=False, default=0)
     expire_date_hash = db.Column(db.DateTime, default=main_utils.min_date_for_calculation())
@@ -87,7 +87,7 @@ class UserInternetAccount(db.Model):
     Класс описывает электронный аккаунт и связь с пользователем
     '''
     id = db.Column(db.Integer, primary_key=True)
-    adress_accaunt = db.Column(db.Integer, unique=True)
+    adress_accaunt = db.Column(db.String(255), unique=True)
     black_list = db.Column(db.Integer, default=0)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
@@ -115,10 +115,10 @@ class User(UserMixin, db.Model):
     '''
     id = db.Column(db.Integer, primary_key=True)
     
-    username = db.Column(db.String(64), unique=True)
-    about_me = db.Column(db.String(140))
+    username = db.Column(db.String(255), unique=True)
+    about_me = db.Column(db.Text(1024))
 
-    email = db.Column(db.String(120))
+    email = db.Column(db.String(255))
     email_confirmed = db.Column(db.Integer, default = 0)
     expire_date_request_confirm_password = db.Column(db.DateTime, default=main_utils.min_date_for_calculation())
 
@@ -287,11 +287,11 @@ class NailMaster(db.Model):
     Чат можно связать только с мастером из этой таблицы
     '''
     id = db.Column(db.Integer, primary_key=True)
-    name =  db.Column(db.String(250), nullable=False)
-    work_phone = db.Column(db.Integer, default=0)
-    work_instagram = db.Column(db.String(250), default='')
-    work_vk = db.Column(db.String(250), default='')
-    work_telegram = db.Column(db.String(250), default='')
+    name =  db.Column(db.Text, nullable=False)
+    work_phone = db.Column(db.BigInteger, default=0)
+    work_instagram = db.Column(db.Text, default='')
+    work_vk = db.Column(db.Text, default='')
+    work_telegram = db.Column(db.Text, default='')
     work_mail = db.Column(db.String(250), default='')
 
     #связь один к одному профиль пользователя профиль мастера
@@ -313,7 +313,7 @@ class Post(db.Model):#(SearchableMixin, db.Model):
  #   __searchable__ = ['body']
 
     id = db.Column(db.Integer, primary_key=True)
-    body = db.Column(db.String(140))
+    body = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     language = db.Column(db.String(5))

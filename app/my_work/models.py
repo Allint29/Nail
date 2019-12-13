@@ -15,15 +15,15 @@ from app import db
 
 class MyWork(db.Model):   
     id = db.Column(db.Integer, primary_key=True)
-    id_site = db.Column(db.Integer, nullable=True)
+    id_site = db.Column(db.String(255), nullable=True)
     published = db.Column(db.DateTime, nullable=False, default=datetime.now())
-    title = db.Column(db.String(250), nullable=True)
+    title = db.Column(db.Text, nullable=True)
     code = db.Column(db.String(250), nullable=True)
-    url = db.Column(db.String(250), unique=True, nullable=True)
-    owner = db.Column(db.String(250), nullable=True)
+    url = db.Column(db.String(255), unique=True, nullable=True)
+    owner = db.Column(db.String(255), nullable=True)
     likes = db.Column(db.Integer)
     show = db.Column(db.Boolean, unique=False, nullable=False, default=True)
-    source = db.Column(db.String(250), nullable=False)
+    source = db.Column(db.Text, nullable=False)
     content = db.Column(db.Text, nullable=True)
     #comments_id = ""
 
@@ -46,16 +46,16 @@ class MyWork(db.Model):
 
 class CommentsToMyWorks(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    id_site = db.Column(db.Integer, nullable=True)
+    id_site = db.Column(db.String(255), nullable=True)
     #media- шифр контента к которому относится данный коммент в инстаграмме
-    media = db.Column(db.String(250), nullable=True)
+    media = db.Column(db.String(255), nullable=True)
     #owner - создатель комментария
-    owner = db.Column(db.String(250), nullable=True)
+    owner = db.Column(db.String(255), nullable=True)
     published = db.Column(db.DateTime, nullable=False, default=datetime.now())
-    text = db.Column(db.String(250), nullable=True)
+    text = db.Column(db.Text, nullable=True)
     #show - инструмент для регулирования комментария к показу
     show = db.Column(db.Boolean, unique=False, nullable=False, default=True)
-    source = db.Column(db.String(250), nullable=True)
+    source = db.Column(db.String(255), nullable=True)
 
     my_work_id = db.Column(
         db.Integer,
