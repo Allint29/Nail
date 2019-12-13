@@ -4,6 +4,13 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    {%if title %}
+    <title>{{title}}</title>
+    {%else%}
+    <title>Профессиональный маникюр в Краснодаре Фестивальный микрорайон. Все виды маникюра и педикюра. :: Мастер Ногтевого Сервиса Анна.</title>
+    {%endif%}
+    
+
     <link href="https://fonts.googleapis.com/css?family=Caveat:400,700|Marck+Script&display=swap&subset=cyrillic,cyrillic-ext,latin-ext" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Amatic+SC:400,700&display=swap&subset=cyrillic" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Pangolin&display=swap&subset=cyrillic" rel="stylesheet">
@@ -31,11 +38,7 @@
           href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.9/styles/default.min.css">
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.9/highlight.min.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    {%if title %}
-    <title>{{title}}</title>
-    {%else%}
-    <title>Профессиональный маникюр в Краснодаре Фестивальный микрорайон. Все виды маникюра и педикюра. :: Мастер Ногтевого Сервиса Анна.</title>
-    {%endif%}
+
 
 
 </head>
