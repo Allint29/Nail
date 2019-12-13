@@ -83,7 +83,7 @@ def create_connection_types_list():
 
     with flask_app.app_context():
 
-        if check_time_for_do('create_connection_types_list', random_= False) == True:    
+        if check_time_for_do('create_connection_types_list', flask_app.config['PERIOD_CONNECTION_TYPES_LIST'], random_= False) == True:    
             #print(f'From create_connection_types_list next: _____{dict_of_line["create_connection_types_list"]}')
             fill_select_connection_type()
 
@@ -95,7 +95,7 @@ def my_work_content():
     #проверка на очередь - если не моя очередь то пропускаю действие
 
     with flask_app.app_context():        
-        if check_time_for_do('my_work_content') == True:    
+        if check_time_for_do('my_work_content',flask_app.config['PERIOD_MY_WORK_CONTENT'],True) == True:    
             #print(f'From my_work_content next: ____ {dict_of_line["my_work_content"]}')
             anna_nails_ani.get_anna_nails_content()
 
@@ -107,7 +107,7 @@ def sevendays_news():
     #проверка на очередь - если не моя очередь то пропускаю действие
 
     with flask_app.app_context():
-        if check_time_for_do('sevendays_news') == True:    
+        if check_time_for_do('sevendays_news',flask_app.config['PERIOD_SEVENDAYS_NEWS'],True) == True:    
             #print(f'From sevendays_news next: _____{dict_of_line["sevendays_news"]}')
             sevendays_news_manikur.get_sevendays_news_manikur()
         
@@ -119,7 +119,7 @@ def sevendays_news_content():
     #проверка на очередь - если не моя очередь то пропускаю действие
 
     with flask_app.app_context():
-        if check_time_for_do('sevendays_news_content') == True:    
+        if check_time_for_do('sevendays_news_content',flask_app.config['PERIOD_SEVENDAYS_NEWS_CONTENT'],True) == True:    
             #print(f'From sevendays_news_content next: _____{dict_of_line["sevendays_news_content"]}')
             sevendays_news_manikur.get_news_content()
 
@@ -131,7 +131,7 @@ def delete_non_confirm_phones():
     #проверка на очередь - если не моя очередь то пропускаю действие
 
     with flask_app.app_context():
-        if check_time_for_do('delete_non_confirm_phones') == True:    
+        if check_time_for_do('delete_non_confirm_phones',flask_app.config['PERIOD_DELETE_NON_CONFIRM_PHONES'],True) == True:    
             #print(f'From delete_non_confirm_phones next: _____{dict_of_line["delete_non_confirm_phones"]}')
             delete_non_comfirmed_phone()
 
@@ -142,7 +142,7 @@ def delete_user_without_contacts():
     '''
     with flask_app.app_context():
           #проверка на очередь - если не моя очередь то пропускаю действие
-        if check_time_for_do('delete_user_without_contacts') == True:    
+        if check_time_for_do('delete_user_without_contacts',flask_app.config['PERIOD_DELETE_USER_WHITHOUT_CONTACTS'],True) == True:    
             #print(f'From delete_user_without_contacts next: _____{dict_of_line["delete_user_without_contacts"]}')
             delete_user_without_phone_and_confirm_email()
 
@@ -151,8 +151,9 @@ def delete_email_if_non_confirm():
     '''
     Задача на удаление не подтвержденных номеров по истесении их времени жизни
     '''
+    #print('PERIOD NON CONF', flask_app.config['PERIOD_DELETE_EMAIL_IF_NON_CONFIRM'])
     with flask_app.app_context():
-        if check_time_for_do('delete_email_if_non_confirm') == True:    
+        if check_time_for_do('delete_email_if_non_confirm',flask_app.config['PERIOD_DELETE_EMAIL_IF_NON_CONFIRM'],True) == True:    
             #print(f'From delete_email_if_non_confirm next: _____{dict_of_line["delete_email_if_non_confirm"]}')
            
             delete_non_comfirmed_email()
@@ -165,7 +166,7 @@ def create_days_for_two_month():
     #проверка на очередь - если не моя очередь то пропускаю действие
 
     with flask_app.app_context():
-        if check_time_for_do('create_days_for_two_month') == True:    
+        if check_time_for_do('create_days_for_two_month',flask_app.config['PERIOD_CREATE_DAYS_FOR_TWO_MONTH'],True) == True:    
             #print(f'From create_days_for_two_month next: _____{dict_of_line["create_days_for_two_month"]}')           
             create_calendar_for_two_month()
 
@@ -176,7 +177,7 @@ def create_grid_time_for_one_day():
     '''
     #проверка на очередь - если не моя очередь то пропускаю действие
     with flask_app.app_context():
-        if check_time_for_do('create_grid_time_for_one_day') == True:    
+        if check_time_for_do('create_grid_time_for_one_day',flask_app.config['PERIOD_CREATE_GRID_TIME_FOR_ONE_DAY'],True) == True:    
             #print(f'From create_grid_time_for_one_day next: _____{dict_of_line["create_grid_time_for_one_day"]}')             
             create_query_time_one_day()
 
@@ -199,10 +200,10 @@ def setup_periodic_tasks(sender, **kwargs):
     
     #словарь хранит время запуска задач если приложение запускается первый раз или после перезагрузки
     global dict_of_line
-    step = 60
+    step = 120
     dict_of_line = {
          'create_connection_types_list' : {'datetime_' :datetime.utcnow(), 'do_many_times' : False},#datetime.utcnow(),
-         'my_work_content' :  {'datetime_' :datetime.utcnow() + timedelta(seconds = (step + random.randint(2,4))), 'do_many_times' : True},#datetime.utcnow() + timedelta(seconds = (step + random.randint(2,4))),
+         'my_work_content' :  {'datetime_' :datetime.utcnow() + timedelta(seconds = (step + random.randint(2,4))), 'do_many_times' : False},#datetime.utcnow() + timedelta(seconds = (step + random.randint(2,4))),
          'sevendays_news' : {'datetime_' :datetime.utcnow() + timedelta(seconds = (2 * step + random.randint(5,7))), 'do_many_times' : True},# datetime.utcnow() + timedelta(seconds = (2 * step + random.randint(5,7))),
          'sevendays_news_content' :  {'datetime_' :datetime.utcnow() + timedelta(seconds = (3 * step + random.randint(8,10))), 'do_many_times' : True},#datetime.utcnow() + timedelta(seconds = (3 * step + random.randint(8,10))),
          'delete_non_confirm_phones' :  {'datetime_' :datetime.utcnow() + timedelta(seconds = (4 * step + random.randint(11,13))), 'do_many_times' : True},#datetime.utcnow() + timedelta(seconds = (4 * step + random.randint(11,13))),
@@ -213,7 +214,7 @@ def setup_periodic_tasks(sender, **kwargs):
          }
     #{'datetime' :datetime.utcnow(), 'do_many_times' : True}
 
-    print('First emnter ________________', dict_of_line)
+    print('First enter ________________', dict_of_line)
 
     #задачи инициализации списка типа связи: Порядок в очереди 0
     sender.add_periodic_task(crontab(minute='*/1'), create_connection_types_list.s())

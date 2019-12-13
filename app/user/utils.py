@@ -247,6 +247,7 @@ def step_one_for_enter_phone(number_phone=None, current_user_id=None):
         flash(_('Регистрация по номеру телефона временно недоступна. Повторите попытку позже. Извените за неудобство.'))
         return False #redirect(url_for('welcome.index'))
 
+    code = '{:04d}'.format(random.randint(0, 9999))        
 
     if UserPhones.query.filter_by(number = number_phone).count() < 1:
         #если пользватель пытается регистрировать телефон уже 15 раз то отфутболиваем его
@@ -276,7 +277,7 @@ def step_one_for_enter_phone(number_phone=None, current_user_id=None):
             return False 
        
        
-        code = '{:04d}'.format(random.randint(0, 9999))        
+        
         try:
             #sms = SMSC()            
             #sms.send_sms('7'+str(number_phone), f'Код {code} для подтверждения телефона на сайте Nail-Master-Krd.')              
@@ -374,17 +375,17 @@ def delete_user_without_phone_and_confirm_email():
     #здесь вычитаю из юзеров которых нужно удалить тех у кого не истек еще срок подтверждения почты
     u_out_conf_mail = [ user.id for user in u_out_conf_mail if user.registration_date + timedelta(seconds=current_app.config['SECONDS_TO_CONFIRM_EMAIL']) < datetime.utcnow()] #
     #выбрал id user
-    print(f'СПИСОК НА УДАЛЕНИЕ ПОЛЬЗОВАТЕЛЕЙ: {u_out_conf_mail}')
+    #print(f'СПИСОК НА УДАЛЕНИЕ ПОЛЬЗОВАТЕЛЕЙ: {u_out_conf_mail}')
     #Выбираю все телефоны подтвержденные или с неистекшим сроком годности или подтвержденные
     p_out_conf = [p.user_id for p in UserPhones.query.all() \
         if p.user_id in u_out_conf_mail and p.expire_date_hash != main_utils.min_date_for_calculation() and p.expire_date_hash > datetime.utcnow() \
         or p.user_id in u_out_conf_mail and (p.phone_checked > 0 or p.user_from_master > 0)]
     #выбрал user_id у телефонов
-    print(f'СПИСОК ИД ПОЛЬЗОВАТЕЛЕЙ ПОДТВЕРЖДЕННЫХ: {p_out_conf}')
+    #print(f'СПИСОК ИД ПОЛЬЗОВАТЕЛЕЙ ПОДТВЕРЖДЕННЫХ: {p_out_conf}')
        
     #удаляем юзеров из списка удаления если у него есть действующий телефон
     id_to_del = [user_id for user_id in u_out_conf_mail if not user_id in p_out_conf]
-    print(f'СПИСОК ИД ПОЛЬЗОВАТЕЛЕЙ КОТОРЫЕ СЕЙЧАС УДАЛЯЮ: {id_to_del}')
+    #print(f'СПИСОК ИД ПОЛЬЗОВАТЕЛЕЙ КОТОРЫЕ СЕЙЧАС УДАЛЯЮ: {id_to_del}')
     #удаляю из базы данных юзеров которые остались без подтверждения
     #1)удаляю их телефоны
     #2)удаляю их соцсети

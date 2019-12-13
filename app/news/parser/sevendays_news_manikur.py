@@ -29,8 +29,10 @@ def get_sevendays_news_manikur():
     '''
     func come in web of 7days in box of mail news and parse it to format db and save it
     '''
-    html = get_html('https://7days.ru/search/?search_all=1&q=%EC%E0%ED%E8%EA%FE%F0')
-    
+    #
+    #html = get_html('https://7days.ru/search/?search_all=1&q=%EC%E0%ED%E8%EA%FE%F0')
+    html = get_html('https://7days.ru/search/?onsite=%EC%E0%ED%E8%EA%FE%F0')
+
     if html:
         soup = BeautifulSoup(html, 'html.parser')
         all_news = soup.find('li', class_='j-slide b-slider__item b-slider__item_state_selected')

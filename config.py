@@ -40,3 +40,22 @@ class Config(object):
 
     MINUTES_FOR_CONFIRM_PHONE = 5
     SECONDS_TO_CONFIRM_EMAIL = 600
+
+    #Сдвиг времени региона в часах
+    LOCALE_TIME_OFFSET = 3
+
+    #рабочие часы для отправки напоминаний писем и смс часы 0-23
+    BEGIN_WORK_TIME = 12
+    END_WORK_TIME = 18
+
+    #время периодичности выполнения разных задачь
+    
+    PERIOD_CONNECTION_TYPES_LIST = 60    
+    PERIOD_MY_WORK_CONTENT = 60 #3600*4    
+    PERIOD_SEVENDAYS_NEWS = 60 #3600*5    
+    PERIOD_SEVENDAYS_NEWS_CONTENT = 60 #3600*6    
+    PERIOD_DELETE_NON_CONFIRM_PHONES = 60    
+    PERIOD_DELETE_USER_WHITHOUT_CONTACTS = 120    
+    PERIOD_DELETE_EMAIL_IF_NON_CONFIRM = 60    
+    PERIOD_CREATE_DAYS_FOR_TWO_MONTH = 60 #3600
+    PERIOD_CREATE_GRID_TIME_FOR_ONE_DAY = 60 #1800

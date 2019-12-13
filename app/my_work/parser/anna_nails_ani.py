@@ -65,7 +65,7 @@ def get_anna_nails_content():
                           break
                       photo_date = photo_date.strftime('%Y-%m-%d %H:%M:%S') 
                      # print(f'{type(date_to_stop_search)}' + '!!!!!!!' + f'{type(photo_date)}')
-                      print(f'Считано фоток: {count_photo}, id_site: {m.id}')
+                      #print(f'Считано фоток: {count_photo}, id_site: {m.id}')
 
                       comment=agent.get_comments(media=m, count=30)
                       comments_for_photo = []                  
@@ -83,6 +83,7 @@ def get_anna_nails_content():
                       photos.append(item)
         
     except Exception as e:
+        pass
         print(f"Error: Type None! {e}")
     except(AttributeError):
         print("Atribute Error!")

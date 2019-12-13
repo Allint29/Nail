@@ -164,11 +164,8 @@ def show_schedule_master_details(dic_val):
                 if reserve_time_for_client(dict_of_form) == True:
                     #print('отослали сообщение')
                     send_info_message(dict_of_form['time_date_id'])
-
-
                 return redirect(url_for('master_schedule.show_schedule_master', dic_val=dic_val))
            
-
             if form_change.clear_field:
                 #здесь очищаю форму, ,  так же нужно обнулить индексы клиента и расписания
                 clear_time_shedue(time_date_id)

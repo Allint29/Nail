@@ -466,16 +466,19 @@ def send_info_message(time_date_id):
         print(_('Информационное письмо было отправлено клиенту ранее.'))
         flash(_('Информационное письмо было отправлено клиенту ранее.'))
         return False
-
-    if client_email == None or client_email =='':        
-        print(_('У клиента не установлена электронная почта. Писмо не отправлено.'))
+       
+    if client_email == None or client_email =='':    
+        flash(_('У клиента не установлена электронная почта. Письмо не отправлено.'))
+        print(_('У клиента не установлена электронная почта. Письмо не отправлено.'))
     else:
         #отсылаем письмо на почту
         try:
             send_info_email(client_email, time_date.begin_time_of_day)
+            flash(_('Информационное письмо отправлено клиенту.'))
+            print(_('Информационное письмо отправлено клиенту.'))
         except:
+            flash(_('Ошибка при отправке письма в блоке информационной рассылки при первой записи клиента.'))
             print(_('Ошибка при отправке письма в блоке информационной рассылки при первой записи клиента.'))
-        
     if client_phone == None:
         print(_('У клиента нет зарегистрированных телефонов. Смс не отправлено.'))        
     else:
@@ -483,28 +486,29 @@ def send_info_message(time_date_id):
         get_balance_sms=get_balance_sms.get_balance()
 
         #проверяем баланс если он меньше заданного остатка смс не высылается и регистрация не происходит
-        if main_utils.no_money_sms_balance(current_app.config['SMSC_LOW_MONEY_LEVEL'], main_utils.string_to_float(get_balance_sms)) == True:
-            flash(_('Регистрация по номеру телефона временно недоступна. Повторите попытку позже. Извените за неудобство.'))
-
-
-        #отсылаем смс на телефон
-        try:            
-            list_message=[]
-            dic_message={'number': '7'+str(client_phone.number), 'date': f'{time_date.begin_time_of_day.strftime("%d-%m-%Y %H:%M")}'}
-            list_message.append(dic_message)
-            send_info_sms(list_message)
-     #       sms = SMSC()            
-     #       sms.send_sms('7'+str(client_phone), f'Вы записаны на маникюр на {time_date.begin_time_of_day.strftime("%d-%m-%Y %H:%M")}. С уважением, Анна. www.nail-master-krd.ru') 
-        except:
-            print(_('Ошибка при отправке смс в блоке информационной рассылки при первой записи клиента.'))
-
-    #отмечает в единице даты - времени что первое письмо отправлено
+        if main_utils.no_money_sms_balance(current_app.config['SMSC_LOW_MONEY_LEVEL'], main_utils.string_to_float(get_balance_sms)) == False:#отсылаем смс на телефон
+            try:            
+                list_message=[]
+                dic_message={'number': '7'+str(client_phone.number), 'date': f'{time_date.begin_time_of_day.strftime("%d-%m-%Y %H:%M")}'}
+                list_message.append(dic_message)
+                send_info_sms(list_message)
+     #           sms = SMSC()            
+     #           sms.send_sms('7'+str(client_phone), f'Вы записаны на маникюр на {time_date.begin_time_of_day.strftime("%d-%m-%Y %H:%M")}. С уважением, Анна. www.nail-master-krd.ru') 
+            except:
+                flash(_('Ошибка при отправке смс в блоке информационной рассылки при первой записи клиента.'))
+                print(_('Ошибка при отправке смс в блоке информационной рассылки при первой записи клиента.'))
+        else:
+            flash(_('Лимит денежных средств на счету смс центра не позволяет отправить информационное сообщение клиенту. Позвоните ему и сообщите,что он записан на прием.'))
+        #отмечает в единице даты - времени что первое письмо отправлено
     time_date.info_message_for_client = 1
     try:
         db.session.add(time_date)
         db.session.commit()
     except:
         print(_('Ошибка при записи в базу отметки, что первое письмо уже отсправлено.'))
+        flash(_('Ошибка при записи в базу отметки, что первое письмо уже отсправлено.'))
+        return False            
+    return True
 
 def send_remaind_messages():
     '''
@@ -516,18 +520,19 @@ def send_remaind_messages():
     4) слать смс асинхронно
     '''
     #дата. когда смс отсылаеся
-    offset = timedelta(hours=3)
+    offset = timedelta(hours=current_app.config['LOCALE_TIME_OFFSET'])
     next_date_time_now_offset = datetime.utcnow()+timedelta(days=1)+timedelta(hours=3)
     
     date_ = next_date_time_now_offset.date()
     time_ = next_date_time_now_offset.time()
 
-    if time_.hour < 12 and time_.hour > 16:
-        print(_('Нельзя отправлять смс и письма ранее 12:00 или позднее 16:00.'))
+    if time_.hour < current_app.config['BEGIN_WORK_TIME'] and time_.hour > current_app.config['END_WORK_TIME']:
+        print(_(f"Нельзя отправлять смс и письма ранее {current_app.config['BEGIN_WORK_TIME']} или позднее {current_app.config['END_WORK_TIME']}."))
         return False
 
     #выбрал все таймы на следующий день у которых есть ид юзера которые заняты и которым не отсылалис смс
-    list_dates_to_send = [d for d in ScheduleOfDay.query.all() \
+    list_schedule_all = ScheduleOfDay.query.all()
+    list_dates_to_send = [d for d in  list_schedule_all\
         if d.begin_time_of_day.date() == date_ \
         and d.user_id >=0 \
         and d.is_empty==0 \
@@ -548,8 +553,8 @@ def send_remaind_messages():
     if len(list_users_for_send) <= 0:
         print(_('Нет пользователей для отправки сообщений_2.'))        
         return False
-
-    list_phones_for_send = [p for p in UserPhones.query.all() if p.user_id in list_id_users]
+    list_users_all = UserPhones.query.all()
+    list_phones_for_send = [p for p in list_users_all if p.user_id in list_id_users]
     
     #отправляем письма напоминания
     for u in list_users_for_send:
@@ -584,21 +589,20 @@ def send_remaind_messages():
             get_balance_sms=get_balance_sms.get_balance()
 
             #проверяем баланс если он меньше заданного остатка смс не высылается и регистрация не происходит
-            if main_utils.no_money_sms_balance(current_app.config['SMSC_LOW_MONEY_LEVEL'], main_utils.string_to_float(get_balance_sms)) == True:
-                flash(_('Регистрация по номеру телефона временно недоступна. Повторите попытку позже. Извените за неудобство.'))
-
-
-            #отсылаем смс на телефон
-            try:
-                if time_of_day != None:
-                    list_message=[]
-                    dic_message={'number': '7'+str(client_phone.number), 'date': f'{time_of_day.begin_time_of_day.strftime("%d-%m-%Y %H:%M")}'}
-                    list_message.append(dic_message)
-                    send_remind_sms(list_message)
-         #           sms = SMSC()            
-         #           sms.send_sms('7'+str(client_phone), f'Вы записаны на маникюр на {time_date.begin_time_of_day.strftime("%d-%m-%Y %H:%M")}. С уважением, Анна. www.nail-master-krd.ru') 
-            except:
-                print(_(f'Ошибка при отправке смс пользователю {u.username} в блоке информационной рассылки при первой записи клиента.'))
+            if main_utils.no_money_sms_balance(current_app.config['SMSC_LOW_MONEY_LEVEL'], main_utils.string_to_float(get_balance_sms)) == False:
+                #отсылаем смс на телефон
+                try:
+                    if time_of_day != None:
+                        list_message=[]
+                        dic_message={'number': '7'+str(client_phone.number), 'date': f'{time_of_day.begin_time_of_day.strftime("%d-%m-%Y %H:%M")}'}
+                        list_message.append(dic_message)
+                        send_remind_sms(list_message)
+         #               sms = SMSC()            
+         #               sms.send_sms('7'+str(client_phone), f'Вы записаны на маникюр на {time_date.begin_time_of_day.strftime("%d-%m-%Y %H:%M")}. С уважением, Анна. www.nail-master-krd.ru') 
+                except:
+                    print(_(f'Ошибка при отправке смс пользователю {u.username} в блоке информационной рассылки при первой записи клиента.'))
+            else:
+                print(_('Смс с напоминанием клиенту не отослано, так как лимит денежных средств на счету смс центра меньше допустимого. Пополните баланс.'))
         #отмечает в единице даты - времени что первое письмо отправлено
         time_of_day.remind_message_for_client = 1
         try:
