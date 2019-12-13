@@ -557,13 +557,13 @@ def delete_socials(dic_val, id_socials=-1):
         return redirect(url_for('admin_my.edit_socials', dic_val = dic_val, id_socials=id_socials))
 
 
-@bp.route('/list_my_work_form', methods=['GET', 'POST'])
+@bp.route('/list_my_work_form_<dic_date>', methods=['GET', 'POST'])
 @admin_required
-def list_my_work():
+def list_my_work(dic_date):
     '''
     Вывод страницы c работами мастера
     '''
-    #dic_date = parser_start_end_date_from_str(dic_date)    
+    dic_date = main_utils.parser_start_end_date_from_str(dic_date)    
     titleVar='Редактирование отображения работ'
     list_edit_users_form = []
     time_form = MyWorkTimeToShowForm()    
@@ -571,10 +571,10 @@ def list_my_work():
     list_my_works_and_comments_forms=[]
     list_comment=[]
     users = []
-    #start_date = #dic_date['start_date'].date()
-    #end_date = #dic_date['end_date'].date()
-    start_date =(datetime.utcnow() -timedelta(days=30)).date()
-    end_date = datetime.utcnow().date()
+    start_date = dic_date['start_date'].date()
+    end_date = dic_date['end_date'].date()
+    #start_date =(datetime.utcnow() -timedelta(days=30)).date()
+    #end_date = datetime.utcnow().date()
                 
     if request.method == "POST":         
         if time_form.validate_on_submit():
@@ -583,7 +583,7 @@ def list_my_work():
             start_date = time_form.date_field_start.data
             end_date =time_form.date_field_end.data
             my_works_all = MyWork.query.all()
-            list_my_works = [w for w in my_works_ if w.published.date() >= start_date and w.published.date() <= end_date]
+            list_my_works = [w for w in my_works_all if w.published.date() >= start_date and w.published.date() <= end_date]
             for w in list_my_works:
                 my_work_form = EditMyWorksForm(id_my_work_field = w.id,
                                                id_site_field = w.id_site,
@@ -611,7 +611,9 @@ def list_my_work():
                         show_list_field = '0' if c.show == 0 else '1',
                         source_field = c.source)
                     list_comment_forms.append(coment_form)
-        
+
+                #dic_date={'start_date': start_date.strftime('%Y-%m-%d_%H-%M'),'end_date': end_date.strftime('%Y-%m-%d_%H-%M')}
+                
                 list_my_works_and_comments_forms.append({'my_work_form': my_work_form, 'list_comment_form': list_comment_forms})
 
     elif request.method == "GET":
@@ -649,13 +651,14 @@ def list_my_work():
 
             list_my_works_and_comments_forms.append({'my_work_form': my_work_form, 'list_comment_form': list_comment_forms})
                        
-   # dic_date={'start_date': start_date.strftime('%Y-%m-%d_%H-%M'),'end_date': end_date.strftime('%Y-%m-%d_%H-%M')} 
-    
-    return render_template('admin_my/list_my_work.html', time_form = time_form, list_my_works_and_comments_forms = list_my_works_and_comments_forms) #,  list_my_works=list_my_works, list_comment=list_comment, dic_date=dic_date
+    dic_date={'start_date': start_date.strftime('%Y-%m-%d_%H-%M'),'end_date': end_date.strftime('%Y-%m-%d_%H-%M')} 
+    print(dic_date)
+    print(start_date.strftime('%Y-%m-%d_%H-%M'), end_date.strftime('%Y-%m-%d_%H-%M'))
+    return render_template('admin_my/list_my_work.html', time_form = time_form, list_my_works_and_comments_forms = list_my_works_and_comments_forms, dic_date=dic_date) #,  list_my_works=list_my_works, list_comment=list_comment, dic_date=dic_date
 
-@bp.route('/save_my_work', methods=['POST'])
+@bp.route('/save_my_work_<dic_date>', methods=['POST'])
 @admin_required
-def save_my_work():
+def save_my_work(dic_date):
     '''
     Действие сохранения изменений в форме работы
     '''
@@ -680,11 +683,11 @@ def save_my_work():
     else:
         flash(_('Ошибка: Изменения в контенте работы мастера НЕ сохранены.'))
 
-    return redirect(main_utils.get_redirect_target())
+    return redirect(url_for('admin_my.list_my_work', dic_date=dic_date))
     
-@bp.route('/edit_comment_to_my_work', methods=['GET', 'POST'])
+@bp.route('/edit_comment_to_my_work_<dic_date>', methods=['GET', 'POST'])
 @admin_required
-def edit_comment_to_my_work():
+def edit_comment_to_my_work(dic_date):
     '''
     Вывод страницы редактирования работы
     '''
@@ -707,7 +710,7 @@ def edit_comment_to_my_work():
                 flash(_('Ошибка при записи в базу: Изменения в контенте комментария к работе мастера НЕ сохранены.'))
 
 
-    return redirect(main_utils.get_redirect_target())
+    return redirect(url_for('admin_my.list_my_work', dic_date=dic_date))
 
 @bp.route('/list_news', methods=['GET', 'POST'])
 @admin_required

@@ -17,7 +17,7 @@
             <a class="button" href="{{url_for('admin_my.find_users', dic_val ={'time_date_id' : -1 , 'client_id' : -1})}}">{{_('Редактор клиентов')}} </a>
         </li>
         <li>
-            <a class="button" href="{{url_for('admin_my.list_my_work')}}">{{_('Редактор работ')}} </a>
+            <a class="button" href="{{url_for('admin_my.list_my_work', dic_date = {'start_date': '-1', 'end_date': '-1'})}}">{{_('Редактор работ')}} </a>
         </li>
         <li>
             <a class="button" href="{{url_for('admin_my.list_work_types')}}">{{_('Редактор видов работ')}} </a>

@@ -18,7 +18,7 @@
     <ul>
         {% for tuple in list_my_works_and_comments_forms %}
         <li>
-            <form action="{{url_for('admin_my.save_my_work')}}" method="post">
+            <form action="{{url_for('admin_my.save_my_work', dic_date=dic_date)}}" method="post">
                 {{tuple['my_work_form'].hidden_tag()}}
                 <ul>
                     <li>
@@ -65,7 +65,7 @@
             {%for f in tuple['list_comment_form']%}
             <ul>
                 <li>
-                    <form action="{{ url_for('admin_my.edit_comment_to_my_work') }}" method="post">
+                    <form action="{{ url_for('admin_my.edit_comment_to_my_work', dic_date=dic_date) }}" method="post">
                         {{f.hidden_tag()}}
                         <ul>
                             <li>
