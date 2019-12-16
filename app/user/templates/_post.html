@@ -13,14 +13,17 @@
             {{ post.author.username }}
         </a>
         {% endset %}
-        {{ _('%(username)s напиcал(а) %(when)s',
-        username=user_link, when=moment(post.timestamp).fromNow()) }}
+        {{
+ _('%(username)s напиcал(а) %(when)s',
+        username=user_link, when=moment(post.timestamp).fromNow())
+        }}
         <br>
+        
         <span id="post{{ post.id }}">{{ post.body }}</span>
         {% if post.language and post.language != g.locale %}
         <br><br>
         <span id="translation{{ post.id }}">
-                
+
             <a href="javascript:translate(
                                 '#post{{ post.id }}',
                                 '#translation{{ post.id }}',
@@ -28,7 +31,7 @@
                                 '{{ g.locale }}');">{{ _('Перевести') }}</a>
         </span>
         {% else %}
-            
+
         {% endif %}
 
     </div>

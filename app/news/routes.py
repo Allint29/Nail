@@ -3,8 +3,9 @@ from app.news import bp
 from app import db
 from app.news.models import News, CommentsToNews
 from app.my_work.models import MyWork
-from app.news.forms import CommentForm;
-from flask_login import current_user, login_required;
+from app.news.forms import CommentForm
+from app.user.forms import LoginForm
+from flask_login import current_user, login_required
 from flask_babel import _, get_locale
 from app.main_func import utils
 import random
@@ -13,7 +14,7 @@ import random
 def index():
     news_list = News.query.filter(News.text.isnot(None)).filter(News.text != "").filter(News.show==1).order_by(News.published.desc())#.all() #filter(News.text.isnot("")).all() # #.filter(News.show==1).order_by(News.published.desc()) #.all()
     # work_list = MyWork.query.order_by(MyWork.published.desc()).all()
-    
+    form_login=LoginForm()
     page = request.args.get('page')
     if page and page.isdigit():
         page = int(page)
@@ -29,16 +30,17 @@ def index():
     prev_url = url_for('news.index', page=pages_new.prev_num) if pages_new.has_prev else None
 
 
-    return render_template("news/index.html", pages=pages_new, next_url=next_url, prev_url=prev_url)
+    return render_template("news/index.html", pages=pages_new, next_url=next_url, prev_url=prev_url, form_login=form_login)
 
 #после мы по этому номеру ищем в Id новости саму новость
 @bp.route('/<int:news_id>')
 def single_news(news_id):
+    form_login=LoginForm()
     my_news = News.query.filter(News.id == news_id).first();    
     if not my_news:
         abort(404);    
     comment_form = CommentForm(news_id=my_news.id);
-    return render_template('news/single_news.html', page_title=my_news.title, news = my_news, comment_form = comment_form);
+    return render_template('news/single_news.html', page_title=my_news.title, news = my_news, comment_form = comment_form, form_login=form_login);
 
 
 #R11Создадим обработчик который будет сохранять новый комментарий, если его не будет то удет выводиться ошибка
@@ -48,6 +50,7 @@ def add_comment():
     '''
     func added comment to BD from web of single news
     '''
+    
     form = CommentForm();
     if form.validate_on_submit():
             comment = CommentsToNews(text=form.comment_text.data, news_id=form.news_id.data, user_id=current_user.id, show = 1)

@@ -19,7 +19,7 @@ from app.user.main import bp
 
 ################################################ Функционал подписи на пользователей и поиска и перевода по сайту ###########################################
 
-@bp.route('/translate', methods=['POST'])
+@bp.route('/translate', methods=['GET', 'POST'])
 @login_required
 def translate_text():
     #print('!!!!!!!!!!!')

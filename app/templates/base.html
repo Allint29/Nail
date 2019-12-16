@@ -2,6 +2,8 @@
 
 <html lang="ru">
 <head>
+    <meta name="yandex-verification" content="c3662fccbafe3825" />
+    <meta name="google-site-verification" content="Axr6vr1eSXyYvMFBNFkuSDFtH3DjqEacVHehut19GJk" />
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     {%if title %}
@@ -9,29 +11,25 @@
     {%else%}
     <title>Профессиональный маникюр в Краснодаре Фестивальный микрорайон. Все виды маникюра и педикюра. :: Мастер Ногтевого Сервиса Анна.</title>
     {%endif%}
-    
+
 
     <link href="https://fonts.googleapis.com/css?family=Caveat:400,700|Marck+Script&display=swap&subset=cyrillic,cyrillic-ext,latin-ext" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Amatic+SC:400,700&display=swap&subset=cyrillic" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Pangolin&display=swap&subset=cyrillic" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Gabriela&display=swap&subset=cyrillic" rel="stylesheet">
 
-    <link rel="stylesheet" href="../static/normolize.css" /> <!--"{{ url_for('static', filename='normolize.css') }}">-->
-    <!-- Latest compiled and minified Bootstrap CSS -->
+    <link rel="stylesheet" href="../static/normolize.css" />
+    <!--"{{ url_for('static', filename='normolize.css') }}">-->
+
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
-    <!-- my static CSS -->
+    <link rel="stylesheet" href="../static/style.css">
+    <!--{{ url_for('static', filename='style.css') }}">-->
 
-    <link rel="stylesheet" href="../static/style.css"><!--{{ url_for('static', filename='style.css') }}">-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
-
-
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 
-
     <!---->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
     <!--Take highlight.js for light code-text-->
     <!-- HighLight CSS -->
     <link rel="stylesheet"
@@ -39,7 +37,7 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.9/highlight.min.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
 
-
+    <link rel="icon" type="image/x-icon" sizes="16x16" href="../static/images/favicon-16x16.ico">
 
 </head>
 <body>
@@ -54,51 +52,63 @@
         {% endblock %}
     </main>
 
-<footer class="main-footer">
-    <div class="container">
-        <p class="footer-contacts">
-            Мастер ногтевого сервиса Nail-Master-Krd<br>
-            Адрес: г.Краснодар, ул.Атарбекова, д. 5/1<br>
-            <a class="js-contact-button-map" href="{{url_for('welcome.welcome_map')}}">Как нас найти?</a><br>
-            
-            Телефон (WhatsApp): +7 (928) 433-71-81<br>
-            Instagram: <a class="main-header-logo-link" href="https://www.instagram.com/anna_nails_ani/" title="{{_('Профиль в Интсаграм')}}">anna_nails_ani </a>
-        </p>
-        <div class="footer-social sss">
-            <b>Давайте дружить!</b>
-            <ul>
-                <li><a class="social-button vkontakte" href="#"><span class="visually-hidden ">Вконтакте</span></a></li>
-                <li><a class="social-button instagram" href="https://www.instagram.com/anna_nails_ani/"><span class="visually-hidden">Инстаграм</span></a></li>
-                <li><a class="social-button whatsapp" href="#"><span class="visually-hidden whatsapp">WhatsApp</span></a></li>
-            </ul>
+    <footer class="main-footer">
+        <div class="container">
+            <p class="footer-contacts">
+                Мастер ногтевого сервиса Nail-Master-Krd<br>
+                Адрес: г.Краснодар, ул.Атарбекова, д. 5/1<br>
+                <a class="js-contact-button-map" href="{{url_for('welcome.welcome_map')}}">Как нас найти?</a><br>
+
+                Телефон (WhatsApp): +7 (928) 433-71-81<br>
+                Instagram: <a class="main-header-logo-link" href="https://www.instagram.com/anna_nails_ani/" title="{{_('Профиль в Интсаграм')}}">anna_nails_ani </a>
+            </p>
+            <div class="footer-social sss">
+                <b>Давайте дружить!</b>
+                <ul>
+                    <li><a class="social-button vkontakte" href="#"><span class="visually-hidden ">Вконтакте</span></a></li>
+                    <li><a class="social-button instagram" href="https://www.instagram.com/anna_nails_ani/"><span class="visually-hidden">Инстаграм</span></a></li>
+                    <li><a class="social-button whatsapp" href="#"><span class="visually-hidden whatsapp">WhatsApp</span></a></li>
+                </ul>
+            </div>
+            <p class="footer-copyright">
+                <b>Разработано</b>
+                <a class="button">Allint</a>
+            </p>
         </div>
-        <p class="footer-copyright">
-            <b>Разработано</b>
-            <a class="button">Allint</a>
+        <hr />
+        <div class="container text-context-container">
+            <h2>Маникюр - Ваша индивидуальность!</h2>
+            <p class="text-context">
+                Вы хотите выглядеть прекрасно? Без маникюра это сложно. В современном мире маникюр для женщины - это ее индивидуальность.
+                В Краснодаре маникюр и педикюр можно сделать во многих салонах красоты, но качественная работа по оформлению Ваших ногтей - это искуcство.
+                Не каждый мастер по маникюру в Краснодаре может подчеркнуть изюминку в Вас.
+                Доверяйте только профессиональным мастерам маникюра и педикюра в Краснодаре.
+                На Фестивальном микрорайоне (на ФМР) в Краснодаре есть отличный мастер по маникюру и педикюру - Анна.
+                Проффессиональный маникюр и педикюр - это выражение ее творческого потенциала на Ваших руках.
+                Цены на работы по ногтевому сервису в салонах красоты в Краснодаре не дешевые, но Nail-Master-Krd не берет деньги на содержание салона, поэтому Вы получаете Ваш маникюр дешевле, чем в салонах красоты, а качество выше.
+                Если Вы живете на Фестивальном микрорайоне (на ФМР) в Краснодаре, приходите к отличному мастеру по маникюру и педикюру на улице Атарбекова и не пожалеете!
+            </p>
+            <p class="text-context">© 2019 Nail-Master-Krd, Inc.</p>
+        </div>
+    </footer>
+
+
+
+    <div class="modal-overlay">
+
+    </div>
+    <section class="modal modal-map">
+        <h2 class="visually-hidden">{{ _('Как до нас добраться?')}}</h2>
+        <p>
+            <iframe src="https://yandex.ru/map-widget/v1/-/CGHEaXpr" allowfullscreen="true"></iframe>
+            <img class="visually-hidden" src="../static/images/map.png" width="780" height="560" alt="{{_('Наш адрес: ул. Атарбекова, д. 5/1, Фестивальный микрорайон, Краснодар')}}" />
         </p>
-    </div>
-    <hr/>
-    <div class="container text-context-container">
-        <h2>Маникюр - Ваша индивидуальность!</h2>
-        <p class="text-context">
-            Вы хотите выглядеть прекрасно? Без маникюра это сложно. В современном мире маникюр для женщины - это ее индивидуальность.
-            В Краснодаре маникюр и педикюр можно сделать во многих салонах красоты, но качественная работа по оформлению Ваших ногтей - это искуcство.
-            Не каждый мастер по маникюру в Краснодаре может подчеркнуть изюминку в Вас.
-            Доверяйте только профессиональным мастерам маникюра и педикюра в Краснодаре.
-            На Фестивальном микрорайоне (на ФМР) в Краснодаре есть отличный мастер по маникюру и педикюру - Анна.
-            Проффессиональный маникюр и педикюр - это выражение ее творческого потенциала на Ваших руках.
-            Цены на работы по ногтевому сервису в салонах красоты в Краснодаре не дешевые, но Nail-Master-Krd не берет деньги на содержание салона, поэтому Вы получаете Ваш маникюр дешевле, чем в салонах красоты, а качество выше.
-            Если Вы живете на Фестивальном микрорайоне (на ФМР) в Краснодаре, приходите к отличному мастеру по маникюру и педикюру на улице Атарбекова и не пожалеете!
-        </p>
-        <p class="text-context">© 2019 Nail-Master-Krd, Inc.</p>
-    </div>
-</footer>
+        <button class="modal-close" type="button"><span class="visually-hidden">{{_('Закрыть')}}</span></button>
+    </section>
 
 
 
-<div class="modal-overlay">
 
-    </div>
 
     {% endblock %}
 
@@ -107,39 +117,67 @@
     {{ moment.lang(g.locale) }}
 
     <script>
-        function translate(sourceElem, destElem, sourceLang, destLang) {
-            $(destElem).html('<img class="loading-gif" src="{{ url_for('static', filename='loading.gif') }}">');
-            /*alert('Временно не доступен перевод текста: "' + $(sourceElem).text() + '". Извените.');*/
+    function translate(sourceElem, destElem, sourceLang, destLang) {
+        $(destElem).html('<img class="loading-gif" src="{{ url_for('static', filename='loading.gif') }}">');
 
-            $.post('/translate', {
-                    text: $(sourceElem).text(),
-                    source_language: sourceLang,
-                    dest_language: destLang
-                }
-            ).done(function (response) {
-
-                $(destElem).text(response['text'])
-            }).fail(function() {
-                $(destElem).text("{{ _('Error: Could not contact server.') }}");
-            });
-        }
+        $.post("{{url_for('main.translate_text')}}", {
+                text: $(sourceElem).text(),
+                source_language: sourceLang,
+                dest_language: destLang
+            }
+        ).done(function (response) {
+            $(destElem).text(response['text']);
+        }).fail(function () {
+            $(destElem).text("{{ _('Error: Could not contact server.') }}");
+        });
+        //$.ajax({
+        //    url: "{{url_for('main.translate_text')}}",
+        //    method: "POST",
+        //    data: {
+        //        text: $(sourceElem).text(),
+        //        source_language: sourceLang,
+        //        dest_language: destLang
+        //    },
+        //    complete: function(response) {
+        //        $(destElem).text(response['text']);
+        //    },
+        //    statusCode: {
+        //        200: function(message) {
+        //            alert(message);
+        //        },
+        //        403: function(jqXHR) {
+        //            var error = JSON.parse(jqXHR.responseText);
+        //            $("body").prepend(error.message);
+        //        }
+        //    }
+        //});
+    }
     </script>
-    <script  src="../static/scripts/login_popup.js"></script>
-    <script  src="../static/scripts/map_popup.js"></script>
-    <script src="../static/scripts/galary_image_sc.js" charset="utf-8" ></script>
 
-    <script>
-        var popup = document.querySelector(".modal-login");
-    </script>
 
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="../static/scripts/login_popup.js"></script>
+    <script src="../static/scripts/map_popup.js"></script>
+    <script src="../static/scripts/galary_image_sc.js" charset="utf-8"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-  
+
+    <script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
     <!--     {{ moment.lang('ru') }}  -->
+    
 
-
+    
+
 </body>
+
+
+
+
 </html>
 
 
+
+
+
+
