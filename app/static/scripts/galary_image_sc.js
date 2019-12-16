@@ -274,8 +274,9 @@ $(function () {
                 xhr = $.ajax('/show_alert').done(
                     function () {
                         xhr = null;
+                        var b = '1';
                         //  здесь создаём и отображаем всплывающее окно
-                      //  alert('222');
+                        //  alert('222');
                     }
                 );
                // alert('!!!2!!!!!');
