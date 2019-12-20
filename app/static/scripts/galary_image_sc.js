@@ -3,43 +3,112 @@ var nextGallaryButton = document.querySelector(".js-gallery-button-next");
 var overlay = document.querySelector(".modal-overlay");
 var listTimeButtons = document.querySelectorAll(".js-schedule-direct");
 
-
 if (listTimeButtons.length > 0) {
     for (i=0; i < listTimeButtons.length; i++) {
          listTimeButtons[i].addEventListener("click",
              function (evt) {
                  evt.preventDefault();
                  var elem = evt.currentTarget;
+
+                 //var prevElem = listTimeButtons[i];
                  $.post("/master_schedule/js_show_schedule_reserve",
                      {
                          idElem: elem.id
                      }
                  ).done(function (response) {
                      if (response['result'] === 'true') {
+
+                         //изменяю элементы предыдущего времени
+                         var idPrevTime = response['time_prev'];
+                         var kindPrevToChange = null;
+                         var timePrevToChange = null;
+                         
+                         if (idPrevTime === 'none') {
+                             timePrevToChange = null;
+                             kindPrevToChange = null;
+                         } else {
+                             timePrevToChange = document.getElementById("time_" + idPrevTime);
+                             kindPrevToChange = document.getElementById("kind_" + idPrevTime);
+                         }
+                         if (timePrevToChange != null) {
+                             timePrevToChange.className = response['time_prev_class_text'];
+                             //timePrevToChange.textContent = response['time_prev_kind_text'];
+                         }
+                         if (kindPrevToChange != null) {
+                             kindPrevToChange.className = response['time_prev_class_text'];
+                             kindPrevToChange.textContent = response['time_prev_kind_text'];
+                         }
+
+                         //изменяю элементы страницы у текущего времени
+          
                          var idTime = response['time_id'];
+                         var kindThis = null;
+                         var timeThis= null;
+                         var clientThis = null;
+                         var priceThis = null;
+                         var typeworkThis = null;
+                         var mailThis = null;
+                         var phoneThis = null;
+                         var contactsThis = null;
+                         var noteThis = null;
+
+                         timeThis = document.getElementById("time_" + idTime);
+                         kindThis = document.getElementById("kind_" + idTime);
+                         clientThis = document.getElementById("client_" + idTime);
+                         priceThis = document.getElementById("price_" + idTime);
+                         typeworkThis = document.getElementById("typework_" + idTime);
+                         mailThis = document.getElementById("mail_" + idTime);
+                         phoneThis = document.getElementById("phone_" + idTime);
+                         contactsThis = document.getElementById("contacts_" + idTime);
+                         noteThis = document.getElementById("note_" + idTime);
+
+                         if (timeThis != null) {
+                             timeThis.className = response['time_this_class_text'];
+                             //timePrevToChange.textContent = response['time_prev_kind_text'];
+                         }
+                         if (kindThis != null) {
+                             kindThis.className = response['time_this_class_text'];
+                             kindThis.textContent = response['time_this_kind_text'];
+                         }
+                         if (clientThis != null) {
+                             clientThis.textContent = response['time_this_client_text'];
+                         }
+                         if (priceThis != null) {
+                             priceThis.textContent = response['time_this_price_text'];
+                         }
+                         if (typeworkThis != null) {
+                             typeworkThis.textContent = response['time_this_typework_text'];
+                         }
+                         if (mailThis != null) {
+                             mailThis.textContent = response['time_this_mail_text'];
+                         }
+                         if (phoneThis != null) {
+                             phoneThis.textContent = response['time_this_phone_text'];
+                         }
+                         if (contactsThis != null) {
+                             contactsThis.textContent = response['time_this_contacts_text'];
+                         }
+                         if (noteThis != null) {
+                             noteThis.textContent = response['time_this_note_text'];
+                         }
+
+                         //изменяю кнопки
                          var typeEmpty = response['type_empty'];
-                         var timeToChange = document.getElementById("time_" + idTime);
-                         var kindToChange = document.getElementById("kind_" + idTime);
+
                          if (typeEmpty === 'free') {
-                             timeToChange.className = "schedule-container-days-free";
-                             kindToChange.className = "schedule-container-days-free";
-                             kindToChange.textContent = "Свободно";
                              elem.id = "to_reserve_" + idTime;
                              let buttonElem = elem.querySelector(".button");
                              buttonElem.id = "reserve_button";
                              buttonElem.name = "reserve_button";
                              buttonElem.value = "Занять";
-
-                         } else if (typeEmpty === 'reserved') {
-                             timeToChange.className = "schedule-container-days-non-free";
-                             kindToChange.className = "schedule-container-days-non-free";
-                             kindToChange.textContent = "Занято";
+                         } else {
                              elem.id = "to_free_" + idTime;
                              let buttonElem = elem.querySelector(".button");
                              buttonElem.id = "delete_button";
                              buttonElem.name = "delete_button";
                              buttonElem.value = "Освободить";
                          }
+
                      } else {
                          alert(response['text']);
                      }

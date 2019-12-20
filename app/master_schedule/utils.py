@@ -279,8 +279,7 @@ def reserve_time_shedue(id_shedule_time):
     '''
     Функция переводит тригер занятости времени во включенное состояние и сохраняет это в БД
     '''
-    #сначала очищаем форму от записи
-    print("ierbfkejrbvr    ", id_shedule_time)
+    #сначала очищаем форму от записи   
     clear_time_shedue(id_shedule_time)
     time_to_reserve = ScheduleOfDay.query.filter(ScheduleOfDay.id == id_shedule_time).first()    
     time_to_reserve.is_empty=0
@@ -311,6 +310,110 @@ def clear_time_shedue(id_shedule_time):
         db.session.commit()  
     except Exception as e:
         print(f'Ошибка при отчистке времени одного дня. {e}')
+
+def complete_info_for_send_to_js(request_idElem):
+    '''
+    Фунция формирует данные для отправки в js для оформления визуализации
+    request_data - данные переданные сос страницы к серверу
+    '''
+    data_ = request_idElem.split('_')
+
+    try:
+        time_date_id = int(data_[2])
+    except:
+        return jsonify({'text': 'Не удалось получить ид времени', 'result': 'false'})           
+    
+    time_ = ScheduleOfDay.query.filter(ScheduleOfDay.id == time_date_id).first()
+
+    if time_== None:
+        return {'text': 'Не удалось получить время по ид', 'result': 'false'}
+
+    time_next_ = ScheduleOfDay.query.filter(ScheduleOfDay.begin_time_of_day == time_.begin_time_of_day + timedelta(hours = 1)).first()
+    #  #####################################Сначала вношу изменения в БД
+      
+    time_emty = '' #маркер говорит освободил время или занял
+
+    time_this_send = str(time_.id)
+    #изменяю элементы текста по умолчанию
+    timeThisClass_send = 'schedule-container-days-free'
+    timeThisText_send = 'Свободно'
+    timeThisClientText_send = 'Клиент: неизвестно'
+    timeThisPriceText_send = 'Цена: 0 руб.'
+    timeThisTypeWorkText_send = 'Тип: маникюр'
+    timeThisMailText_send = 'Почта: неизвестно'
+    timeThisPhoneText_send = 'Тел.: неизвестно'
+    timeThisContactsText_send = 'Контакты: неизвестно'
+    timeThisNoteText_send = 'Примечание: примечание'
+
+    if data_[1] == 'free':
+        #если освобождаю время то отчищаю данные из БД
+        clear_time_shedue(time_date_id)
+        time_emty = 'free'
+        timeThisClass_send = 'schedule-container-days-free'
+        timeThisText_send = 'Свободно'
+
+        if time_next_:
+            #если следующее время занято, то текущее неполное, иначе свободное
+            if time_next_.begin_time_of_day.hour <= current_app.config['END_MASTER_WORK_TIME']:
+                if time_next_.is_empty == 0:
+                    timeThisClass_send = 'schedule-container-days-some-free'
+                    timeThisText_send = 'Неполное время' 
+    else:        
+        reserve_time_shedue(time_date_id)
+        time_emty = 'reserved'
+        timeThisClass_send = 'schedule-container-days-non-free'
+        timeThisText_send = 'Занято'
+
+    ################### Затем по измененным данным в базе редактирую предшествующий элемент
+
+    #для js нужно послать ид для следующих и предыдущих элементов которые будут менять свои свойства
+    time_prev_ = ScheduleOfDay.query.filter(ScheduleOfDay.begin_time_of_day == time_.begin_time_of_day - timedelta(hours = 1)).first()
+    
+    #time_next_next_ = ScheduleOfDay.query.filter(ScheduleOfDay.begin_time_of_day == time_.begin_time_of_day + timedelta(hours = 2)).first()
+    
+    time_prev_send = 'none'
+    timePrevClass_send = 'none'
+    timePrevText_send = 'none'
+    
+    if time_prev_:
+        if time_prev_.begin_time_of_day.hour >= current_app.config['BEGIN_MASTER_WORK_TIME']:
+            time_prev_send = str(time_prev_.id)
+            #если я освобождаю ячейку, то предыдущая либо занята либо неполное время
+            if time_prev_.is_empty == 0: # если впредыдущее время занято
+                    timePrevClass_send = 'schedule-container-days-non-free'
+                    timePrevText_send = 'Занято'
+            else:
+                if time_.is_empty == 1: #если текущее время свободно после сохранения
+                    timePrevClass_send = 'schedule-container-days-free'
+                    timePrevText_send = 'Свободно'
+                else:
+                    timePrevClass_send = 'schedule-container-days-some-free'
+                    timePrevText_send = 'Неполное время'
+
+   # print(timePrevClass_send)
+   # print(timePrevText_send)
+
+    #далее формирую контент для отправки в js
+
+    return {
+        'text': 'Изменения приняты',
+        'result': 'true',
+        'type_empty' : time_emty,
+        'time_id' : time_this_send,
+        'time_this_class_text': timeThisClass_send,
+        'time_this_kind_text': timeThisText_send,
+        'time_this_client_text': timeThisClientText_send,
+        'time_this_price_text': timeThisPriceText_send,
+        'time_this_typework_text': timeThisTypeWorkText_send,
+        'time_this_mail_text': timeThisMailText_send,
+        'time_this_phone_text': timeThisPhoneText_send,
+        'time_this_contacts_text': timeThisContactsText_send,
+        'time_this_note_text': timeThisNoteText_send,
+        #'time_next': time_next_send,
+        'time_prev': time_prev_send,
+        'time_prev_class_text': timePrevClass_send,
+        'time_prev_kind_text': timePrevText_send
+                    }
 
 def reserve_time_for_client(dict_of_form):
     '''

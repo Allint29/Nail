@@ -1,5 +1,5 @@
 ﻿from app import db
-from flask import render_template, request, redirect, url_for, flash, jsonify
+from flask import render_template, request, redirect, url_for, flash, jsonify, current_app
 from datetime import datetime, timedelta, time, date
 from app.master_schedule import bp
 from app.decorators.decorators import admin_required
@@ -7,10 +7,10 @@ from flask_babel import Babel, _, lazy_gettext as _l
 from app.master_schedule.forms import ScheduleTimeToShow, ScheduleMaster, TimeForm, ScheduleTimeToShowMaster, PreliminaryForm
 from app.user import models as user_models #User, UserPhones, ConnectionType
 from app.master_schedule.models import DateTable, ScheduleOfDay, PreliminaryRecord
-from app.master_schedule.utils import take_empty_time_in_shedule, clear_time_shedue, reserve_time_shedue, reserve_time_for_client, send_info_message
+from app.master_schedule.utils import take_empty_time_in_shedule, clear_time_shedue, reserve_time_shedue, \
+                                        reserve_time_for_client, send_info_message, complete_info_for_send_to_js
 from app.main_func import utils  as main_utils
 from app.master_schedule.myemail import send_preliminary_email
-
 
 @bp.route("/show_schedule_reserve", methods=['POST'])
 @admin_required
@@ -37,34 +37,9 @@ def show_schedule_reserve():
 def js_show_schedule_reserve():
     '''
     маршрут сохранения изменений в расписании в части резервирования времени для js
-    '''
-    data_ = request.form.get('idElem').split('_')
-
-    try:
-        time_date_id = int(data_[2])
-    except:
-        return jsonify({'text': 'Не удалось получить ид времени', 'result': 'false'})           
-    
-    time_ = ScheduleOfDay.query.filter(ScheduleOfDay.id == time_date_id).first()
-   
-    if time_== None:
-        return jsonify({'text': 'Не удалось получить время по ид', 'result': 'false'})
-
-    time_emty = ''
-    if data_[1] == 'free':
-        time_.is_empty = 1
-        time_emty = 'free'
-
-    else:
-        time_.is_empty = 0
-        time_emty = 'reserved'
-    try:
-        db.session.add(time_)
-        db.session.commit()
-    except:
-        return jsonify({'text': 'Не удалось сохранить изменения в базе данных', 'result': 'false'})
-
-    return jsonify({'text': 'Изменения приняты', 'result': 'true', 'time_id' : str(time_date_id), 'type_empty' : time_emty})
+    '''       
+    dic_to_send = complete_info_for_send_to_js(request.form.get('idElem'))
+    return jsonify(dic_to_send)
 
 
 @bp.route('/show_schedule_master_<dic_val>', methods=['GET', 'POST'])

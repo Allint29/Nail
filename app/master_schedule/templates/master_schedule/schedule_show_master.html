@@ -39,13 +39,13 @@
 
                     {%if item_list['empty'] == 'free' %}<span id ="kind_{{item_list['time'].id}}" class="schedule-container-days-free">Свободно</span>{% elif item_list['empty'] == 'non_free' %}<span id ="kind_{{item_list['time'].id}}" class="schedule-container-days-non-free">Занято</span>{%else%}<span id ="kind_{{item_list['time'].id}}" class="schedule-container-days-some-free">Неполное время</span>{%endif%}
                     {%if current_user.is_admin %}
-                    <span>{{_('Клиент:')}} {{item_list['time'].name_of_client}}</span>
-                    <span>{{_('Цена:')}} {{item_list['time'].cost}} {{_('руб.')}}</span>
-                    <span>{{_('Тип:')}} {{item_list['time'].work_type}}</span>
-                    <span>{{_('Почта:')}} {{item_list['time'].mail_of_client}}</span>
-                    <span>{{_('Тел.:')}} {{item_list['time'].phone_of_client}}</span>
-                    <span>{{_('Контакты:')}} {{item_list['time'].adress_of_client}}</span>
-                    <span>{{_('Примечание:')}} {{item_list['time'].note}}</span>
+                    <span id = "client_{{item_list['time'].id}}">{{_('Клиент:')}} {{item_list['time'].name_of_client}}</span>
+                    <span id = "price_{{item_list['time'].id}}">{{_('Цена:')}} {{item_list['time'].cost}} {{_('руб.')}}</span>
+                    <span id = "typework_{{item_list['time'].id}}">{{_('Тип:')}} {{item_list['time'].work_type}}</span>
+                    <span id = "mail_{{item_list['time'].id}}">{{_('Почта:')}} {{item_list['time'].mail_of_client}}</span>
+                    <span id = "phone_{{item_list['time'].id}}">{{_('Тел.:')}} {{item_list['time'].phone_of_client}}</span>
+                    <span id = "contacts_{{item_list['time'].id}}">{{_('Контакты:')}} {{item_list['time'].adress_of_client}}</span>
+                    <span id = "note_{{item_list['time'].id}}">{{_('Примечание:')}} {{item_list['time'].note}}</span>
                     <form action="{{url_for('master_schedule.show_schedule_reserve')}}" method="post">
                         {{item_list['form_edit'].hidden_tag()}}
                         {{item_list['form_edit'].id_time}}
