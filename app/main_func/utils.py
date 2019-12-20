@@ -144,12 +144,13 @@ def parser_time_client_from_str(dic_val):
     возвращает словарь с теми же ключами, но уже значения это числа, если преобразование прошло не удачно, то знаячения будут -1
     dic_val = {'time_date_id': string number, 'client_id': string number, }
     dic_val = {'time_date_id': string number, 'client_id': string number, 'number_phone' : string number}
+    dic_val = {'time_date_id': string number, 'client_id': string number, 'number_phone' : string number, 'begin_date_id' : string number, 'end_date_id' : string number}
     '''
-    #  print(dic_val)
+    print(dic_val)
     try:
-        dic_val = json.loads(dic_val.replace("'", '"').replace("Undefined".lower(), '-1'))    
-    except:
-        print('Ошибка: при парсинге словаря dic-val из строки запроса методом json.loads в блоке parser_time_client_from_str ')
+        dic_val = json.loads(dic_val.replace("'", '"').replace("Undefined".lower(), '-1'))
+    except Exception as e:
+        print(f'Ошибка: при парсинге словаря dic-val из строки запроса методом json.loads в блоке parser_time_client_from_str : {e}')
         return {'time_date_id' : -1, 'client_id' : -1, 'number_phone' : -1}
     
     try:
@@ -167,7 +168,17 @@ def parser_time_client_from_str(dic_val):
     except:
         number_ = ''
 
-    dic_val = {'time_date_id' : time_date_id, 'client_id' : client_id, 'number_phone' : number_}
+    try:
+        begin_date_id = int(dic_val['begin_date_id'])
+    except:
+        begin_date_id = -1
+
+    try:
+        end_date_id = int(dic_val['end_date_id'])
+    except:
+        end_date_id = -1
+
+    dic_val = {'time_date_id' : time_date_id, 'client_id' : client_id, 'number_phone' : number_, 'begin_date_id' : begin_date_id, 'end_date_id' : end_date_id}
     
     return dic_val
 

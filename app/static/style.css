@@ -2024,24 +2024,52 @@ button.bg-light:hover {
     flex-wrap: wrap;
     justify-content: space-between;
     border: none !important;
-   
 }
 
 .schedule-container-days-content-buttons li {
     padding: 0 !important;
     margin: 0 !important;
-    
-
-    
 }
 
 .schedule-container-days-content-buttons .button {
+    margin: 2px !important;
     padding: 5px !important;
     max-width: 110px;
     height: 45px;
     margin: 0 10px 10px 0 !important;
     font-size: 12px !important;
 }
+
+
+    .schedule-container-days-content-buttons a {
+        margin: 0px !important;
+        padding: 0px !important;
+        text-decoration: none;
+    }
+
+    .schedule-container-days-content-buttons a:focus,
+    .schedule-container-days-content-buttons a:hover {
+        margin: 0px !important;
+        padding: 0px !important;
+        outline: none;
+        color: rgba(201,5,5, 1) !important;
+        text-decoration: none;
+    }
+
+
+/*------------Кнопки-----------*/
+    .schedule-container-days-content-buttons .button {
+        margin: 2px !important;
+        padding: 0 !important;
+
+    }
+
+        .schedule-container-days-content-buttons .button:focus,
+        .schedule-container-days-content-buttons .button:hover {
+            margin: 2px !important;
+            padding: 0px 0px 0px 0px !important;
+
+        }
 
 
 @media (max-width:768px) {
@@ -2076,8 +2104,8 @@ button.bg-light:hover {
 }
 
 
-    .schedule-master-details-container ul{
-        margin: 0 0 0 0 !important;
+.schedule-master-details-container ul{
+    margin: 0 !important;
     padding: 0 !important;
     list-style: none;
 }
@@ -2103,7 +2131,7 @@ button.bg-light:hover {
 }
 
     .schedule-master-details-container a {
-        margin: 2px !important;
+        margin: 0px !important;
         padding: 0px 0px 0px 0px !important;
     }
 
@@ -2138,8 +2166,8 @@ button.bg-light:hover {
     }
     .find-user-container li {
         display: block;
-        margin: 2px 2px 2px 2px;
-        padding: 2px 2px 2px 2px;
+        margin: 2px;
+        padding: 2px;
         border: 1px solid rgba(255,110,210, 0.3) !important;
     }
     .find-user-container p {

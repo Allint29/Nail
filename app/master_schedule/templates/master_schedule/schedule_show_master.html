@@ -14,13 +14,13 @@
         <h2 class="visually-hidden">Выбор периода</h2>
         {{ form.hidden_tag() }}
 
-    <ul class="schedule-container-item-master">
-        <li>
-            <span class="visually-hidden">{{ form.date_field.label}} </span>
-            {{ form.date_field}}
-            {{ form.submit }}
-        </li>
-    </ul>
+        <ul class="schedule-container-item-master">
+            <li>
+                <span class="visually-hidden">{{ form.date_field.label}} </span>
+                <div class="js-reserve-time-button">{{ form.date_field}}</div>
+                {{ form.submit }}
+            </li>
+        </ul>
 
     </form>
     <ul class="schedule-container-days-master">
@@ -35,9 +35,9 @@
                 {% for item_list in item['list_work_time']%}
 
                 <li class="schedule-container-days-content">
-                    <span class="{%if item_list['empty'] == 'free' %}schedule-container-days-free{% elif item_list['empty'] == 'non_free' %}schedule-container-days-non-free{%else%}schedule-container-days-some-free{%endif%}">{{item_list['time'].begin_time_of_day.hour}}:00</span>
+                    <span id ="time_{{item_list['time'].id}}" class="{%if item_list['empty'] == 'free' %}schedule-container-days-free{% elif item_list['empty'] == 'non_free' %}schedule-container-days-non-free{%else%}schedule-container-days-some-free{%endif%}">{{item_list['time'].begin_time_of_day.hour}}:00</span>
 
-                    <span>{%if item_list['empty'] == 'free' %}<span class="schedule-container-days-free">Свободно</span>{% elif item_list['empty'] == 'non_free' %}<span class="schedule-container-days-non-free">Занято</span>{%else%}<span class="schedule-container-days-some-free">Неполное время</span>{%endif%}</span>
+                    {%if item_list['empty'] == 'free' %}<span id ="kind_{{item_list['time'].id}}" class="schedule-container-days-free">Свободно</span>{% elif item_list['empty'] == 'non_free' %}<span id ="kind_{{item_list['time'].id}}" class="schedule-container-days-non-free">Занято</span>{%else%}<span id ="kind_{{item_list['time'].id}}" class="schedule-container-days-some-free">Неполное время</span>{%endif%}
                     {%if current_user.is_admin %}
                     <span>{{_('Клиент:')}} {{item_list['time'].name_of_client}}</span>
                     <span>{{_('Цена:')}} {{item_list['time'].cost}} {{_('руб.')}}</span>
@@ -46,20 +46,33 @@
                     <span>{{_('Тел.:')}} {{item_list['time'].phone_of_client}}</span>
                     <span>{{_('Контакты:')}} {{item_list['time'].adress_of_client}}</span>
                     <span>{{_('Примечание:')}} {{item_list['time'].note}}</span>
-                    <form action="" method="post">
+                    <form action="{{url_for('master_schedule.show_schedule_reserve')}}" method="post">
                         {{item_list['form_edit'].hidden_tag()}}
                         {{item_list['form_edit'].id_time}}
+                        {{item_list['form_edit'].id_client}}
+                        {{item_list['form_edit'].id_date}}
                         <ul class="schedule-container-days-content-buttons">
-                            <li>{{item_list['form_edit'].change_button}}</li>
+                            <li>
+                            <!--  <div id="to_change_{{item_list['form_edit'].id_time.data}}" class="js-schedule-direct">-->
+                                {{item_list['form_edit'].change_button}}
+                                <!--</div>-->
+                            </li>
                             {%if item_list['empty'] == 'free' or item_list['empty'] == 'some_free'%}
-                            <li>{{item_list['form_edit'].reserve_button}}</li>
+                            <li>
+                                <div id="to_reserve_{{item_list['form_edit'].id_time.data}}" class="js-schedule-direct">
+                                    {{item_list['form_edit'].reserve_button}}
+                                </div>
+                            </li>
                             {%else%}
-                            <li>{{item_list['form_edit'].delete_button}}</li>
+                            <li>
+                                <div id="to_free_{{item_list['form_edit'].id_time.data}}" class="js-schedule-direct">
+                                    {{item_list['form_edit'].delete_button}}
+                                </div>
+                            </li>
                             {%endif%}
                         </ul>
                     </form>
                     {% endif %}
-
                 </li>
                 {%endfor%}
             </ul>

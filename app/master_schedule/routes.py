@@ -1,5 +1,5 @@
 ﻿from app import db
-from flask import render_template, request, redirect, url_for, flash
+from flask import render_template, request, redirect, url_for, flash, jsonify
 from datetime import datetime, timedelta, time, date
 from app.master_schedule import bp
 from app.decorators.decorators import admin_required
@@ -12,110 +12,125 @@ from app.main_func import utils  as main_utils
 from app.master_schedule.myemail import send_preliminary_email
 
 
-
-@bp.route('/', methods=['GET', 'POST'])
+@bp.route("/show_schedule_reserve", methods=['POST'])
 @admin_required
-def index():
-    titleVar=_('Расписание')
-    form=ScheduleMaster()
-
-    if request.method=="POST":
-        if form.validate_on_submit():
-            pass
-        else:
-            pass         
-    elif request.method=="GET":
-        pass
-        #return render_template('master_schedule/index.html', title=titleVar, form=form)
-
-    return render_template('master_schedule/index.html', title=titleVar, form=form)
-
-@bp.route('/show_schedule', methods=['GET', 'POST'])
-def show_schedule():
+def show_schedule_reserve():
     '''
-    Действие показа страницы расписания для клиента
+    маршрут сохранения изменений в расписании в части резервирования времени
     '''
-    titleVar = _('Расписание')    
-    form=ScheduleTimeToShow()
+    form_time=TimeForm()  
+    time_date_id = str(request.form.get('id_time'))
+    client_id = str(request.form.get('id_client'))          
+    begin_date_id = str(request.form.get('id_date'))
+    if form_time.validate_on_submit():
+        if form_time.reserve_button.data:
+            reserve_time_shedue(request.form.get('id_time'))
+        if form_time.delete_button.data:
+            clear_time_shedue(request.form.get('id_time'))
+        if form_time.change_button.data:
+            #здесь изменяем данные времени записи
+            return redirect(url_for('master_schedule.show_schedule_master_details', dic_val = {'time_date_id' : time_date_id, 'client_id' : client_id}))
+    return redirect(url_for("master_schedule.show_schedule_master", dic_val = {'time_date_id' : time_date_id, 'client_id' : client_id, 'begin_date_id' : begin_date_id}))
 
-    if request.method == 'POST':
-        if form.validate_on_submit():
-            d_start=form.date_field_start.data
-            d_end=form.date_field_end.data
+@bp.route("/js_show_schedule_reserve", methods=['POST'])
+#@admin_required
+def js_show_schedule_reserve():
+    '''
+    маршрут сохранения изменений в расписании в части резервирования времени для js
+    '''
+    data_ = request.form.get('idElem').split('_')
 
-            if d_start < date.today():
-                d_start = date.today()
-            else:
-                if d_start > d_end:
-                    d_end = d_start
-              
-            form.date_field_start.render_kw={"class" : "shedule-text-field comment-field", "type": "date", "placeholder" : _('Выберите дату'), "value" : d_start.strftime("%Y-%m-%d")}
-            form.date_field_end.render_kw={"class" : "shedule-text-field comment-field", "type": "date", "placeholder" : _('Выберите дату'), "value" : d_end.strftime("%Y-%m-%d")}
-
-            return render_template('master_schedule/schedule_show.html', title=titleVar, list_time_to_show=take_empty_time_in_shedule(d_start, d_end), form=form)
-
-    elif request.method == "GET":
-        d_start=date.today()
-        d_end=date.today()+timedelta(days=7)
-        form.date_field_start.data=d_start
-        form.date_field_end.data=d_end
-
+    try:
+        time_date_id = int(data_[2])
+    except:
+        return jsonify({'text': 'Не удалось получить ид времени', 'result': 'false'})           
     
-    return render_template('master_schedule/schedule_show.html', title=titleVar, list_time_to_show=take_empty_time_in_shedule(d_start, d_end), form=form)
+    time_ = ScheduleOfDay.query.filter(ScheduleOfDay.id == time_date_id).first()
+   
+    if time_== None:
+        return jsonify({'text': 'Не удалось получить время по ид', 'result': 'false'})
+
+    time_emty = ''
+    if data_[1] == 'free':
+        time_.is_empty = 1
+        time_emty = 'free'
+
+    else:
+        time_.is_empty = 0
+        time_emty = 'reserved'
+    try:
+        db.session.add(time_)
+        db.session.commit()
+    except:
+        return jsonify({'text': 'Не удалось сохранить изменения в базе данных', 'result': 'false'})
+
+    return jsonify({'text': 'Изменения приняты', 'result': 'true', 'time_id' : str(time_date_id), 'type_empty' : time_emty})
 
 
-date_to_show = None
 @bp.route('/show_schedule_master_<dic_val>', methods=['GET', 'POST'])
+@admin_required
 def show_schedule_master(dic_val):
     '''
     Действие представление общего расписания для мастера, где есть элементы управления со временем - детали, освободить, занять 
+    dic_val = {'time_date_id': string number, 'client_id': string number, 'number_phone' : string number, 'begin_date_id' : string number, 'end_date_id' : string number}
+    
     '''
     try:
         dic_val = main_utils.parser_time_client_from_str(dic_val)
     except:
-        dic_val = {'time_date_id' : -1, 'client_id' : -1}
+        dic_val = {'time_date_id' : -1, 'client_id' : -1, 'begin_date_id' : -1}
  
     time_date_id = dic_val['time_date_id']
     client_id = dic_val['client_id']
+    begin_date_id = dic_val['begin_date_id']
 
+    date_to_show = DateTable.query.filter(DateTable.id == begin_date_id).first()    
+    date_to_show = date.today() if date_to_show == None else date_to_show.day_date.date()
     titleVar = _('Расписание')    
     form=ScheduleTimeToShowMaster()   
-    form_time=TimeForm()    
-    global date_to_show
+    form_time=TimeForm()
+   
     if request.method == 'POST':   
         if form.validate_on_submit():
             if form.submit.data:
                 date_to_show = form.date_field.data
             if not date_to_show:
                 date_to_show=datetime.now()
+
+            list_time_to_show=take_empty_time_in_shedule(date_to_show, date_to_show, to_back=1, id_client = client_id)
+
             form.date_field.render_kw={"class" : "shedule-text-field-master comment-field", "type": "date", "placeholder" : _('Выберите дату'), "value" : date_to_show.strftime("%Y-%m-%d")}          
             
-            return render_template('master_schedule/schedule_show_master.html', title=titleVar, list_time_to_show=take_empty_time_in_shedule(date_to_show, date_to_show, to_back=1), form=form)
+            return render_template('master_schedule/schedule_show_master.html', title=titleVar, list_time_to_show=list_time_to_show, form=form)
         
-        if form_time.validate_on_submit():
-            if form_time.reserve_button.data:
-                reserve_time_shedue(form_time.id_time.data)
-            if form_time.delete_button.data:
-                clear_time_shedue(form_time.id_time.data)
-            if form_time.change_button.data:
-                #здесь изменяем данные времени записи
-                return redirect(url_for('master_schedule.show_schedule_master_details', dic_val = {'time_date_id' : form_time.id_time.data, 'client_id' : client_id}))
-
-            if not date_to_show:
-                date_to_show=datetime.now()
-            form.date_field.data = date_to_show
-            form.date_field.render_kw={"class" : "shedule-text-field-master comment-field", "type": "date", "placeholder" : _('Выберите дату'), "value" : date_to_show.strftime("%Y-%m-%d")}
-            return render_template('master_schedule/schedule_show_master.html', title=titleVar, list_time_to_show=take_empty_time_in_shedule(date_to_show, date_to_show, to_back=1), form=form)
+        #if form_time.validate_on_submit():
+        #   # if form_time.reserve_button.data:
+        #   #     return redirect(url_for('master_schedule.show_schedule_reserve', dic_val = dic_val))
+        #        #reserve_time_shedue(form_time.id_time.data)
+        #    if form_time.delete_button.data:
+        #        clear_time_shedue(form_time.id_time.data)
+        #    if form_time.change_button.data:
+        #        #здесь изменяем данные времени записи
+        #        return redirect(url_for('master_schedule.show_schedule_master_details', dic_val = {'time_date_id' : form_time.id_time.data, 'client_id' : client_id}))
+        #
+        #    if not date_to_show:
+        #        date_to_show=datetime.now()
+        #    form.date_field.data = date_to_show
+        #    form.date_field.render_kw={"class" : "shedule-text-field-master comment-field", "type": "date", "placeholder" : _('Выберите дату'), "value" : date_to_show.strftime("%Y-%m-%d")}
+        #    return render_template('master_schedule/schedule_show_master.html', title=titleVar, list_time_to_show=take_empty_time_in_shedule(date_to_show, date_to_show, to_back=1), form=form)
                 
     elif request.method == "GET":
         if date_to_show == None:
             date_to_show=date.today()
         form.date_field.data=date_to_show
+        list_time_to_show=take_empty_time_in_shedule(date_to_show, date_to_show, to_back=1, id_client = client_id)
 
-    return render_template('master_schedule/schedule_show_master.html', title=titleVar, list_time_to_show=take_empty_time_in_shedule(date_to_show, date_to_show, to_back=1), form=form)
+    return render_template('master_schedule/schedule_show_master.html', title=titleVar, list_time_to_show=list_time_to_show, form=form)
+
 
 
 @bp.route('/show_schedule_master_details_<dic_val>', methods=['GET', 'POST'])
+@admin_required
 def show_schedule_master_details(dic_val):
     '''
     Маршрут к странице детализации расписания мастера на день. 
@@ -212,11 +227,45 @@ def show_schedule_master_details(dic_val):
 
     return render_template('master_schedule/shedule_details.html', form=form_change, dic_val ={'time_date_id': time_date_id, 'client_id':client_id} )
 
+
+@bp.route('/show_schedule', methods=['GET', 'POST'])
+def show_schedule():
+    '''
+    Действие показа страницы расписания для клиента
+    '''
+    titleVar = _('Расписание')    
+    form=ScheduleTimeToShow()
+
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            d_start=form.date_field_start.data
+            d_end=form.date_field_end.data
+
+            if d_start < date.today():
+                d_start = date.today()
+            else:
+                if d_start > d_end:
+                    d_end = d_start
+              
+            form.date_field_start.render_kw={"class" : "shedule-text-field comment-field", "type": "date", "placeholder" : _('Выберите дату'), "value" : d_start.strftime("%Y-%m-%d")}
+            form.date_field_end.render_kw={"class" : "shedule-text-field comment-field", "type": "date", "placeholder" : _('Выберите дату'), "value" : d_end.strftime("%Y-%m-%d")}
+
+            return render_template('master_schedule/schedule_show.html', title=titleVar, list_time_to_show=take_empty_time_in_shedule(d_start, d_end), form=form)
+
+    elif request.method == "GET":
+        d_start=date.today()
+        d_end=date.today()+timedelta(days=7)
+        form.date_field_start.data=d_start
+        form.date_field_end.data=d_end
+
+    
+    return render_template('master_schedule/schedule_show.html', title=titleVar, list_time_to_show=take_empty_time_in_shedule(d_start, d_end), form=form)
+
+
 @bp.route('/preliminary_record_<dic_val>', methods=['GET', 'POST'])
 def preliminary_record(dic_val):
     '''
-    Маршрут к странице детализации расписания мастера на день.
-    Здесь вводим информацию о клиенте и работе
+    Маршрут к странице завок на запись
     '''
     try:
         dic_val = main_utils.parser_time_client_from_str(dic_val)
@@ -291,3 +340,19 @@ def preliminary_record(dic_val):
 
     return render_template('master_schedule/shedule_preliminary_record.html', form=form, dic_val = dic_val)
 
+@bp.route('/', methods=['GET', 'POST'])
+@admin_required
+def index():
+    titleVar=_('Расписание')
+    form=ScheduleMaster()
+
+    if request.method=="POST":
+        if form.validate_on_submit():
+            pass
+        else:
+            pass         
+    elif request.method=="GET":
+        pass
+        #return render_template('master_schedule/index.html', title=titleVar, form=form)
+
+    return render_template('master_schedule/index.html', title=titleVar, form=form)

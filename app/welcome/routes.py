@@ -86,9 +86,9 @@ def index():
     list_with_z_index = []
     z=100;
     display='none'
-    for work in list_gallary[-5:]:
+    for work in list_gallary[-2:]:
         z=z+1
-        if z-100 == len(list_gallary[-5:]):
+        if z-100 == len(list_gallary[-2:]):
             display='block'
         list_with_z_index.append({'work': work, 'z' : z, 'display' : display})
     ################################################################################

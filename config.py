@@ -48,6 +48,10 @@ class Config(object):
     BEGIN_WORK_TIME = 12
     END_WORK_TIME = 18
 
+    #рабочие часы мастера 0-23
+    BEGIN_MASTER_WORK_TIME = 8
+    END_MASTER_WORK_TIME = 21
+
     #время периодичности выполнения разных задачь
     
     PERIOD_CONNECTION_TYPES_LIST = 60    

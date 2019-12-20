@@ -43,10 +43,13 @@ class TimeForm(FlaskForm):
     Форма для выбора времени для редактирования
     '''
 
-    id_time = StringField(_('ID тайминга'),  render_kw={"class" : "", "type": "text"})   
+    id_time = StringField(_('ID тайминга'),  render_kw={"class" : "visually-hidden", "type": "text"})
+    id_date = StringField(_('id_date'), default='-1', render_kw={"class" : "visually-hidden", "type": "text"})
+    id_client = StringField(_('id_client'), default='-1', render_kw={"class" : "visually-hidden", "type": "text"})
     change_button = SubmitField(_('Изменить'), render_kw={"class": "button", "type": "submit"})
     reserve_button = SubmitField(_('Занять'), render_kw={"class": "button", "type": "submit"})
     delete_button = SubmitField(_('Освободить'), render_kw={"class": "button", "type": "submit"})
+
     
 
 class ScheduleMaster(FlaskForm):

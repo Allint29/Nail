@@ -177,11 +177,19 @@ def create_query_time_one_day():
     except Exception as e:
         print(f'Ошибка в блоке создания сетки create_query_time_one_day времени на один день. {e}')
 
-def take_empty_time_in_shedule(begin_date=None, end_date=None, to_back=None):
+def take_empty_time_in_shedule(begin_date=None, end_date=None, to_back=None, id_client=None):
     '''
     Функция берет список с временем расписания и возвращает словарь с 
     маркировкой времени расписания - занято, свободно, свободно с ограничениями
     '''    
+    print('id_client', id_client)
+    try:
+        id_client=int(id_client)
+        id_client = -1 if id_client < 0 else id_client
+    except Exception as e:
+        print(f'Ошибка преобразования ID клиента: {e}')
+        id_client = -1
+
     if begin_date == None and end_date == None:
         begin_date = datetime.now()
         end_date = datetime.now()
@@ -226,7 +234,7 @@ def take_empty_time_in_shedule(begin_date=None, end_date=None, to_back=None):
 
         for item in list_of_time:
             t=item.begin_time_of_day.hour
-            if t >= 8 and t <= 21:
+            if t >= current_app.config['BEGIN_MASTER_WORK_TIME'] and t <= current_app.config['END_MASTER_WORK_TIME']:
                 list_of_work_time.append(item)
         list_to_show =[]
        
@@ -236,9 +244,10 @@ def take_empty_time_in_shedule(begin_date=None, end_date=None, to_back=None):
             #добавляю форму для отправки запроса на редактирование            
             edit_form = TimeForm()
             edit_form.id_time.data=list_of_work_time[j].id
-            
+            edit_form.id_client.data= id_client
+            edit_form.id_date.data= list_of_date[i].id
             #достигли последнего элемента и он свободен, то время свободное
-            if t==21:
+            if t==current_app.config['END_MASTER_WORK_TIME']:
                 if list_of_work_time[j].is_empty == True:
                     list_to_show.append({'time': list_of_work_time[j], 'empty': 'free', 'form_edit': edit_form})
                 else:
@@ -260,11 +269,18 @@ def take_empty_time_in_shedule(begin_date=None, end_date=None, to_back=None):
 
     return list_date
 
+def take_data_of_fate_for_master(begin_date = None ):
+    '''
+    ищет один день и возвращает расписание на данный день и формы для каждого тайминга для показа мастеру
+    '''
+    pass
+
 def reserve_time_shedue(id_shedule_time):
     '''
     Функция переводит тригер занятости времени во включенное состояние и сохраняет это в БД
     '''
     #сначала очищаем форму от записи
+    print("ierbfkejrbvr    ", id_shedule_time)
     clear_time_shedue(id_shedule_time)
     time_to_reserve = ScheduleOfDay.query.filter(ScheduleOfDay.id == id_shedule_time).first()    
     time_to_reserve.is_empty=0

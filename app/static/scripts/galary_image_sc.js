@@ -1,8 +1,57 @@
-﻿
-
-var backGallagyButton = document.querySelector(".js-gallery-button-back");
+﻿var backGallagyButton = document.querySelector(".js-gallery-button-back");
 var nextGallaryButton = document.querySelector(".js-gallery-button-next");
 var overlay = document.querySelector(".modal-overlay");
+var listTimeButtons = document.querySelectorAll(".js-schedule-direct");
+
+
+if (listTimeButtons.length > 0) {
+    for (i=0; i < listTimeButtons.length; i++) {
+         listTimeButtons[i].addEventListener("click",
+             function (evt) {
+                 evt.preventDefault();
+                 var elem = evt.currentTarget;
+                 $.post("/master_schedule/js_show_schedule_reserve",
+                     {
+                         idElem: elem.id
+                     }
+                 ).done(function (response) {
+                     if (response['result'] === 'true') {
+                         var idTime = response['time_id'];
+                         var typeEmpty = response['type_empty'];
+                         var timeToChange = document.getElementById("time_" + idTime);
+                         var kindToChange = document.getElementById("kind_" + idTime);
+                         if (typeEmpty === 'free') {
+                             timeToChange.className = "schedule-container-days-free";
+                             kindToChange.className = "schedule-container-days-free";
+                             kindToChange.textContent = "Свободно";
+                             elem.id = "to_reserve_" + idTime;
+                             let buttonElem = elem.querySelector(".button");
+                             buttonElem.id = "reserve_button";
+                             buttonElem.name = "reserve_button";
+                             buttonElem.value = "Занять";
+
+                         } else if (typeEmpty === 'reserved') {
+                             timeToChange.className = "schedule-container-days-non-free";
+                             kindToChange.className = "schedule-container-days-non-free";
+                             kindToChange.textContent = "Занято";
+                             elem.id = "to_free_" + idTime;
+                             let buttonElem = elem.querySelector(".button");
+                             buttonElem.id = "delete_button";
+                             buttonElem.name = "delete_button";
+                             buttonElem.value = "Освободить";
+                         }
+                     } else {
+                         alert(response['text']);
+                     }
+
+                 }).fail(function () {
+                     alert('Error: Could not contact server.');
+
+                 });
+
+             });
+    }
+}
 
 if (nextGallaryButton) {
     nextGallaryButton.addEventListener("click",
@@ -302,6 +351,37 @@ function load_image(idImage2, listImages2) {
     alert($(listImages2));
 
 }
+
+//function alert_my(alertM) {
+//    alert(alertM);
+//    console.log('Hello');
+//}
+
+//
+//if (timeList) {
+//    var reserveTimeButton = timeList.querySelectorAll("js-reserve-time-li-to-reserve");
+//    reserveTimeButton.addEventListener("click",
+//        function(evt) {
+//            evt.preventDefault();
+//            alert('I am here');
+//            //$.post("/load_image",
+//            //    {
+//            //        idImage: sectionGallary[i].id,
+//            //        listAllImages: listAllIdImages.value,
+//            //        listFactIdImages: str,
+//            //        toForvard: '0' // 1 - пролистываем вперед, 0 - пролистываем назад
+//            //    }).done(function (response) {
+//            //        //response['listImages'].length
+//            //      
+//            //
+//            //    }).fail(function () {
+//            //        alert('Error: Could not contact server.');
+//            //    });
+//        });
+//}
+
+
+
 
 //loginClose.addEventListener("click",
 //    function(evt) {

@@ -1,5 +1,5 @@
 
-    var loginLink = document.querySelector(".login-link-item");
+var loginLink = document.querySelector(".login-link-item");
 var loginPopup = document.querySelector(".modal-login");
 
 if (loginPopup) {
@@ -11,7 +11,7 @@ if (loginPopup) {
 
         var overlay = document.querySelector(".modal-overlay");
 
-
+    if (loginLink) {
         loginLink.addEventListener("click",
             function(evt) {
                 if (loginPopup) {
@@ -24,7 +24,7 @@ if (loginPopup) {
                     }
                 }
             });
-
+    }
 
         loginClose.addEventListener("click",
             function(evt) {
